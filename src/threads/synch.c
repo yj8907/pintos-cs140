@@ -214,15 +214,12 @@ lock_acquire (struct lock *lock)
     struct thread* next;
     curr->lock_waited_on = lock;
     
-    if (lock->holder != NULL) {
-        if (&lock->holder->thread_wait_list == NULL) list_init(&lock->holder->thread_wait_list);
+    if (lock->holder != NULL)
         list_push_back (&lock->holder->thread_wait_list, &curr->wait_elem);
-    }
     
     while (curr && curr->lock_waited_on){
         next = curr->lock_waited_on->holder;
         if (!next) break;
-        if (!next->init_priority) next->init_priority = next->priority;
         if (curr->priority > next->priority) next->priority = curr->priority;
         curr = next;
     }
@@ -267,22 +264,19 @@ lock_release (struct lock *lock)
     
   /* iterate through threads waiting for the lock and upadte priority */
   struct thread* curr = thread_current();
-//  struct list_elem *e = list_begin(&curr->thread_wait_list);
-//  curr->priority = curr->init_priority;
+  struct list_elem *e = list_begin(&curr->thread_wait_list);
+  curr->priority = curr->init_priority;
 
-//    if (list_entry (e, struct thread, wait_elem))
-//    msg("thread name %s", list_entry (e, struct thread, wait_elem)->name);
-//
-//  while (e!= list_end(&curr->thread_wait_list)){
-//      struct thread* waiting_t = list_entry (e, struct thread, wait_elem);
-//
-//      if (waiting_t->lock_waited_on != lock) {
-//          if (waiting_t->priority > curr->priority) curr->priority = waiting_t->priority;
-//          e = list_next(e);
-//      } else {
-//          e = list_remove(e);
-//      }
-//  }
+  while (e!= list_end(&curr->thread_wait_list)){
+      struct thread* waiting_t = list_entry (e, struct thread, wait_elem);
+
+      if (waiting_t->lock_waited_on != lock) {
+          if (waiting_t->priority > curr->priority) curr->priority = waiting_t->priority;
+          e = list_next(e);
+      } else {
+          e = list_remove(e);
+      }
+  }
 
   sema_up (&lock->semaphore);
 }
