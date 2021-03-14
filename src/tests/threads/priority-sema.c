@@ -43,6 +43,7 @@ test_priority_sema (void)
 static void
 priority_sema_thread (void *aux UNUSED) 
 {
+  msg("test");
   sema_down (&sema);
   msg ("Thread %s woke up.", thread_name ());
 }
