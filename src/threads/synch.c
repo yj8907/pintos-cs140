@@ -247,7 +247,7 @@ lock_release (struct lock *lock)
 
   lock->holder = NULL;
     
-//  if (thread_current()->init_priority) thread_set_priority(thread_current()->init_priority);
+  if (thread_current()->init_priority) thread_set_priority(thread_current()->init_priority);
   sema_up (&lock->semaphore);
 }
 
