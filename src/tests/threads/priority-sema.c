@@ -32,7 +32,7 @@ test_priority_sema (void)
 
   for (i = 0; i < 10; i++) 
     {
-      msg("sema priority %d", list_empty (&sema->waiters));
+      msg("sema priority %d", list_empty (&(sema->waiters)));
       sema_up (&sema);
       msg ("Back in main thread."); 
     }
