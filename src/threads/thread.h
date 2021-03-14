@@ -97,6 +97,10 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
+    /* list for lock record keeping */
+    struct list thread_wait_list;
+    struct list_elem wait_elem;
+      
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
