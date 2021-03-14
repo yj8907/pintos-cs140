@@ -197,10 +197,11 @@ lock_acquire (struct lock *lock)
   ASSERT (!lock_held_by_current_thread (lock));
 
   /* priority donation */
-    thread* curr = thread_current();
+    struct thread* curr = thread_current();
+    struct thread* next;
     curr->lock_waited_on = lock;
     while (curr->lock_waited_on){
-        thread* next = curr->lock_waited_on->holder;
+        next = curr->lock_waited_on->holder;
         if (!next->init_priority) next->init_priority = next->priority;
         if (curr->priority > next->priority) next->priority = curr->priority;
         curr = next;
