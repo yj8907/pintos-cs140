@@ -71,8 +71,7 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
-bool
-priority_less(const struct list_elem *elem1,
+bool priority_less(const struct list_elem *elem1,
               const struct list_elem *elem2, void *aux){
     /* ready list is sorted by this function and we want thread of highest priority to be at front of the list */
     return list_entry (elem1, struct thread, elem)->priority > list_entry (elem2, struct thread, elem)->priority;
@@ -247,7 +246,8 @@ thread_unblock (struct thread *t)
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
 
-  list_insert_ordered(&ready_list, &t->elem, &priority_less, NULL);
+//  list_insert_ordered(&ready_list, &t->elem, &priority_less, NULL);
+    list_push_back (&ready_list, &t->elem);
   
   t->status = THREAD_READY;
   intr_set_level (old_level);
@@ -319,7 +319,8 @@ thread_yield (void)
 
   old_level = intr_disable ();
     if (cur != idle_thread) {
-        list_insert_ordered(&ready_list, &cur->elem, &priority_less, NULL);
+//        list_insert_ordered(&ready_list, &cur->elem, &priority_less, NULL);
+        list_push_back (&ready_list, &cur->elem);
     }
     
   cur->status = THREAD_READY;
