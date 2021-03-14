@@ -213,7 +213,7 @@ lock_acquire (struct lock *lock)
     struct thread* curr = thread_current();
     struct thread* next;
     curr->lock_waited_on = lock;
-//    if (lock->holder) list_push_back (&lock->holder->thread_wait_list, &curr->wait_elem);
+    if (lock->holder) list_push_back (&lock->holder->thread_wait_list, &curr->wait_elem);
     
     while (curr && curr->lock_waited_on){
         next = curr->lock_waited_on->holder;
