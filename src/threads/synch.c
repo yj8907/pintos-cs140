@@ -73,7 +73,7 @@ sema_down (struct semaphore *sema)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-  msg("thread %d",  thread_current()->priority);
+//  msg("thread %d",  thread_current()->priority);
     
   while (sema->value == 0) 
     {
