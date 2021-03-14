@@ -207,7 +207,7 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
-  list_init(t->thread_wait_list);
+  list_init(&t->thread_wait_list);
     
 //  if (t->priority > thread_current()->priority)  thread_yield();
     thread_yield();
