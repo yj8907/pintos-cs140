@@ -73,7 +73,7 @@ sema_down (struct semaphore *sema)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-//  msg("thread %d",  thread_current()->priority);    
+//  msg("thread %d",  thread_current()->priority);
   while (sema->value == 0) 
     {
 //        list_push_back (&sema->waiters, &thread_current ()->elem);
@@ -123,7 +123,7 @@ sema_up (struct semaphore *sema)
   ASSERT (sema != NULL);
 
   old_level = intr_disable ();
-//    msg("empty %d", list_empty (&sema->waiters));
+    msg("empty %d", list_empty (&sema->waiters));
     if (!list_empty (&sema->waiters)) {
 //        msg("thread %d", list_entry (list_front (&sema->waiters),
 //                                     struct thread, elem)->priority);
