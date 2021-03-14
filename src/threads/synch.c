@@ -265,20 +265,22 @@ lock_release (struct lock *lock)
   /* iterate through threads waiting for the lock and upadte priority */
   struct thread* curr = thread_current();
   struct list_elem *e = list_begin(&curr->thread_wait_list);
-  curr->priority = curr->init_priority;
+  int priority = curr->init_priority;
 
   while (e!= list_end(&curr->thread_wait_list)){
       struct thread* waiting_t = list_entry (e, struct thread, wait_elem);
 
       if (waiting_t->lock_waited_on != lock) {
-          if (waiting_t->priority > curr->priority) curr->priority = waiting_t->priority;
+          if (waiting_t->priority > priority) priority = waiting_t->priority;
           e = list_next(e);
       } else {
           e = list_remove(e);
       }
   }
-
+  curr->priority = priority;
+    
   sema_up (&lock->semaphore);
+  thread_set_priority(priority);
 }
 
 /* Returns true if the current thread holds LOCK, false
