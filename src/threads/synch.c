@@ -201,7 +201,7 @@ lock_acquire (struct lock *lock)
     struct thread* curr = thread_current();
     struct thread* next;
     curr->lock_waited_on = lock;
-    while (curr->lock_waited_on){
+    while (curr && curr->lock_waited_on){
         next = curr->lock_waited_on->holder;
         if (!next->init_priority) next->init_priority = next->priority;
         if (curr->priority > next->priority) next->priority = curr->priority;
