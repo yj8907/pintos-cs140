@@ -98,8 +98,8 @@ struct thread
     struct list_elem elem;              /* List element. */
 
     /* list for lock record keeping */
-//    struct list thread_wait_list;
-//    struct list_elem wait_elem;
+    struct list thread_wait_list;
+    struct list_elem wait_elem;
       
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
