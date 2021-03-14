@@ -33,7 +33,7 @@ test_priority_sema (void)
   for (i = 0; i < 10; i++) 
     {
       sema_up (&sema);
-        msg("thread %d", list_entry (list_front (&sema->waiters),
+        msg("thread %d", list_entry (list_front (&sema.waiters),
         struct thread, elem)->priority);
       msg ("Back in main thread."); 
     }
