@@ -207,8 +207,7 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
-  list_init(&t->thread_wait_list);
-    
+      
 //  if (t->priority > thread_current()->priority)  thread_yield();
     thread_yield();
     
@@ -479,7 +478,8 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
-
+  list_init(&t->thread_wait_list);
+    
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
     
