@@ -122,6 +122,7 @@ sema_up (struct semaphore *sema)
   ASSERT (sema != NULL);
 
   old_level = intr_disable ();
+    msg("empty %d", list_empty (&sema->waiters));
     if (!list_empty (&sema->waiters)) {
         msg("thread %d", list_entry (list_front (&sema->waiters),
                                      struct thread, elem)->priority);
