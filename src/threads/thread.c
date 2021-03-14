@@ -76,7 +76,7 @@ bool
 priority_less(const struct list_elem *elem1,
               const struct list_elem *elem2, void *aux){
     /* ready list is sorted by this function and we want thread of highest priority to be at front of the list */
-    return list_entry (elem1, struct thread, elem)->priority >= list_entry (elem2, struct thread, elem)->priority;
+    return list_entry (elem1, struct thread, elem)->priority > list_entry (elem2, struct thread, elem)->priority;
 }
 
 /* Initializes the threading system by transforming the code
@@ -246,8 +246,7 @@ thread_unblock (struct thread *t)
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
 
-  void *aux;
-  list_insert_ordered(&ready_list, &t->elem, &priority_less, aux);
+  list_insert_ordered(&ready_list, &t->elem, &priority_less, NULL);
   
   t->status = THREAD_READY;
   intr_set_level (old_level);
@@ -319,8 +318,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
     if (cur != idle_thread) {
-        void *aux;
-        list_insert_ordered(&ready_list, &cur->elem, &priority_less, aux);
+        list_insert_ordered(&ready_list, &cur->elem, &priority_less, NULL);
     }
     
   cur->status = THREAD_READY;
