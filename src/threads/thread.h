@@ -111,8 +111,6 @@ struct thread
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
 
-list_less_func priority_less;
-
 void thread_init (void);
 void thread_start (void);
 
