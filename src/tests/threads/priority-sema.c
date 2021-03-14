@@ -34,9 +34,9 @@ test_priority_sema (void)
     {
       sema_up (&sema);
 //        msg("sema priority %d", list_empty (&sema.waiters));
-        if (!list_empty (&sema.waiters)) {
-           msg("sema priority %d", list_entry(list_front(&sema.waiters), struct thread, elem)->priority);
-        }
+//        if (!list_empty (&sema.waiters)) {
+//           msg("sema priority %d", list_entry(list_front(&sema.waiters), struct thread, elem)->priority);
+//        }
       msg ("Back in main thread."); 
     }
 }
