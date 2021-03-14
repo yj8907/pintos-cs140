@@ -123,13 +123,15 @@ sema_up (struct semaphore *sema)
 
   old_level = intr_disable ();
     if (!list_empty (&sema->waiters)) {
+        msg("thread %d", list_entry (list_front (&sema->waiters),
+                                     struct thread, elem)->priority);
         thread_unblock (list_entry (list_pop_front (&sema->waiters),
                                     struct thread, elem));
     }
         
   sema->value++;
   intr_set_level (old_level);
-
+  
   thread_yield();
 }
 
