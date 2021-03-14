@@ -215,7 +215,7 @@ lock_acquire (struct lock *lock)
     curr->lock_waited_on = lock;
     
     if (lock->holder != NULL) {
-        if (lock->holder->thread_wait_list == NULL) list_init(&lock->holder->thread_wait_list);
+        if (&lock->holder->thread_wait_list == NULL) list_init(&lock->holder->thread_wait_list);
         list_push_back (&lock->holder->thread_wait_list, &curr->wait_elem);
     }
     
