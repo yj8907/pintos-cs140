@@ -73,7 +73,8 @@ static tid_t allocate_tid (void);
 
 static list_less_func priority_less;
 bool
-priority_less(struct list_elem *elem1, struct list_elem *elem2, void *aux){
+priority_less(const struct list_elem *elem1,
+              const struct list_elem *elem2, void *aux){
     /* ready list is sorted by this function and we want thread of highest priority to be at front of the list */
     return list_entry (elem1, struct thread, elem)->priority >= list_entry (elem2, struct thread, elem)->priority;
 }
