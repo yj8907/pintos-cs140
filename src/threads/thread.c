@@ -254,7 +254,6 @@ thread_unblock (struct thread *t)
   intr_set_level (old_level);
     
   msg("thread %d", thread_current()->priority);
-  thread_yield();
     
 }
 
@@ -354,8 +353,15 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-  thread_current()->priority = new_priority;
-  thread_current()->init_priority = new_priority;
+  struct thread* curr = thread_current();
+  curr->init_priority = new_priority;
+  
+    if (!is_empty(&curr->thread_wait_list)) {
+        if (new_priority > curr->priority) curr->priority = new_priority;
+    } else {
+    thread_current()->priority = new_priority;
+    }
+      
   if (!list_empty (&ready_list) &&
       new_priority < list_entry(list_front(&ready_list), struct thread, elem)->priority) thread_yield();
 }
