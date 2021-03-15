@@ -356,7 +356,7 @@ thread_set_priority (int new_priority)
   struct thread* curr = thread_current();
   curr->init_priority = new_priority;
   
-    if (!is_empty(&curr->thread_wait_list)) {
+    if (!list_empty(&curr->thread_wait_list)) {
         if (new_priority > curr->priority) curr->priority = new_priority;
     } else {
     thread_current()->priority = new_priority;
