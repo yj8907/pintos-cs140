@@ -312,8 +312,8 @@ bool sema_priority_less(const struct list_elem *elem1,
     ASSERT(!list_empty(&sm1->semaphore.waiters));
     ASSERT(!list_empty(&sm2->semaphore.waiters));
     
-    struct thread* t1 = list_front(&sm1->semaphore.waiters);
-    struct thread* t2 = list_front(&sm2->semaphore.waiters);
+    struct thread* t1 = list_entry(list_front(&sm1->semaphore.waiters), struct thread, elem);
+    struct thread* t2 = list_entry(list_front(&sm2->semaphore.waiters), struct thread, elem);
     
     return t1->priority > t2->priority;
 }
