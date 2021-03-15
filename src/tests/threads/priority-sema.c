@@ -36,7 +36,6 @@ test_priority_sema (void)
 //        if (!list_empty (&sema.waiters))
 //        msg("thread %d", list_entry (list_front (&sema.waiters),
 //        struct thread, elem)->priority);
-     msg("empty %d", list_empty (&sema.waiters));
       msg ("Back in main thread."); 
     }
 }
