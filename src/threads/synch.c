@@ -39,22 +39,6 @@ bool thread_priority_less(const struct list_elem *elem1,
     return list_entry (elem1, struct thread, elem)->priority > list_entry (elem2, struct thread, elem)->priority;
 }
 
-static list_less_func sema_priority_less;
-bool sema_priority_less(const struct list_elem *elem1,
-              const struct list_elem *elem2, void *aux UNUSED){
-    /* condition variable waiter list is sorted by this function and we want thread of highest priority to be at front of the list */
-    struct semaphore_elem* sm1 = list_entry (elem1, struct semaphore_elem, elem);
-    struct semaphore_elem* sm2 = list_entry (elem2, struct semaphore_elem, elem);
-    
-    ASSERT(!list_empty(&sm1->semaphore->waiters));
-    ASSERT(!list_empty(&sm2->semaphore->waiters));
-    
-    struct thread* t1 = list_front(&sm1->semaphore->waiters);
-    struct thread* t2 = list_front(&sm2->semaphore->waiters);
-    
-    return t1->priority > t2->priority;
-}
-
 
 /* Initializes semaphore SEMA to VALUE.  A semaphore is a
    nonnegative integer along with two atomic operators for
@@ -316,6 +300,23 @@ struct semaphore_elem
     struct list_elem elem;              /* List element. */
     struct semaphore semaphore;         /* This semaphore. */
   };
+
+
+static list_less_func sema_priority_less;
+bool sema_priority_less(const struct list_elem *elem1,
+              const struct list_elem *elem2, void *aux UNUSED){
+    /* condition variable waiter list is sorted by this function and we want thread of highest priority to be at front of the list */
+    struct semaphore_elem* sm1 = list_entry (elem1, struct semaphore_elem, elem);
+    struct semaphore_elem* sm2 = list_entry (elem2, struct semaphore_elem, elem);
+    
+    ASSERT(!list_empty(&sm1->semaphore->waiters));
+    ASSERT(!list_empty(&sm2->semaphore->waiters));
+    
+    struct thread* t1 = list_front(&sm1->semaphore->waiters);
+    struct thread* t2 = list_front(&sm2->semaphore->waiters);
+    
+    return t1->priority > t2->priority;
+}
 
 /* Initializes condition variable COND.  A condition variable
    allows one piece of code to signal a condition and cooperating
