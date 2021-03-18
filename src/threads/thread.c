@@ -411,6 +411,7 @@ thread_current (void)
      have overflowed its stack.  Each thread has less than 4 kB
      of stack, so a few big automatic arrays or moderate
      recursion can cause stack overflow. */
+    ASSERT(t!=NULL);
   ASSERT (is_thread (t));
     thread_current()->status = THREAD_RUNNING;
   ASSERT (t->status == THREAD_RUNNING);
