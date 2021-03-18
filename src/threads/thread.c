@@ -569,6 +569,7 @@ idle (void *idle_started_ UNUSED)
 {
   struct semaphore *idle_started = idle_started_;
   idle_thread = thread_current ();
+  ASSERT(is_thread(is_thread));
   sema_up (idle_started);
 
   for (;;) 
