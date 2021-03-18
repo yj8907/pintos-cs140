@@ -247,8 +247,7 @@ update_mlfqs_parameters(void)
     int num_ready_threads = 0;
     if (t != idle_thread) num_ready_threads++;
 
-    int i;
-    for (i = PRI_MIN; i<PRI_MAX+1; i++){
+    for (int i = PRI_MIN; i<PRI_MAX+1; i++){
         num_ready_threads += list_size(&ready_list_mlfqs[i]);
     }
     load_avg = multiply(divide(inttoreal(59), inttoreal(60)), load_avg);
@@ -687,11 +686,12 @@ next_thread_to_run (void)
         else
           return list_entry (list_pop_front (&ready_list), struct thread, elem);
     } else {
-        int pri_level = PRI_MAX;
-        while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
-        if (pri_level < PRI_MIN) return idle_thread;
-        return list_entry (list_pop_front (&ready_list_mlfqs[pri_level]),
-                           struct thread, elem);
+//        int pri_level = PRI_MAX;
+//        while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
+//        if (pri_level < PRI_MIN) return idle_thread;
+//        return list_entry (list_pop_front (&ready_list_mlfqs[pri_level]),
+//                           struct thread, elem);
+        return idle_thread;
     }
 
 }
