@@ -412,7 +412,7 @@ thread_current (void)
      of stack, so a few big automatic arrays or moderate
      recursion can cause stack overflow. */
     ASSERT(t!=NULL);
-    msg("thread name %s", t->name);
+    printf("thread name %s", t->name);
   ASSERT (is_thread (t));
     thread_current()->status = THREAD_RUNNING;
   ASSERT (t->status == THREAD_RUNNING);
