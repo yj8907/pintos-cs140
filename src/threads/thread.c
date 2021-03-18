@@ -217,16 +217,16 @@ thread_tick (void)
   
   int64_t t_ticks = timer_ticks();
     
-  if (thread_mlfqs && (t_ticks % TIME_SLICE == 0) ) {
+//  if (thread_mlfqs && (t_ticks % TIME_SLICE == 0) ) {
 //      update_last_run_mlfqs_priority_and_queue();
-
-      /* clear list every time slice */
-      if(!list_empty(&last_tslice_list)){
-          struct list_elem* e = list_front(&last_tslice_list);
-          while(!list_empty(&last_tslice_list))
-              e = list_remove(e);
-      }
-    }
+//
+//      /* clear list every time slice */
+//      if(!list_empty(&last_tslice_list)){
+//          struct list_elem* e = list_front(&last_tslice_list);
+//          while(!list_empty(&last_tslice_list))
+//              e = list_remove(e);
+//      }
+//    }
 //
 //  if (thread_mlfqs && t_ticks % TIMER_FREQ == 0)
 //      update_mlfqs_parameters();
@@ -387,7 +387,7 @@ thread_unblock (struct thread *t)
   if (!thread_mlfqs) {
       list_insert_ordered(&ready_list, &t->elem, &priority_less, NULL);
   } else {
-      list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
+//      list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
   }
 
   t->status = THREAD_READY;
@@ -525,12 +525,12 @@ thread_get_priority (void)
 void
 thread_set_nice (int nice)
 {
-  struct thread* curr = thread_current();
-  curr->nice = nice;
-  int prev_priority = curr->priority;
-  calculate_mlfqs_thread_priority(curr, NULL);
-  upadte_thread_mlfsq_ready_list(curr);
-  if (curr->priority < prev_priority) thread_yield();
+//  struct thread* curr = thread_current();
+//  curr->nice = nice;
+//  int prev_priority = curr->priority;
+//  calculate_mlfqs_thread_priority(curr, NULL);
+//  upadte_thread_mlfsq_ready_list(curr);
+//  if (curr->priority < prev_priority) thread_yield();
 }
 
 /* Returns the current thread's nice value. */
