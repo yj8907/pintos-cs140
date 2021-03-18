@@ -31,6 +31,7 @@ test_mlfqs_load_1 (void)
       load_avg = thread_get_load_avg ();
       ASSERT (load_avg >= 0);
       elapsed = timer_elapsed (start_time) / TIMER_FREQ;
+        msg("elapsed %d", elapsed);
       if (load_avg > 100)
         fail ("load average is %d.%02d "
               "but should be between 0 and 1 (after %d seconds)",
@@ -39,6 +40,7 @@ test_mlfqs_load_1 (void)
         break;
       else if (elapsed > 45)
         fail ("load average stayed below 0.5 for more than 45 seconds");
+      msg("check2");
     }
 
   if (elapsed < 38)
