@@ -164,14 +164,14 @@ thread_init (void)
 {
   
   ASSERT (intr_get_level () == INTR_OFF);
-
+  msg("tcheck1");
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
   list_init(&last_tslice_list);
   for (int i = 0;i < PRI_MAX+1;i++) list_init(&ready_list_mlfqs[i]);
   load_avg = inttoreal(0);
-    
+  msg("tcheck2");
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
