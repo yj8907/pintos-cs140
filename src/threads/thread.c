@@ -100,7 +100,7 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 #define TIME_SLICE 4            /* # of timer ticks to give each thread. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
-//static real load_avg;  /* load_avg as real number */
+static real load_avg;  /* load_avg as real number */
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -126,25 +126,25 @@ bool priority_less(const struct list_elem *elem1,
     return list_entry (elem1, struct thread, elem)->priority > list_entry (elem2, struct thread, elem)->priority;
 }
 
-//static thread_action_func update_recent_cpu;
-//void update_recent_cpu (struct thread *t, void *aux UNUSED){
-//
-//    real ratio = divide(multiply(inttoreal(2), load_avg),
-//                        add(multiply(inttoreal(2), load_avg), inttoreal(1)));
-//    t->recent_cpu = add(multiply(ratio, t->recent_cpu),
-//                        inttoreal(t->nice));
-//}
-//
-///* calculate mlfsq priority for single thread */
-//void calculate_mlfqs_thread_priority(struct thread* t, void *aux UNUSED)
-//{
-//    real priority = subtract(subtract(inttoreal(PRI_MAX),
-//                                      divide(t->recent_cpu, inttoreal(4))),
-//                             divide(inttoreal(t->nice), inttoreal(2)));
-//    t->priority = realtoint(priority);
-//    if (t->priority > PRI_MAX) t->priority = PRI_MAX;
-//    if (t->priority < PRI_MIN) t->priority = PRI_MIN;
-//}
+static thread_action_func update_recent_cpu;
+void update_recent_cpu (struct thread *t, void *aux UNUSED){
+
+    real ratio = divide(multiply(inttoreal(2), load_avg),
+                        add(multiply(inttoreal(2), load_avg), inttoreal(1)));
+    t->recent_cpu = add(multiply(ratio, t->recent_cpu),
+                        inttoreal(t->nice));
+}
+
+/* calculate mlfsq priority for single thread */
+void calculate_mlfqs_thread_priority(struct thread* t, void *aux UNUSED)
+{
+    real priority = subtract(subtract(inttoreal(PRI_MAX),
+                                      divide(t->recent_cpu, inttoreal(4))),
+                             divide(inttoreal(t->nice), inttoreal(2)));
+    t->priority = realtoint(priority);
+    if (t->priority > PRI_MAX) t->priority = PRI_MAX;
+    if (t->priority < PRI_MIN) t->priority = PRI_MIN;
+}
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -168,7 +168,7 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
-//  load_avg = inttoreal(0);
+  load_avg = inttoreal(0);
     
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
