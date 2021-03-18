@@ -518,12 +518,12 @@ thread_get_priority (void)
 void
 thread_set_nice (int nice)
 {
-//  struct thread* curr = thread_current();
-//  curr->nice = nice;
-//  int prev_priority = curr->priority;
-//  calculate_mlfqs_thread_priority(curr, NULL);
-//  upadte_thread_mlfsq_ready_list(curr);
-//  if (curr->priority < prev_priority) thread_yield();
+  struct thread* curr = thread_current();
+  curr->nice = nice;
+  int prev_priority = curr->priority;
+  calculate_mlfqs_thread_priority(curr, NULL);
+  upadte_thread_mlfsq_ready_list(curr);
+  if (curr->priority < prev_priority) thread_yield();
 }
 
 /* Returns the current thread's nice value. */
@@ -537,14 +537,14 @@ thread_get_nice (void)
 int
 thread_get_load_avg (void) 
 {
-//  return realtoint(multiply(load_avg, inttoreal(100)));
+  return realtoint(multiply(load_avg, inttoreal(100)));
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
 int
 thread_get_recent_cpu (void) 
 {
-//  return realtoint(multiply(thread_current()->recent_cpu, inttoreal(100)));
+  return realtoint(multiply(thread_current()->recent_cpu, inttoreal(100)));
 }
 
 /* Idle thread.  Executes when no other thread is ready to run.
