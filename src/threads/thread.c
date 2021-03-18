@@ -639,7 +639,7 @@ init_thread (struct thread *t, const char *name, int priority)
       t->priority = priority;
       t->init_priority = priority;
   } else {
-//      calculate_mlfqs_thread_priority(t, NULL);
+      calculate_mlfqs_thread_priority(t, NULL);
   }
     
   t->magic = THREAD_MAGIC;
@@ -678,11 +678,11 @@ next_thread_to_run (void)
         else
           return list_entry (list_pop_front (&ready_list), struct thread, elem);
     } else {
-//        int pri_level = PRI_MAX;
-//        while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
-//        if (pri_level < PRI_MIN) return idle_thread;
-//        return list_entry (list_pop_front (&ready_list_mlfqs[pri_level]),
-//                           struct thread, elem);
+        int pri_level = PRI_MAX;
+        while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
+        if (pri_level < PRI_MIN) return idle_thread;
+        return list_entry (list_pop_front (&ready_list_mlfqs[pri_level]),
+                           struct thread, elem);
     }
 
 }
