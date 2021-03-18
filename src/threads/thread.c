@@ -759,7 +759,7 @@ schedule (void)
 
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
-    ASSERT (next->thread_get_load_avg () == 100);
+    ASSERT (thread_get_load_avg () == 100);
   ASSERT (is_thread (next));
 
   /* insert next thread into last run list */
