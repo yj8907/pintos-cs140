@@ -216,6 +216,7 @@ thread_tick (void)
     kernel_ticks++;
   
   int64_t t_ticks = timer_ticks();
+    
 //  if (thread_mlfqs && t_ticks % TIME_SLICE == 0) {
 //      update_last_run_mlfqs_priority_and_queue();
 //
@@ -444,7 +445,10 @@ thread_exit (void)
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
-  if (thread_mlfqs) list_remove (&thread_current()->lastrun_elem);
+  if (thread_mlfqs && thread_current()->lastrun_elem.prev != NULL
+        && thread_current()->lastrun_elem.next != NULL)
+      list_remove (&thread_current()->lastrun_elem);
+    
   thread_current ()->status = THREAD_DYING;
   schedule ();
   NOT_REACHED ();
@@ -643,7 +647,7 @@ init_thread (struct thread *t, const char *name, int priority)
       t->priority = priority;
       t->init_priority = priority;
   } else {
-      calculate_mlfqs_thread_priority(t, NULL);
+//      calculate_mlfqs_thread_priority(t, NULL);
   }
     
   t->magic = THREAD_MAGIC;
