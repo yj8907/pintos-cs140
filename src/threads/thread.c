@@ -162,6 +162,7 @@ void calculate_mlfqs_thread_priority(struct thread* t, void *aux UNUSED)
 void
 thread_init (void) 
 {
+  msg("check1");
   ASSERT (intr_get_level () == INTR_OFF);
 
   lock_init (&tid_lock);
