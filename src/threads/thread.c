@@ -647,7 +647,7 @@ init_thread (struct thread *t, const char *name, int priority)
       t->priority = priority;
       t->init_priority = priority;
   } else {
-//      calculate_mlfqs_thread_priority(t, NULL);
+      calculate_mlfqs_thread_priority(t, NULL);
   }
     
   t->magic = THREAD_MAGIC;
