@@ -213,7 +213,7 @@ thread_tick (void)
   else
     kernel_ticks++;
   
-//  int64_t t_ticks = timer_ticks();
+  int64_t t_ticks = timer_ticks();
 //    if (t_ticks % TIME_SLICE == 0) {
 //      update_last_run_mlfqs_priority_and_queue();
 //
@@ -269,7 +269,7 @@ update_last_run_mlfqs_priority_and_queue(void)
       }
 }
 
-//void
+void
 upadte_thread_mlfsq_ready_list(struct thread *t)
 {
     ASSERT(t->priority >= PRI_MIN && t->priority <= PRI_MAX);
@@ -383,7 +383,7 @@ thread_unblock (struct thread *t)
   if (!thread_mlfqs) {
       list_insert_ordered(&ready_list, &t->elem, &priority_less, NULL);
   } else {
-//      list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
+      list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
   }
 
   t->status = THREAD_READY;
