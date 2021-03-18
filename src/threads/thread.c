@@ -232,50 +232,50 @@ thread_tick (void)
 }
 
 /* update threads priority related parameters for all threads*/
-//void
-//update_mlfqs_parameters(void)
-//{
-//    /* update recent_cpu for all threads */
-//    thread_foreach(&update_recent_cpu, NULL);
-//
-//    struct thread *t = thread_current ();
-//    int num_ready_threads = 0;
-//    if (t != idle_thread) num_ready_threads++;
-//
-//    int i;
-//    for (i = PRI_MIN; i<PRI_MAX+1; i++){
-//        num_ready_threads += list_size(&ready_list_mlfqs[i]);
-//    }
-//    load_avg = multiply(divide(inttoreal(59), inttoreal(60)), load_avg);
-//    load_avg = add(load_avg,
-//                   multiply(divide(inttoreal(1), inttoreal(60)), inttoreal(num_ready_threads)));
-//
-//}
+void
+update_mlfqs_parameters(void)
+{
+    /* update recent_cpu for all threads */
+    thread_foreach(&update_recent_cpu, NULL);
+
+    struct thread *t = thread_current ();
+    int num_ready_threads = 0;
+    if (t != idle_thread) num_ready_threads++;
+
+    int i;
+    for (i = PRI_MIN; i<PRI_MAX+1; i++){
+        num_ready_threads += list_size(&ready_list_mlfqs[i]);
+    }
+    load_avg = multiply(divide(inttoreal(59), inttoreal(60)), load_avg);
+    load_avg = add(load_avg,
+                   multiply(divide(inttoreal(1), inttoreal(60)), inttoreal(num_ready_threads)));
+
+}
 
 
 /* update mlfqs priority for threads run from last time slice */
-//void
-//update_last_run_mlfqs_priority_and_queue(void)
-//{
-//    struct list_elem *e;
-//    ASSERT (intr_get_level () == INTR_OFF);
-//
-//    for (e = list_begin (&last_tslice_list); e != list_end (&last_tslice_list);
-//         e = list_next (e))
-//      {
-//        struct thread *t = list_entry (e, struct thread, lastrun_elem);
-//        calculate_mlfqs_thread_priority(t, NULL);
-//        upadte_thread_mlfsq_ready_list(t);
-//      }
-//}
+void
+update_last_run_mlfqs_priority_and_queue(void)
+{
+    struct list_elem *e;
+    ASSERT (intr_get_level () == INTR_OFF);
+
+    for (e = list_begin (&last_tslice_list); e != list_end (&last_tslice_list);
+         e = list_next (e))
+      {
+        struct thread *t = list_entry (e, struct thread, lastrun_elem);
+        calculate_mlfqs_thread_priority(t, NULL);
+        upadte_thread_mlfsq_ready_list(t);
+      }
+}
 
 //void
-//upadte_thread_mlfsq_ready_list(struct thread *t)
-//{
-//    ASSERT(t->priority >= PRI_MIN && t->priority <= PRI_MAX);
-//    list_remove(&t->elem);
-//    list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
-//}
+upadte_thread_mlfsq_ready_list(struct thread *t)
+{
+    ASSERT(t->priority >= PRI_MIN && t->priority <= PRI_MAX);
+    list_remove(&t->elem);
+    list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
+}
 
 
 /* Prints thread statistics. */
