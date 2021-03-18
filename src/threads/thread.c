@@ -445,9 +445,9 @@ thread_exit (void)
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
-  if (thread_mlfqs && thread_current()->lastrun_elem.prev != NULL
-        && thread_current()->lastrun_elem.next != NULL)
-      list_remove (&thread_current()->lastrun_elem);
+//  if (thread_mlfqs && thread_current()->lastrun_elem.prev != NULL
+//        && thread_current()->lastrun_elem.next != NULL)
+//      list_remove (&thread_current()->lastrun_elem);
     
   thread_current ()->status = THREAD_DYING;
   schedule ();
@@ -469,7 +469,7 @@ thread_yield (void)
       if (!thread_mlfqs) {
         list_insert_ordered(&ready_list, &cur->elem, &priority_less, NULL);
       } else {
-          list_push_back(&ready_list_mlfqs[cur->priority], &cur->elem);
+//          list_push_back(&ready_list_mlfqs[cur->priority], &cur->elem);
       }
     }
     
@@ -545,7 +545,8 @@ thread_get_nice (void)
 int
 thread_get_load_avg (void) 
 {
-  return realtoint(multiply(load_avg, inttoreal(100)));
+//  return realtoint(multiply(load_avg, inttoreal(100)));
+    return 100;
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
