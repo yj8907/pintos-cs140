@@ -17,6 +17,7 @@
 void
 test_mlfqs_load_1 (void) 
 {
+  msg("check0");
   int64_t start_time;
   int elapsed;
   int load_avg;
