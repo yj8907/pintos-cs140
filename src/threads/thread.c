@@ -28,10 +28,10 @@ static real inttoreal(const int x){
 }
 
 static int realtoint(const real x){
-    if (x >= 0) {
-        return (x + FP/2)/FP;
+    if (x.val >= 0) {
+        return (x.val + FP/2)/FP;
     } else {
-        return (x - FP/2)/FP;
+        return (x.val - FP/2)/FP;
     }
 }
 
@@ -49,14 +49,14 @@ static real subtract(const real x, const real y){
 
 static real multiply(const real x, const real y){
     real output;
-    output.val = ((int64_t)x) * (y/FP);
+    output.val = ((int64_t)x.val) * (y.val/FP);
     return output;
 }
 
 static real divide(const real x, const real y){
     real output;
-    output.val = ((int64_t)x) * FP / y;
-    return output
+    output.val = ((int64_t)x.val) * FP / y.val;
+    return output;
 }
 
 
@@ -131,7 +131,7 @@ void update_recent_cpu (struct thread *t, void *aux UNUSED){
     
     real ratio = divide(multiply(inttoreal(2), load_avg),
                         add(multiply(inttoreal(2), load_avg), inttoreal(1)));
-    t->recent_cpu = add(multiply(ratio, inttoreal(t->recent_cpu)),
+    t->recent_cpu = add(multiply(ratio, t->recent_cpu),
                         inttoreal(t->nice));
 }
 
@@ -139,8 +139,9 @@ void update_recent_cpu (struct thread *t, void *aux UNUSED){
 static thread_action_func calculate_mlfqs_thread_priority;
 void calculate_mlfqs_thread_priority(struct thread* t, void *aux UNUSED)
 {
-    real priority = subtract(subtract(inttoreal(PRI_MAX), divide(recent_cpu, inttoreal(4))),
-                             divide(inttoreal(nice), inttoreal(2)));
+    real priority = subtract(subtract(inttoreal(PRI_MAX),
+                                      divide(t->recent_cpu, inttoreal(4))),
+                             divide(inttoreal(t->nice), inttoreal(2)));
     t->priority = realtoint(priority);
     if (t->priority > PRI_MAX) t->priority = PRI_MAX;
     if (t->priority < PRI_MIN) t->priority = PRI_MIN;
@@ -167,7 +168,7 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
-  load_avg = 0;
+  load_avg = inttoreal(0);
     
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -246,7 +247,8 @@ update_mlfqs_parameters(void)
         num_ready_threads += list_size(&ready_list_mlfqs[i]);
     }
     load_avg = multiply(divide(inttoreal(59), inttoreal(60)), load_avg);
-    load_avg += multiply(divide(inttoreal(1), inttoreal(60)), inttoreal(num_ready_threads));
+    load_avg = add(load_avg,
+                   multiply(divide(inttoreal(1), inttoreal(60)), inttoreal(num_ready_threads)));
     
 }
 
@@ -271,8 +273,8 @@ void
 upadte_thread_mlfsq_ready_list(struct thread *t)
 {
     ASSERT(t->priority >= PRI_MIN && t->priority <= PRI_MAX);
-    list_remove(t->elem);
-    list_push_back(&ready_list_mlfqs[t->priority], t->elem);
+    list_remove(&t->elem);
+    list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
 }
 
 
@@ -381,7 +383,7 @@ thread_unblock (struct thread *t)
   if (!thread_mlfqs) {
       list_insert_ordered(&ready_list, &t->elem, &priority_less, NULL);
   } else {
-      list_push_back(&ready_list_mlfqs[t->priority], t->elem);
+      list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
   }
 
   t->status = THREAD_READY;
@@ -438,7 +440,7 @@ thread_exit (void)
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
-  list_remove (&thread_current->runelem);
+  list_remove (&thread_current->lastrun_elem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
   NOT_REACHED ();
@@ -459,7 +461,7 @@ thread_yield (void)
       if (!thread_mlfqs) {
         list_insert_ordered(&ready_list, &cur->elem, &priority_less, NULL);
       } else {
-          list_push_back(&ready_list_mlfqs[cur->priority], cur);
+          list_push_back(&ready_list_mlfqs[cur->priority], &cur->elem);
       }
     }
     
@@ -490,7 +492,7 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-  if (mlfqs) return;
+  if (thread_mlfqs) return;
     
   struct thread* curr = thread_current();
   curr->init_priority = new_priority;
@@ -631,12 +633,13 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->recent_cpu = inttoreal(0);
-  
-  if (!mlfqs) {
-  t->priority = priority;
-  t->init_priority = priority;
+  t->nice = 0;
+    
+  if (!thread_mlfqs) {
+      t->priority = priority;
+      t->init_priority = priority;
   } else {
-      t->priority = calculate_mlfqs_thread_priority(t, NULL);
+      calculate_mlfqs_thread_priority(t, NULL);
   }
     
   t->magic = THREAD_MAGIC;
@@ -749,7 +752,7 @@ schedule (void)
   ASSERT (is_thread (next));
 
   /* insert next thread into last run list */
-  if (mlfqs && next->lastrun_elem->prev != NULL && next->lastrun_elem->next != NULL) list_push_back(&last_tslice_list, &next->lastrun_elem);
+  if (thread_mlfqs && next->lastrun_elem.prev != NULL && next->lastrun_elem.next != NULL) list_push_back(&last_tslice_list, &next->lastrun_elem);
     
   if (cur != next)
     prev = switch_threads (cur, next);
