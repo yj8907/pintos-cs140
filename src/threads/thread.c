@@ -752,7 +752,7 @@ schedule (void)
   ASSERT (is_thread (next));
 
   /* insert next thread into last run list */
-//  if (thread_mlfqs && next->lastrun_elem.prev != NULL && next->lastrun_elem.next != NULL) list_push_back(&last_tslice_list, &next->lastrun_elem);
+  if (thread_mlfqs && next->lastrun_elem.prev != NULL && next->lastrun_elem.next != NULL) list_push_back(&last_tslice_list, &next->lastrun_elem);
     
   if (cur != next)
     prev = switch_threads (cur, next);
