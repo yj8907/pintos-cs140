@@ -65,10 +65,10 @@ static real divide(const real x, const real y){
 static struct list ready_list;
 
 /* Array of list of processes in THREAD_READY state to enable mlfqs */
-//static struct list ready_list_mlfqs[PRI_MAX-PRI_MIN+1];
+static struct list ready_list_mlfqs[PRI_MAX-PRI_MIN+1];
 
 /* List of processes run during last second */
-//static struct list last_tslice_list;
+static struct list last_tslice_list;
 
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
