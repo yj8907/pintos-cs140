@@ -53,7 +53,6 @@ test_priority_fifo (void)
   thread_set_priority (PRI_DEFAULT + 2);
   for (i = 0; i < THREAD_CNT; i++) 
     {
-      msg("check1");
       char name[16];
       struct simple_thread_data *d = data + i;
       snprintf (name, sizeof name, "%d", i);
