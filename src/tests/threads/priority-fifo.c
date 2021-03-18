@@ -31,6 +31,7 @@ static thread_func simple_thread_func;
 void
 test_priority_fifo (void) 
 {
+  msg("check1");
   struct simple_thread_data data[THREAD_CNT];
   struct lock lock;
   int *output, *op;
