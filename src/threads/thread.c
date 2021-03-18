@@ -750,6 +750,7 @@ schedule (void)
 
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
+  ASSERT (next == idle_thread);
   ASSERT (is_thread (next));
 
   /* insert next thread into last run list */
