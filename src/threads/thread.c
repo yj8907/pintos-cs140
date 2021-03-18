@@ -214,17 +214,17 @@ thread_tick (void)
     kernel_ticks++;
   
   int64_t t_ticks = timer_ticks();
-//    if (t_ticks % TIME_SLICE == 0) {
-//      update_last_run_mlfqs_priority_and_queue();
-//
-//      /* clear list every time slice */
-//      struct list_elem* e = list_front(&last_tslice_list);
-//      while(!list_empty(&last_tslice_list))
-//          e = list_remove(e);
-//    }
-//
-//  if (t_ticks % TIMER_FREQ == 0)
-//      update_mlfqs_parameters();
+  if (thread_mlfqs && t_ticks % TIME_SLICE == 0) {
+      update_last_run_mlfqs_priority_and_queue();
+
+      /* clear list every time slice */
+      struct list_elem* e = list_front(&last_tslice_list);
+      while(!list_empty(&last_tslice_list))
+          e = list_remove(e);
+    }
+
+  if (thread_mlfqs && t_ticks % TIMER_FREQ == 0)
+      update_mlfqs_parameters();
     
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
