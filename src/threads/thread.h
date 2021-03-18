@@ -157,7 +157,7 @@ void update_mlfqs_parameters(void);
 void calculate_mlfqs_thread_priority(struct thread *);
 
 void update_last_run_mlfqs_priority_and_queue(void);
-void upadte_thread_mlfsq_ready_list(struct thread *);
+void upadte_thread_mlfsq_ready_list(struct thread *, void *);
 
 int thread_get_nice (void);
 void thread_set_nice (int);

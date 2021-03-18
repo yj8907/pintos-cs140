@@ -29,9 +29,9 @@ static real inttoreal(const int x){
 
 static int realtoint(const real x){
     if (x.val >= 0) {
-        return (x.val + FP/2)/FP;
+        return (x.val + (FP/2))/FP;
     } else {
-        return (x.val - FP/2)/FP;
+        return (x.val - (FP/2))/FP;
     }
 }
 
@@ -136,7 +136,6 @@ void update_recent_cpu (struct thread *t, void *aux UNUSED){
 }
 
 /* calculate mlfsq priority for single thread */
-static thread_action_func calculate_mlfqs_thread_priority;
 void calculate_mlfqs_thread_priority(struct thread* t, void *aux UNUSED)
 {
     real priority = subtract(subtract(inttoreal(PRI_MAX),
@@ -440,7 +439,7 @@ thread_exit (void)
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
-  list_remove (&thread_current->lastrun_elem);
+  list_remove (&thread_current()->lastrun_elem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
   NOT_REACHED ();
@@ -521,7 +520,7 @@ thread_set_nice (int nice)
   struct thread* curr = thread_current();
   curr->nice = nice;
   int prev_priority = curr->priority;
-  calculate_mlfqs_thread_priority(curr);
+  calculate_mlfqs_thread_priority(curr, NULL);
   upadte_thread_mlfsq_ready_list(curr);
   if (curr->priority < prev_priority) thread_yield();
 }
