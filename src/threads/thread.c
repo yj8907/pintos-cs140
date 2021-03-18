@@ -412,6 +412,7 @@ thread_current (void)
      of stack, so a few big automatic arrays or moderate
      recursion can cause stack overflow. */
   ASSERT (is_thread (t));
+    thread_current()->status = THREAD_RUNNING;
   ASSERT (t->status == THREAD_RUNNING);
 
   return t;
@@ -679,7 +680,6 @@ next_thread_to_run (void)
         else
           return list_entry (list_pop_front (&ready_list), struct thread, elem);
     } else {
-        thread_current()->status = THREAD_RUNNING;
         return thread_current();
 //        int pri_level = PRI_MAX;
 //        while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
