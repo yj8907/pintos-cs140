@@ -569,7 +569,6 @@ idle (void *idle_started_ UNUSED)
 {
   struct semaphore *idle_started = idle_started_;
   idle_thread = thread_current ();
-  ASSERT(is_thread(is_thread));
   sema_up (idle_started);
 
   for (;;) 
@@ -760,6 +759,7 @@ schedule (void)
 
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
+  ASSERT (next->magic == THREAD_MAGIC);
   ASSERT (is_thread (next));
 
   /* insert next thread into last run list */
