@@ -265,12 +265,12 @@ thread_tick (void)
 //      {
 //        struct thread *t = list_entry (e, struct thread, lastrun_elem);
 //        calculate_mlfqs_thread_priority(t, NULL);
-//        upadte_thread_mlfsq_ready_list(t);
+//        upadte_thread_mlfqs_ready_list(t);
 //      }
 //}
 
 //void
-//upadte_thread_mlfsq_ready_list(struct thread *t)
+//upadte_thread_mlfqs_ready_list(struct thread *t)
 //{
 //    ASSERT(t->priority >= PRI_MIN && t->priority <= PRI_MAX);
 //    list_remove(&t->elem);
@@ -522,7 +522,7 @@ thread_set_nice (int nice)
 //  curr->nice = nice;
 //  int prev_priority = curr->priority;
 //  calculate_mlfqs_thread_priority(curr, NULL);
-//  upadte_thread_mlfsq_ready_list(curr);
+//  upadte_thread_mlfqs_ready_list(curr);
 //  if (curr->priority < prev_priority) thread_yield();
 }
 
@@ -640,6 +640,7 @@ init_thread (struct thread *t, const char *name, int priority)
       t->init_priority = priority;
   } else {
 //      calculate_mlfqs_thread_priority(t, NULL);
+      t->priority = priority;
   }
     
   t->magic = THREAD_MAGIC;
@@ -750,7 +751,8 @@ schedule (void)
 
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
-  ASSERT (next == idle_thread);
+    ASSERT (thread_mlfqs == true);
+  ASSERT (next->nice == 0);
   ASSERT (is_thread (next));
 
   /* insert next thread into last run list */
