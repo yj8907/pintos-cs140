@@ -680,6 +680,7 @@ alloc_frame (struct thread *t, size_t size)
 static struct thread *
 next_thread_to_run (void) 
 {
+    return idle_thread;
     if (!thread_mlfqs){
         if (list_empty (&ready_list))
           return idle_thread;
