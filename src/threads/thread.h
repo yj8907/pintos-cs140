@@ -15,6 +15,10 @@ enum thread_status
     THREAD_DYING        /* About to be destroyed. */
   };
 
+typedef struct number {
+    int val;
+} real;
+
 /* Thread identifier type.
    You can redefine this to whatever type you like. */
 typedef int tid_t;
@@ -24,6 +28,8 @@ typedef int tid_t;
 #define PRI_MIN 0                       /* Lowest priority. */
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
+#define DQ 14
+#define FP 1<<DQ
 
 /* A kernel thread or user process.
 
@@ -90,7 +96,10 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
     int init_priority;
-    
+      
+    int nice;
+    real recent_cpu  /* recent_cpu as real number */;
+      
     struct list_elem allelem;           /* List element for all threads list. */
     struct lock* lock_waited_on;
       
@@ -100,6 +109,9 @@ struct thread
     /* list for lock record keeping */
     struct list thread_wait_list;
     struct list_elem wait_elem;
+      
+    struct list_elem lastrun_elem; /* list element to record threads run during last second */
+    
       
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -140,6 +152,12 @@ void thread_foreach (thread_action_func *, void *);
 
 int thread_get_priority (void);
 void thread_set_priority (int);
+
+void update_mlfqs_parameters(void);
+void calculate_mlfqs_thread_priority(struct thread *);
+
+void update_last_run_mlfqs_priority_and_queue(void);
+void upadte_thread_mlfsq_ready_list(struct thread *);
 
 int thread_get_nice (void);
 void thread_set_nice (int);
