@@ -461,7 +461,7 @@ thread_yield (void)
       if (!thread_mlfqs) {
         list_insert_ordered(&ready_list, &cur->elem, &priority_less, NULL);
       } else {
-//          list_push_back(&ready_list_mlfqs[cur->priority], &cur->elem);
+          list_push_back(&ready_list_mlfqs[cur->priority], &cur->elem);
       }
     }
     
