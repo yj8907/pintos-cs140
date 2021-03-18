@@ -169,7 +169,7 @@ thread_init (void)
   list_init (&ready_list);
   list_init (&all_list);
   list_init(&last_tslice_list);
-  for (int i = 0;i < PRI_MAX+1;i++) list_init(ready_list_mlfqs[i]);
+  for (int i = 0;i < PRI_MAX+1;i++) list_init(&ready_list_mlfqs[i]);
   load_avg = inttoreal(0);
     
   /* Set up a thread structure for the running thread. */
