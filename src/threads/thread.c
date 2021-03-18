@@ -217,16 +217,16 @@ thread_tick (void)
   
   int64_t t_ticks = timer_ticks();
     
-//  if (thread_mlfqs && t_ticks % TIME_SLICE == 0) {
-//      update_last_run_mlfqs_priority_and_queue();
-//
-//      /* clear list every time slice */
-//      if(!list_empty(&last_tslice_list)){
-//          struct list_elem* e = list_front(&last_tslice_list);
-//          while(!list_empty(&last_tslice_list))
-//              e = list_remove(e);
-//      }
-//    }
+  if (thread_mlfqs && t_ticks % TIME_SLICE == 0) {
+      update_last_run_mlfqs_priority_and_queue();
+
+      /* clear list every time slice */
+      if(!list_empty(&last_tslice_list)){
+          struct list_elem* e = list_front(&last_tslice_list);
+          while(!list_empty(&last_tslice_list))
+              e = list_remove(e);
+      }
+    }
 //
 //  if (thread_mlfqs && t_ticks % TIMER_FREQ == 0)
 //      update_mlfqs_parameters();
@@ -759,7 +759,6 @@ schedule (void)
 
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
-  ASSERT (next->magic == THREAD_MAGIC);
   ASSERT (is_thread (next));
 
   /* insert next thread into last run list */
