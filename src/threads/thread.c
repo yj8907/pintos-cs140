@@ -44,7 +44,7 @@ static int subtract(const real* x, const real* y){
 }
 
 static int multiply(const real* x, const real* y){
-    return ((int64_t)x->val) * (y->val/FP);
+    return ((int64_t)x->val * y->val) /FP;
 }
 
 static int divide(const real* x, const real* y){
@@ -265,17 +265,15 @@ update_mlfqs_parameters(void)
     f1.val = inttoreal(3); f2.val =inttoreal(60);
     f1.val = divide(&f1, &f2);
     
-//    load_avg.val = multiply(&f1, &load_avg);
+    load_avg.val = multiply(&f1, &load_avg);
     
-//    f1.val = inttoreal(1);
+    f1.val = inttoreal(1);
     f2.val = divide(&f1, &f2);
 //    f1.val = inttoreal(num_ready_threads);
-//    f1.val = inttoreal(1);
-    
-    f2.val = inttoreal(1);
+    f1.val = inttoreal(1);
+
     f1.val = multiply(&f2, &f1);
     
-//    load_avg.val = add(&load_avg, &f1);
     load_avg.val = add(&load_avg, &f1);
 
 }
