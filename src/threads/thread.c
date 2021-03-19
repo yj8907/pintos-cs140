@@ -100,7 +100,7 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 #define TIME_SLICE 4            /* # of timer ticks to give each thread. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
-//static real load_avg;  /* load_avg as real number */
+static real load_avg;  /* load_avg as real number */
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -168,7 +168,7 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
-  for (int i = 0; i < PRI_MAX+1; i++) list_init(&ready_list_mlfqs[i]);
+for (int i = 0; i < PRI_MAX+1; i++) list_init(&ready_list_mlfqs[i]);
 //  load_avg = inttoreal(0);
     
   /* Set up a thread structure for the running thread. */
