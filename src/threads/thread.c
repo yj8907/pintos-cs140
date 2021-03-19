@@ -383,7 +383,7 @@ thread_unblock (struct thread *t)
   if (!thread_mlfqs) {
       list_insert_ordered(&ready_list, &t->elem, &priority_less, NULL);
   } else {
-//      list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
+      list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
   }
 
   t->status = THREAD_READY;
@@ -462,7 +462,7 @@ thread_yield (void)
       if (!thread_mlfqs) {
         list_insert_ordered(&ready_list, &cur->elem, &priority_less, NULL);
       } else {
-//          list_push_back(&ready_list_mlfqs[cur->priority], &cur->elem);
+          list_push_back(&ready_list_mlfqs[cur->priority], &cur->elem);
       }
     }
     
@@ -682,12 +682,11 @@ next_thread_to_run (void)
           return list_entry (list_pop_front (&ready_list), struct thread, elem);
     } else {
         msg("next_thread_to_run ckpt");
-        return thread_current();
-//        int pri_level = PRI_MAX;
-//        while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
-//        if (pri_level < PRI_MIN) return idle_thread;
-//        return list_entry (list_pop_front (&ready_list_mlfqs[pri_level]),
-//                           struct thread, elem);
+        int pri_level = PRI_MAX;
+        while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
+        if (pri_level < PRI_MIN) return idle_thread;
+        return list_entry (list_pop_front (&ready_list_mlfqs[pri_level]),
+                           struct thread, elem);
     }
 
 }
