@@ -178,7 +178,7 @@ thread_init (void)
   list_init (&all_list);
   for (int i = 0; i < PRI_MAX+1; i++) list_init(&ready_list_mlfqs[i]);
   load_avg.val = inttoreal(0);
-  FP = 1<<DQ
+  FP = 1<<DQ;
     
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
