@@ -425,7 +425,7 @@ thread_unblock (struct thread *t)
 void
 thread_sleep(void)
 {
-    thread *cur = thread_current ();
+    struct thread *cur = thread_current ();
     
     ASSERT(!cur->sleeping);
     cur->sleeping = true;
@@ -444,7 +444,7 @@ thread_sleep(void)
 }
 
 /* wake up sleeping thread. intterupt must be disabled. */
-void thread_wakeup (struct thread *)
+void thread_wakeup (struct thread* t)
 {
     ASSERT (t->status == THREAD_READY);
     ASSERT (is_thread (t));
