@@ -169,7 +169,7 @@ thread_init (void)
   list_init (&ready_list);
   list_init (&all_list);
   for (int i = 0; i < PRI_MAX+1; i++) list_init(&ready_list_mlfqs[i]);
-//  load_avg = inttoreal(0);
+  load_avg = inttoreal(0);
     
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -224,8 +224,8 @@ thread_tick (void)
 //          e = list_remove(e);
 //    }
 //
-//  if (t_ticks % TIMER_FREQ == 0)
-//      update_mlfqs_parameters();
+  if (t_ticks % TIMER_FREQ == 0)
+      update_mlfqs_parameters();
     
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
@@ -234,24 +234,24 @@ thread_tick (void)
 
 /* update threads priority related parameters for all threads*/
 //void
-//update_mlfqs_parameters(void)
-//{
-//    /* update recent_cpu for all threads */
+update_mlfqs_parameters(void)
+{
+    /* update recent_cpu for all threads */
 //    thread_foreach(&update_recent_cpu, NULL);
-//
-//    struct thread *t = thread_current ();
-//    int num_ready_threads = 0;
-//    if (t != idle_thread) num_ready_threads++;
-//
-//    int i;
-//    for (i = PRI_MIN; i<PRI_MAX+1; i++){
-//        num_ready_threads += list_size(&ready_list_mlfqs[i]);
-//    }
-//    load_avg = multiply(divide(inttoreal(59), inttoreal(60)), load_avg);
-//    load_avg = add(load_avg,
-//                   multiply(divide(inttoreal(1), inttoreal(60)), inttoreal(num_ready_threads)));
-//
-//}
+
+    struct thread *t = thread_current ();
+    int num_ready_threads = 0;
+    if (t != idle_thread) num_ready_threads++;
+
+    int i;
+    for (i = PRI_MIN; i<PRI_MAX+1; i++){
+        num_ready_threads += list_size(&ready_list_mlfqs[i]);
+    }
+    load_avg = multiply(divide(inttoreal(59), inttoreal(60)), load_avg);
+    load_avg = add(load_avg,
+                   multiply(divide(inttoreal(1), inttoreal(60)), inttoreal(num_ready_threads)));
+
+}
 
 
 /* update mlfqs priority for threads run from last time slice */
@@ -539,8 +539,7 @@ thread_get_nice (void)
 int
 thread_get_load_avg (void) 
 {
-//  return realtoint(multiply(load_avg, inttoreal(100)));
-    return 40;
+  return realtoint(multiply(load_avg, inttoreal(100)));
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
