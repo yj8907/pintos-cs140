@@ -237,7 +237,7 @@ thread_tick (void)
 //          e = list_remove(e);
 //    }
 //
-  if (t_ticks % TIMER_FREQ == 0)
+  if (t_ticks % 100 == 0)
       update_mlfqs_parameters();
     
   /* Enforce preemption. */
