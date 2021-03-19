@@ -426,11 +426,21 @@ void
 thread_sleep(void)
 {
     thread *cur = thread_current ();
+    
+    ASSERT(!cur->sleeping);
     cur->sleeping = true;
     ASSERT (intr_get_level () == INTR_ON);
     list_push_back(&sleep_list, &cur->elem);
     
-    thread_yield();
+    enum intr_level old_level;
+    
+    ASSERT (!intr_context ());
+
+    old_level = intr_disable ();
+    cur->status = THREAD_READY;
+    schedule ();
+    intr_set_level (old_level);
+    
 }
 
 /* wake up sleeping thread. intterupt must be disabled. */
@@ -438,7 +448,9 @@ void thread_wakeup (struct thread *)
 {
     ASSERT (t->status == THREAD_READY);
     ASSERT (is_thread (t));
+    ASSERT (t->sleeping);
     
+    t->sleeping = false;
     if (!thread_mlfqs) {
         list_insert_ordered(&ready_list, &t->elem, &priority_less, NULL);
     } else {
@@ -538,7 +550,7 @@ thread_yield (void)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-  if (cur != idle_thread && !cur->sleeping) {
+  if (cur != idle_thread ) {
       if (!thread_mlfqs) {
         list_insert_ordered(&ready_list, &cur->elem, &priority_less, NULL);
       } else {
