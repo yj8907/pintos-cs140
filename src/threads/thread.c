@@ -21,6 +21,8 @@
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
 
+static int FP;
+
 static int inttoreal(int x){
     return x * FP;
 }
@@ -91,7 +93,6 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
 static real load_avg;  /* load_avg as real number */
-static int FP;
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
