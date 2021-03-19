@@ -412,6 +412,7 @@ thread_current (void)
      of stack, so a few big automatic arrays or moderate
      recursion can cause stack overflow. */
     if (!is_thread (t)) {
+        msg("thread is: %s", t->name);
         debug_backtrace();
     }
     
