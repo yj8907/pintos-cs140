@@ -168,7 +168,7 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
-for (int i = 0; i < PRI_MAX+1; i++) list_init(&ready_list_mlfqs[i]);
+  for (int i = 0; i < PRI_MAX+1; i++) list_init(&ready_list_mlfqs[i]);
 //  load_avg = inttoreal(0);
     
   /* Set up a thread structure for the running thread. */
@@ -682,7 +682,7 @@ next_thread_to_run (void)
         else
           return list_entry (list_pop_front (&ready_list), struct thread, elem);
     } else {
-        msg("next_thread_to_run ckpt");
+//        msg("next_thread_to_run ckpt");
         int pri_level = PRI_MAX;
         while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
         if (pri_level < PRI_MIN) return idle_thread;
