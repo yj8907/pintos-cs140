@@ -91,6 +91,7 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
 static real load_avg;  /* load_avg as real number */
+static int FP;
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -176,6 +177,7 @@ thread_init (void)
   list_init (&all_list);
   for (int i = 0; i < PRI_MAX+1; i++) list_init(&ready_list_mlfqs[i]);
   load_avg.val = inttoreal(0);
+  FP = 1<<DQ
     
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
