@@ -272,7 +272,8 @@ update_mlfqs_parameters(void)
 //    f1.val = inttoreal(num_ready_threads);
 //    f1.val = inttoreal(1);
     
-//    f1.val = multiply(&f2, &f1);
+    f2.val = inttoreal(1);
+    f1.val = multiply(&f2, &f1);
     
 //    load_avg.val = add(&load_avg, &f1);
     load_avg.val = add(&load_avg, &f1);
