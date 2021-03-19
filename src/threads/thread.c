@@ -563,7 +563,7 @@ thread_get_load_avg (void)
 {
     real f1;
     f1.val = inttoreal(FP);
-    f1.val = multiply(&load_avg, &f1);
+//    f1.val = multiply(&load_avg, &f1);
     return realtoint(&f1);
 }
 
