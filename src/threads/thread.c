@@ -751,7 +751,7 @@ schedule (void)
   struct thread *next = next_thread_to_run ();
   struct thread *prev = NULL;
 
-  msg("ckpt1");
+//  msg("ckpt1");
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (next->nice == 0);
