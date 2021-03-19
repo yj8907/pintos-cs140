@@ -758,7 +758,7 @@ schedule (void)
 
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
-    ASSERT (thread_mlfqs == true);
+//    ASSERT (thread_mlfqs == true);
   ASSERT (next->nice == 0);
   ASSERT (is_thread (next));
 
