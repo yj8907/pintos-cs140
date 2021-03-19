@@ -681,6 +681,7 @@ next_thread_to_run (void)
         else
           return list_entry (list_pop_front (&ready_list), struct thread, elem);
     } else {
+        msg("next_thread_to_run ckpt");
         return thread_current();
 //        int pri_level = PRI_MAX;
 //        while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
