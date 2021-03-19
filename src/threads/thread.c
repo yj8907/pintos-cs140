@@ -237,8 +237,8 @@ thread_tick (void)
 //          e = list_remove(e);
 //    }
 //
-//  if (t_ticks % TIMER_FREQ == 0)
-//      update_mlfqs_parameters();
+  if (t_ticks % TIMER_FREQ == 0)
+      update_mlfqs_parameters();
     
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
@@ -562,8 +562,8 @@ int
 thread_get_load_avg (void) 
 {
     real f1;
-    f1.val = inttoreal(FP);
-//    f1.val = multiply(&load_avg, &f1);
+    f1.val = inttoreal(100);
+    f1.val = multiply(&load_avg, &f1);
     return realtoint(&f1);
 }
 
