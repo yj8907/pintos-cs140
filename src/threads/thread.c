@@ -21,42 +21,32 @@
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
 
-static real inttoreal(const int x){
-    real output;
-    output.val = x * FP;
-    return output;
+static int inttoreal(int x){
+    return x * FP;
 }
 
-static int realtoint(const real x){
-    if (x.val >= 0) {
-        return (x.val + (FP/2))/FP;
+static int realtoint(const real* x){
+    if (x->val >= 0) {
+        return (x->val + (FP/2))/FP;
     } else {
-        return (x.val - (FP/2))/FP;
+        return (x->val - (FP/2))/FP;
     }
 }
 
-static real add(const real x, const real y){
-    real output;
-    output.val = x.val + y.val;
-    return output;
+static int add(const real* x, const real* y){
+    return x->val + y->val;
 }
 
-static real subtract(const real x, const real y){
-    real output;
-    output.val = x.val - y.val;
-    return output;
+static int subtract(const real* x, const real* y){
+    return x->val - y->val;
 }
 
-static real multiply(const real x, const real y){
-    real output;
-    output.val = ((int64_t)x.val) * (y.val/FP);
-    return output;
+static int multiply(const real* x, const real* y){
+    return ((int64_t)x->val) * (y->val/FP);
 }
 
-static real divide(const real x, const real y){
-    real output;
-    output.val = ((int64_t)x.val) * FP / y.val;
-    return output;
+static int divide(const real* x, const real* y){
+    return ((int64_t)x->val) * FP / y->val;
 }
 
 
@@ -129,19 +119,35 @@ bool priority_less(const struct list_elem *elem1,
 static thread_action_func update_recent_cpu;
 void update_recent_cpu (struct thread *t, void *aux UNUSED){
 
-    real ratio = divide(multiply(inttoreal(2), load_avg),
-                        add(multiply(inttoreal(2), load_avg), inttoreal(1)));
-    t->recent_cpu = add(multiply(ratio, t->recent_cpu),
-                        inttoreal(t->nice));
+    real f1, f2, ratio;
+    f1.val = inttoreal(2);
+    f2.val = inttoreal(1);
+    
+    f1.val = multiply(&f1, &load_avg);
+    f2.val = add(&f1, &f2)
+    ratio.val = divide(&f1, &f2);
+    
+    t->recent_cpu.val = multiply(&ratio, &t->recent_cpu);
+    t->recent_cpu.val = add(&t->recent_cpu, &t->nice);
+    
 }
 
 /* calculate mlfsq priority for single thread */
 void calculate_mlfqs_thread_priority(struct thread* t, void *aux UNUSED)
 {
-    real priority = subtract(subtract(inttoreal(PRI_MAX),
-                                      divide(t->recent_cpu, inttoreal(4))),
-                             divide(inttoreal(t->nice), inttoreal(2)));
-    t->priority = realtoint(priority);
+    real f1, f2, priority;
+    f1.val = inttoreal(PRI_MAX);
+    f2.val = inttoreal(4);
+    
+    f2.val = divide(&t->recent_cpu, &f2);
+    f1.val = subtract(&f1, &f2);
+    
+    f2.val = inttoreal(2);
+    f2.val = divide(&t->nice, &f2);
+    
+    priority.val = subtract(&f1, &f2);
+    t->priority = realtoint(&priority);
+    
     if (t->priority > PRI_MAX) t->priority = PRI_MAX;
     if (t->priority < PRI_MIN) t->priority = PRI_MIN;
 }
@@ -169,7 +175,7 @@ thread_init (void)
   list_init (&ready_list);
   list_init (&all_list);
   for (int i = 0; i < PRI_MAX+1; i++) list_init(&ready_list_mlfqs[i]);
-  load_avg = inttoreal(0);
+  load_avg.val = inttoreal(0);
     
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -202,7 +208,11 @@ thread_tick (void)
 {
   struct thread *t = thread_current ();
  
-  if (t != idle_thread) t->recent_cpu = add(t->recent_cpu, inttoreal(1));
+    if (t != idle_thread) {
+        real incre;
+        incre.val = inttoreal(1);
+        t->recent_cpu.val = add(&t->recent_cpu, &incre);
+    }
     
   /* Update statistics. */
   if (t == idle_thread)
@@ -247,9 +257,18 @@ update_mlfqs_parameters(void)
     for (i = PRI_MIN; i<PRI_MAX+1; i++){
         num_ready_threads += list_size(&ready_list_mlfqs[i]);
     }
-    load_avg = multiply(divide(inttoreal(59), inttoreal(60)), load_avg);
-    load_avg = add(load_avg,
-                   multiply(divide(inttoreal(1), inttoreal(60)), inttoreal(num_ready_threads)));
+    
+    real f1, f2;
+    f1.val = inttoreal(59); f2.val =inttoreal(60);
+    f1.val = divide(&f1, &f2);
+    
+    load_avg.val = multiply(&f1, &load_avg);
+    
+    f1.val = inttoreal(1);
+    f2.val = divide(&f1, &f2);
+    f1.val = inttoreal(num_ready_threads);
+    f1.val = multiply(&f2, &f1);
+    load_avg.val = add(&load_avg, &f1);
 
 }
 
@@ -539,15 +558,20 @@ thread_get_nice (void)
 int
 thread_get_load_avg (void) 
 {
-//  return realtoint(multiply(load_avg, inttoreal(100)));
-    return realtoint(inttoreal(0));
+    real f1;
+    f1.val = inttoreal(100);
+    f1.val = multiply(&load_avg, &f1)
+    return realtoint(&f1);
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
 int
 thread_get_recent_cpu (void) 
 {
-//  return realtoint(multiply(thread_current()->recent_cpu, inttoreal(100)));
+    real f1;
+    f1.val = inttoreal(100);
+    f1.val = multiply(&thread_current()->recent_cpu, &f1)
+    return realtoint(&f1);
 }
 
 /* Idle thread.  Executes when no other thread is ready to run.
@@ -635,7 +659,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->status = THREAD_BLOCKED;
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
-//  t->recent_cpu = inttoreal(0);
+  t->recent_cpu.val = inttoreal(0);
   t->nice = 0;
     
   if (!thread_mlfqs) {

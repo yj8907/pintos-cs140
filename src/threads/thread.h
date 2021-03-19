@@ -97,7 +97,7 @@ struct thread
     int priority;                       /* Priority. */
     int init_priority;
       
-    int nice;
+    real nice;
     real recent_cpu  /* recent_cpu as real number */;
       
     struct list_elem allelem;           /* List element for all threads list. */
