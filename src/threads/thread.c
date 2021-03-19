@@ -265,7 +265,7 @@ update_mlfqs_parameters(void)
     f1.val = inttoreal(59); f2.val =inttoreal(60);
     f1.val = divide(&f1, &f2);
     
-    load_avg.val = multiply(&f1, &load_avg);
+//    load_avg.val = multiply(&f1, &load_avg);
     
     f1.val = inttoreal(1);
     f2.val = divide(&f1, &f2);
