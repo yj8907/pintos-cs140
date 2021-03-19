@@ -40,6 +40,7 @@ load_avg = thread_get_load_avg ();
       else if (load_avg > 50)
         break;
       else if (elapsed > 45)
+        msg("load avg: %d", load_avg);
         fail ("load average stayed below 0.5 for more than 45 seconds");
     }
 
