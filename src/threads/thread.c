@@ -427,12 +427,15 @@ thread_unblock (struct thread *t)
 
 /* put thread to sleep */
 void
-thread_sleep(void)
+thread_sleep(int64_t sleep_start_time, int64_t duration)
 {
     struct thread *cur = thread_current ();
     
     ASSERT(!cur->sleeping);
     cur->sleeping = true;
+    cur->sleep_start_time = sleep_start_time;
+    cur->sleep_time = duration;
+    
     ASSERT (intr_get_level () == INTR_ON);
     list_push_back(&sleep_list, &cur->elem);
     
