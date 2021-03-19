@@ -224,8 +224,8 @@ thread_tick (void)
 //          e = list_remove(e);
 //    }
 //
-  if (t_ticks % TIMER_FREQ == 0)
-      update_mlfqs_parameters();
+//  if (t_ticks % TIMER_FREQ == 0)
+//      update_mlfqs_parameters();
     
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
@@ -539,7 +539,8 @@ thread_get_nice (void)
 int
 thread_get_load_avg (void) 
 {
-  return realtoint(multiply(load_avg, inttoreal(100)));
+//  return realtoint(multiply(load_avg, inttoreal(100)));
+    return realtoint(load_avg);
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
