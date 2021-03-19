@@ -411,14 +411,13 @@ thread_current (void)
      have overflowed its stack.  Each thread has less than 4 kB
      of stack, so a few big automatic arrays or moderate
      recursion can cause stack overflow. */
-    if (!is_thread (t)) {
-        msg("thread is: %s", t->name);
-        debug_backtrace();
-    }
+//    if (!is_thread (t)) {
+//        msg("thread is: %s", t->name);
+//        debug_backtrace();
+//    }
     
     ASSERT (is_thread (t));
-    thread_current()->status = THREAD_RUNNING;
-  
+//    thread_current()->status = THREAD_RUNNING;
     ASSERT (t->status == THREAD_RUNNING);
 
   return t;
