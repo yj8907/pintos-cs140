@@ -540,7 +540,7 @@ void
 thread_set_nice (int nice)
 {
 //  struct thread* curr = thread_current();
-//  curr->nice = nice;
+//  curr->nice.val = inttoreal(nice);
 //  int prev_priority = curr->priority;
 //  calculate_mlfqs_thread_priority(curr, NULL);
 //  upadte_thread_mlfqs_ready_list(curr);
@@ -551,7 +551,7 @@ thread_set_nice (int nice)
 int
 thread_get_nice (void) 
 {
-  return thread_current()->nice;
+  return realtoint(&thread_current()->nice);
 }
 
 /* Returns 100 times the system load average. */
@@ -660,7 +660,7 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->recent_cpu.val = inttoreal(0);
-  t->nice = 0;
+  t->nice.val = inttoreal(0);
     
   if (!thread_mlfqs) {
       t->priority = priority;
@@ -779,7 +779,6 @@ schedule (void)
 //  msg("ckpt1");
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
-  ASSERT (next->nice == 0);
   ASSERT (is_thread (next));
 
   /* insert next thread into last run list */
