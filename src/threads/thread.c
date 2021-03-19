@@ -540,7 +540,7 @@ int
 thread_get_load_avg (void) 
 {
 //  return realtoint(multiply(load_avg, inttoreal(100)));
-    return realtoint(load_avg);
+    return realtoint(0);
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
