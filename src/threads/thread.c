@@ -237,7 +237,7 @@ thread_tick (void)
 //          e = list_remove(e);
 //    }
 //
-  if (t_ticks % 100 == 0)
+  if (t_ticks % TIMER_FREQ == 0)
       update_mlfqs_parameters();
     
   /* Enforce preemption. */
@@ -272,7 +272,9 @@ update_mlfqs_parameters(void)
 //    f1.val = inttoreal(num_ready_threads);
     f1.val = inttoreal(1);
     f1.val = multiply(&f2, &f1);
-    load_avg.val = add(&load_avg, &f1);
+    
+//    load_avg.val = add(&load_avg, &f1);
+    load_avg.val = add(&load_avg, &f2);
 
 }
 
