@@ -124,7 +124,7 @@ void update_recent_cpu (struct thread *t, void *aux UNUSED){
     f2.val = inttoreal(1);
     
     f1.val = multiply(&f1, &load_avg);
-    f2.val = add(&f1, &f2)
+    f2.val = add(&f1, &f2);
     ratio.val = divide(&f1, &f2);
     
     t->recent_cpu.val = multiply(&ratio, &t->recent_cpu);
@@ -560,7 +560,7 @@ thread_get_load_avg (void)
 {
     real f1;
     f1.val = inttoreal(100);
-    f1.val = multiply(&load_avg, &f1)
+    f1.val = multiply(&load_avg, &f1);
     return realtoint(&f1);
 }
 
@@ -570,7 +570,7 @@ thread_get_recent_cpu (void)
 {
     real f1;
     f1.val = inttoreal(100);
-    f1.val = multiply(&thread_current()->recent_cpu, &f1)
+    f1.val = multiply(&thread_current()->recent_cpu, &f1);
     return realtoint(&f1);
 }
 
