@@ -26,6 +26,8 @@ test_mlfqs_load_1 (void)
   msg ("spinning for up to 45 seconds, please wait...");
 
   start_time = timer_ticks ();
+load_avg = thread_get_load_avg ();
+    msg ("load_avg now: %d", load_avg);
   for (;;) 
     {
       load_avg = thread_get_load_avg ();
