@@ -429,6 +429,7 @@ thread_unblock (struct thread *t)
 void
 thread_sleep(int64_t sleep_start_time, int64_t duration)
 {
+    if (duration == 0) return;
     struct thread *cur = thread_current ();
     
     ASSERT(!cur->sleeping);
