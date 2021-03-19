@@ -95,10 +95,14 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
     int init_priority;
+    
+    int64_t sleep_start_time;
+    int64_t sleep_time;
+    bool sleeping;
       
     real nice;
     real recent_cpu  /* recent_cpu as real number */;
-      
+    
     struct list_elem allelem;           /* List element for all threads list. */
     struct lock* lock_waited_on;
       
@@ -137,6 +141,10 @@ tid_t thread_create (const char *name, int priority, thread_func *, void *);
 
 void thread_block (void);
 void thread_unblock (struct thread *);
+
+void thread_sleep (void);
+void thread_wakeup (struct thread *);
+void wakeup_threads (void);
 
 struct thread *thread_current (void);
 tid_t thread_tid (void);

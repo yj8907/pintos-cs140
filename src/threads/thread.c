@@ -62,6 +62,9 @@ static struct list ready_list_mlfqs[PRI_MAX-PRI_MIN+1];
 /* List of processes run during last second */
 static struct list last_tslice_list;
 
+/* List of processes put to sleep */
+static struct list sleep_list;
+
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
@@ -237,8 +240,11 @@ thread_tick (void)
 //          e = list_remove(e);
 //    }
 //
-  if (t_ticks % TIMER_FREQ == 0)
+  if (thread_mlfqs && t_ticks % TIMER_FREQ == 0)
       update_mlfqs_parameters();
+  
+  /* wake up sleeping threads */
+  wakeup_threads();
     
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
@@ -255,9 +261,8 @@ update_mlfqs_parameters(void)
     struct thread *t = thread_current ();
     int num_ready_threads = 0;
     if (t != idle_thread) num_ready_threads++;
-
-    int i;
-    for (i = PRI_MIN; i<PRI_MAX+1; i++){
+    
+    for (int i = PRI_MIN; i<PRI_MAX+1; i++){
         num_ready_threads += list_size(&ready_list_mlfqs[i]);
     }
     
@@ -416,6 +421,56 @@ thread_unblock (struct thread *t)
     
 }
 
+/* put thread to sleep */
+void
+thread_sleep(void)
+{
+    thread *cur = thread_current ();
+    cur->sleeping = true;
+    ASSERT (intr_get_level () == INTR_ON);
+    list_push_back(&sleep_list, &cur->elem);
+    
+    thread_yield();
+}
+
+/* wake up sleeping thread. intterupt must be disabled. */
+void thread_wakeup (struct thread *)
+{
+    ASSERT (t->status == THREAD_READY);
+    ASSERT (is_thread (t));
+    
+    if (!thread_mlfqs) {
+        list_insert_ordered(&ready_list, &t->elem, &priority_less, NULL);
+    } else {
+        list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
+    }
+    
+}
+
+/* examine elapsed time for sleeping threads and wake up
+ the thread if time's up */
+void wakeup_threads(void)
+{
+    enum intr_level old_level;
+
+    old_level = intr_disable ();
+    
+    struct list_elem *e = list_begin (&sleep_list);
+    while ( e != list_end (&sleep_list) )
+      {
+        struct thread *t = list_entry (e, struct thread, elem);
+        ASSERT(t->sleep_start_time != NULL);
+        ASSERT(t->sleep_time != NULL);
+          if (timer_elapsed (t->sleep_start_time) >= t->sleep_time) {
+              e = list_remove (e);
+              thread_wakeup(t);
+          } else {
+              e = list_next (e);
+          }
+      }
+    intr_set_level (old_level);
+}
+
 /* Returns the name of the running thread. */
 const char *
 thread_name (void) 
@@ -483,7 +538,7 @@ thread_yield (void)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-  if (cur != idle_thread) {
+  if (cur != idle_thread && !cur->sleeping) {
       if (!thread_mlfqs) {
         list_insert_ordered(&ready_list, &cur->elem, &priority_less, NULL);
       } else {
@@ -666,6 +721,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->recent_cpu.val = inttoreal(0);
   t->nice.val = inttoreal(0);
+  t->sleeping = false;
     
   if (!thread_mlfqs) {
       t->priority = priority;
@@ -781,7 +837,6 @@ schedule (void)
   struct thread *next = next_thread_to_run ();
   struct thread *prev = NULL;
 
-//  msg("ckpt1");
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (is_thread (next));
