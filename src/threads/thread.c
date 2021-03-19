@@ -214,7 +214,7 @@ thread_tick (void)
   else
     kernel_ticks++;
   
-//  int64_t t_ticks = timer_ticks();
+  int64_t t_ticks = timer_ticks();
 //    if (t_ticks % TIME_SLICE == 0) {
 //      update_last_run_mlfqs_priority_and_queue();
 //
