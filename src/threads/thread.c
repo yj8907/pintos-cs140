@@ -240,10 +240,11 @@ thread_tick (void)
       update_last_run_mlfqs_priority_and_queue();
 
       /* clear list every time slice */
-//      ASSERT(!list_empty(&last_tslice_list));
-//      struct list_elem* e = list_front(&last_tslice_list);
-//      while(!list_empty(&last_tslice_list))
-//          e = list_remove(e);
+      if (!list_empty(&last_tslice_list)) {
+          struct list_elem* e = list_front(&last_tslice_list);
+          while(!list_empty(&last_tslice_list))
+              e = list_remove(e);
+      }
     }
 
   if (thread_mlfqs && t_ticks % TIMER_FREQ == 0)
@@ -869,8 +870,8 @@ schedule (void)
   ASSERT (is_thread (next));
 
   /* insert next thread into last_run list if it's not already in the list */
-//  if (thread_mlfqs && next->lastrun_elem.prev == NULL && next->lastrun_elem.next == NULL)
-//      list_push_back(&last_tslice_list, &next->lastrun_elem);
+  if (thread_mlfqs && is_thread(next) && next->lastrun_elem.prev == NULL && next->lastrun_elem.next == NULL && )
+      list_push_back(&last_tslice_list, &next->lastrun_elem);
     
   if (cur != next)
     prev = switch_threads (cur, next);
