@@ -447,6 +447,7 @@ thread_sleep(int64_t sleep_start_time, int64_t duration)
     old_level = intr_disable ();
     
     if (cur->sleeping) {
+        msg("thread name %s", cur->name);
         msg("start time %d", sleep_start_time);
         msg("duration %d", duration);
     }
