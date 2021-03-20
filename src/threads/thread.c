@@ -440,7 +440,7 @@ thread_sleep(int64_t sleep_start_time, int64_t duration)
     if (duration == 0) return;
     struct thread *cur = thread_current ();
     
-    if (!cur->sleeping) {
+    if (cur->sleeping) {
         msg("start time %d", sleep_start_time);
         msg("duration %d", duration);
     }
