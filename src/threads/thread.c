@@ -235,15 +235,15 @@ thread_tick (void)
     kernel_ticks++;
   
   int64_t t_ticks = timer_ticks();
-//    if (t_ticks % TIME_SLICE == 0) {
-//      update_last_run_mlfqs_priority_and_queue();
-//
-//      /* clear list every time slice */
-//      struct list_elem* e = list_front(&last_tslice_list);
-//      while(!list_empty(&last_tslice_list))
-//          e = list_remove(e);
-//    }
-//
+  if (t_ticks % TIME_SLICE == 0) {
+      update_last_run_mlfqs_priority_and_queue();
+
+      /* clear list every time slice */
+      struct list_elem* e = list_front(&last_tslice_list);
+      while(!list_empty(&last_tslice_list))
+          e = list_remove(e);
+    }
+
   if (thread_mlfqs && t_ticks % TIMER_FREQ == 0)
       update_mlfqs_parameters();
   
@@ -256,7 +256,7 @@ thread_tick (void)
 }
 
 /* update threads priority related parameters for all threads*/
-//void
+void
 update_mlfqs_parameters(void)
 {
     /* update recent_cpu for all threads */
@@ -288,28 +288,33 @@ update_mlfqs_parameters(void)
 
 
 /* update mlfqs priority for threads run from last time slice */
-//void
-//update_last_run_mlfqs_priority_and_queue(void)
-//{
-//    struct list_elem *e;
-//    ASSERT (intr_get_level () == INTR_OFF);
-//
-//    for (e = list_begin (&last_tslice_list); e != list_end (&last_tslice_list);
-//         e = list_next (e))
-//      {
-//        struct thread *t = list_entry (e, struct thread, lastrun_elem);
-//        calculate_mlfqs_thread_priority(t, NULL);
-//        upadte_thread_mlfqs_ready_list(t);
-//      }
-//}
+void
+update_last_run_mlfqs_priority_and_queue(void)
+{
+    enum intr_level old_level;
+    old_level = intr_disable ();
+    
+    struct list_elem *e;
 
-//void
-//upadte_thread_mlfqs_ready_list(struct thread *t)
-//{
-//    ASSERT(t->priority >= PRI_MIN && t->priority <= PRI_MAX);
-//    list_remove(&t->elem);
-//    list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
-//}
+    for (e = list_begin (&last_tslice_list); e != list_end (&last_tslice_list);
+         e = list_next (e))
+      {
+        struct thread *t = list_entry (e, struct thread, lastrun_elem);
+        calculate_mlfqs_thread_priority(t, NULL);
+        upadte_thread_mlfqs_ready_list(t);
+      }
+    intr_set_level (old_level);
+}
+
+/* reassgin thread to ready list based on probably updated priority if the thread is not curretn running thread */
+void
+upadte_thread_mlfqs_ready_list(struct thread *t)
+{
+    if (t == thread_current()) return;
+    ASSERT(t->priority >= PRI_MIN && t->priority <= PRI_MAX);
+    list_remove(&t->elem);
+    list_push_back(&ready_list_mlfqs[t->priority], &t->elem);
+}
 
 
 /* Prints thread statistics. */
@@ -862,7 +867,7 @@ schedule (void)
   ASSERT (is_thread (next));
 
   /* insert next thread into last run list */
-//  if (thread_mlfqs && next->lastrun_elem.prev != NULL && next->lastrun_elem.next != NULL) list_push_back(&last_tslice_list, &next->lastrun_elem);
+  if (thread_mlfqs && next->lastrun_elem.prev != NULL && next->lastrun_elem.next != NULL) list_push_back(&last_tslice_list, &next->lastrun_elem);
     
   if (cur != next)
     prev = switch_threads (cur, next);
