@@ -236,6 +236,8 @@ thread_tick (void)
     kernel_ticks++;
   
   int64_t t_ticks = timer_ticks();
+  int prev_priority = t->priority;
+  
   if (t_ticks % TIME_SLICE == 0) {
       update_last_run_mlfqs_priority_and_queue();
       clear_lastrun_list();
@@ -248,7 +250,7 @@ thread_tick (void)
   wakeup_threads();
     
   /* Enforce preemption. */
-  if (++thread_ticks >= TIME_SLICE)
+  if (++thread_ticks >= TIME_SLICE || t->priority < prev_priority)
     intr_yield_on_return ();
 }
 
@@ -289,6 +291,7 @@ update_mlfqs_parameters(void)
     /* update recent_cpu for all threads */
     thread_foreach(&update_recent_cpu, NULL);
 
+    /* update load avg */
     struct thread *t = thread_current ();
     int num_ready_threads = 0;
     if (t != idle_thread) num_ready_threads++;
