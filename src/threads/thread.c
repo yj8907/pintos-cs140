@@ -549,7 +549,9 @@ thread_exit (void)
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
-//  list_remove (&thread_current()->lastrun_elem);
+    
+  /* remove exiting threads from last_run list */
+  if (thread_mlfqs && thread_current()->lastrun_elem.prev != NULL && thread_current()->lastrun_elem.next != NULL ) list_remove (&thread_current()->lastrun_elem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
   NOT_REACHED ();
@@ -627,12 +629,13 @@ thread_get_priority (void)
 void
 thread_set_nice (int nice)
 {
-//  struct thread* curr = thread_current();
-//  curr->nice.val = inttoreal(nice);
-//  int prev_priority = curr->priority;
-//  calculate_mlfqs_thread_priority(curr, NULL);
-//  upadte_thread_mlfqs_ready_list(curr);
-//  if (curr->priority < prev_priority) thread_yield();
+  struct thread* curr = thread_current();
+  curr->nice.val = inttoreal(nice);
+    
+  int prev_priority = curr->priority;
+  calculate_mlfqs_thread_priority(curr, NULL);
+  upadte_thread_mlfqs_ready_list(curr);
+  if (curr->priority < prev_priority) thread_yield();
 }
 
 /* Returns the current thread's nice value. */
@@ -755,8 +758,8 @@ init_thread (struct thread *t, const char *name, int priority)
       t->priority = priority;
       t->init_priority = priority;
   } else {
-//      calculate_mlfqs_thread_priority(t, NULL);
-      t->priority = priority;
+      calculate_mlfqs_thread_priority(t, NULL);
+//      t->priority = priority;
   }
     
   t->magic = THREAD_MAGIC;
@@ -795,7 +798,7 @@ next_thread_to_run (void)
         else
           return list_entry (list_pop_front (&ready_list), struct thread, elem);
     } else {
-//        msg("next_thread_to_run ckpt");
+        
         int pri_level = PRI_MAX;
         while (list_empty(&ready_list_mlfqs[pri_level]) && pri_level >= PRI_MIN) pri_level--;
         if (pri_level < PRI_MIN) return idle_thread;
