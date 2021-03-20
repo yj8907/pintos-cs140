@@ -471,8 +471,7 @@ thread_sleep(int64_t sleep_start_time, int64_t duration)
     
 //    ASSERT (intr_get_level () == INTR_ON);
     list_push_back(&sleep_list, &cur->elem);
-    
-    cur->status = THREAD_READY;
+   
     schedule ();
     intr_set_level (old_level);
     
