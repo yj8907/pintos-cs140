@@ -440,6 +440,12 @@ thread_sleep(int64_t sleep_start_time, int64_t duration)
     if (duration == 0) return;
     struct thread *cur = thread_current ();
     
+    enum intr_level old_level;
+    
+    ASSERT (!intr_context ());
+
+    old_level = intr_disable ();
+    
     if (cur->sleeping) {
         msg("start time %d", sleep_start_time);
         msg("duration %d", duration);
@@ -449,14 +455,9 @@ thread_sleep(int64_t sleep_start_time, int64_t duration)
     cur->sleep_start_time = sleep_start_time;
     cur->sleep_time = duration;
     
-    ASSERT (intr_get_level () == INTR_ON);
+//    ASSERT (intr_get_level () == INTR_ON);
     list_push_back(&sleep_list, &cur->elem);
     
-    enum intr_level old_level;
-    
-    ASSERT (!intr_context ());
-
-    old_level = intr_disable ();
     cur->status = THREAD_READY;
     schedule ();
     intr_set_level (old_level);
@@ -876,8 +877,12 @@ schedule (void)
   ASSERT (is_thread (next));
 
   /* insert next thread into last_run list if it's not already in the list */
-  if (thread_mlfqs && is_thread(next) && next->lastrun_elem.prev == NULL && next->lastrun_elem.next == NULL )
-      list_push_back(&last_tslice_list, &next->lastrun_elem);
+  if (thread_mlfqs) {
+     if (is_thread(cur) && cur->lastrun_elem.prev == NULL && cur->lastrun_elem.next == NULL )
+         list_push_back(&last_tslice_list, &cur->lastrun_elem);
+     if (is_thread(next) && next->lastrun_elem.prev == NULL && next->lastrun_elem.next == NULL )
+        list_push_back(&last_tslice_list, &next->lastrun_elem);
+   }
     
   if (cur != next)
     prev = switch_threads (cur, next);
