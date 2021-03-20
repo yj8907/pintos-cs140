@@ -870,7 +870,7 @@ schedule (void)
   ASSERT (is_thread (next));
 
   /* insert next thread into last_run list if it's not already in the list */
-  if (thread_mlfqs && is_thread(next) && next->lastrun_elem.prev == NULL && next->lastrun_elem.next == NULL && )
+  if (thread_mlfqs && is_thread(next) && next->lastrun_elem.prev == NULL && next->lastrun_elem.next == NULL )
       list_push_back(&last_tslice_list, &next->lastrun_elem);
     
   if (cur != next)
