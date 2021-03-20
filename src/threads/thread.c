@@ -180,7 +180,8 @@ thread_init (void)
   list_init (&ready_list);
   list_init (&all_list);
   list_init (&sleep_list);
-  
+  list_init (&last_tslice_list);
+    
   if (thread_mlfqs){
       for (int i = 0; i < PRI_MAX+1; i++) list_init(&ready_list_mlfqs[i]);
       load_avg.val = inttoreal(0);
