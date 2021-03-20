@@ -12,6 +12,7 @@ enum thread_status
     THREAD_RUNNING,     /* Running thread. */
     THREAD_READY,       /* Not running but ready to run. */
     THREAD_BLOCKED,     /* Waiting for an event to trigger. */
+    THREAD_SLEEPING,    /* Waiting for an event to awoken. */
     THREAD_DYING        /* About to be destroyed. */
   };
 
@@ -98,7 +99,6 @@ struct thread
     
     int64_t sleep_start_time;
     int64_t sleep_time;
-    bool sleeping;
       
     real nice;
     real recent_cpu  /* recent_cpu as real number */;
@@ -162,6 +162,8 @@ void thread_set_priority (int);
 
 void update_mlfqs_parameters(void);
 void calculate_mlfqs_thread_priority(struct thread *, void *);
+
+void clear_lastrun_list(void);
 
 void update_last_run_mlfqs_priority_and_queue(void);
 void upadte_thread_mlfqs_ready_list(struct thread *);
