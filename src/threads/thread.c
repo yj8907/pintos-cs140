@@ -440,6 +440,10 @@ thread_sleep(int64_t sleep_start_time, int64_t duration)
     if (duration == 0) return;
     struct thread *cur = thread_current ();
     
+    if (!cur->sleeping) {
+        msg("start time %d", sleep_start_time);
+        msg("duration %d", duration);
+    }
     ASSERT(!cur->sleeping);
     cur->sleeping = true;
     cur->sleep_start_time = sleep_start_time;
@@ -759,7 +763,6 @@ init_thread (struct thread *t, const char *name, int priority)
       t->init_priority = priority;
   } else {
       calculate_mlfqs_thread_priority(t, NULL);
-//      t->priority = priority;
   }
     
   t->magic = THREAD_MAGIC;
