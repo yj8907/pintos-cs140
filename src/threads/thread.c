@@ -275,7 +275,7 @@ void
 update_mlfqs_parameters(void)
 {
     /* update recent_cpu for all threads */
-//    thread_foreach(&update_recent_cpu, NULL);
+    thread_foreach(&update_recent_cpu, NULL);
 
     struct thread *t = thread_current ();
     int num_ready_threads = 0;
