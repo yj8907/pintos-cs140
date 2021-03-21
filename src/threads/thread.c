@@ -281,18 +281,6 @@ clear_lastrun_list(void){
 void
 update_mlfqs_parameters(void)
 {
-    /* update priority */
-    struct list_elem *e;
-
-    for (e = list_begin (&all_list); e != list_end (&all_list);
-         e = list_next (e))
-      {
-        struct thread *t = list_entry (e, struct thread, allelem);
-        int prev_priority = t->priority;
-        calculate_mlfqs_thread_priority(t, NULL);
-        if (t->status == THREAD_READY && t->priority > prev_priority ) upadte_thread_mlfqs_ready_list(t);
-      }
-    
     /* update recent_cpu for all threads */
     thread_foreach(&update_recent_cpu, NULL);
 
@@ -319,6 +307,18 @@ update_mlfqs_parameters(void)
     
     load_avg.val = add(&load_avg, &f1);
 
+    /* update priority */
+    struct list_elem *e;
+
+    for (e = list_begin (&all_list); e != list_end (&all_list);
+         e = list_next (e))
+      {
+        struct thread *t = list_entry (e, struct thread, allelem);
+        int prev_priority = t->priority;
+        calculate_mlfqs_thread_priority(t, NULL);
+        if (t->status == THREAD_READY && t->priority != prev_priority ) upadte_thread_mlfqs_ready_list(t);
+      }
+    
 }
 
 
@@ -337,7 +337,7 @@ update_last_run_mlfqs_priority_and_queue(void)
         struct thread *t = list_entry (e, struct thread, lastrun_elem);
         int prev_priority = t->priority;
         calculate_mlfqs_thread_priority(t, NULL);
-        if (t->status == THREAD_READY && t->priority > prev_priority ) upadte_thread_mlfqs_ready_list(t);
+        if (t->status == THREAD_READY && t->priority != prev_priority ) upadte_thread_mlfqs_ready_list(t);
       }
     intr_set_level (old_level);
 }
