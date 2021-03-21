@@ -221,7 +221,7 @@ thread_tick (void)
  
     if (t != idle_thread) {
         real incre;
-        incre.val = inttoreal(1);
+        incre.val = inttoreal(2);
         t->recent_cpu.val = add(&t->recent_cpu, &incre);
     }
     
@@ -238,12 +238,14 @@ thread_tick (void)
   int64_t t_ticks = timer_ticks();
   int prev_priority = t->priority;
   
-  if (thread_mlfqs && t_ticks % TIME_SLICE == 0) {
+  /* update priority from last run list */
+  if (thread_mlfqs && t_ticks % TIME_SLICE == 0 ) {
       ASSERT(!list_empty(&last_tslice_list));
       update_last_run_mlfqs_priority_and_queue();
       clear_lastrun_list();
     }
 
+  /* update load avg, recent_cpu and priority for all threads */
   if (thread_mlfqs && t_ticks % TIMER_FREQ == 0)
       update_mlfqs_parameters();
   
