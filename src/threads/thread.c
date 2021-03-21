@@ -148,7 +148,7 @@ void calculate_mlfqs_thread_priority(struct thread* t, void *aux UNUSED)
     f1.val = subtract(&f1, &f2);
     
     f2.val = inttoreal(2);
-    f2.val = divide(&t->nice, &f2);
+    f2.val = multiply(&t->nice, &f2);
     
     priority.val = subtract(&f1, &f2);
     t->priority = realtoint(&priority);
@@ -221,7 +221,7 @@ thread_tick (void)
  
     if (t != idle_thread) {
         real incre;
-        incre.val = inttoreal(2);
+        incre.val = inttoreal(1);
         t->recent_cpu.val = add(&t->recent_cpu, &incre);
     }
     
