@@ -295,7 +295,6 @@ update_mlfqs_parameters(void)
         num_ready_threads += list_size(&ready_list_mlfqs[i]);
     }
     
-    num_ready_threads++;
     
     real f1, f2;
     f1.val = inttoreal(59); f2.val =inttoreal(60);
