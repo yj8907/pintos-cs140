@@ -238,7 +238,8 @@ thread_tick (void)
   int64_t t_ticks = timer_ticks();
   int prev_priority = t->priority;
   
-  if (t_ticks % TIME_SLICE == 0) {
+  if (thread_mlfqs && t_ticks % TIME_SLICE == 0) {
+      ASSERT(!list_empty(&last_tslice_list));
       update_last_run_mlfqs_priority_and_queue();
       clear_lastrun_list();
     }
@@ -255,7 +256,7 @@ thread_tick (void)
 }
 
 
-/* clear list every time slice */
+/* every time slice, remove every thread in last run list except current running thread */
 void
 clear_lastrun_list(void){
     
@@ -263,9 +264,13 @@ clear_lastrun_list(void){
         struct list_elem* e = list_front(&last_tslice_list);
         while(!list_empty(&last_tslice_list)) {
             struct thread *t = list_entry(e, struct thread, lastrun_elem);
-            e = list_remove(e);
-            t->lastrun_elem.prev = NULL;
-            t->lastrun_elem.next = NULL;
+            if (t != thread_current() ){
+                e = list_remove(e);
+                t->lastrun_elem.prev = NULL;
+                t->lastrun_elem.next = NULL;
+            } else {
+                e = list_next(e);
+            }
         }
             
     }
