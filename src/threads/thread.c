@@ -262,7 +262,7 @@ clear_lastrun_list(void){
     
     if (!list_empty(&last_tslice_list)) {
         struct list_elem* e = list_front(&last_tslice_list);
-        while(!list_empty(&last_tslice_list)) {
+        while(e != list_tail(&last_tslice_list)) {
             struct thread *t = list_entry(e, struct thread, lastrun_elem);
             if (t != thread_current() ){
                 e = list_remove(e);
