@@ -51,6 +51,7 @@ static int divide(const real* x, const real* y){
     return ((int64_t)x->val) * FP / y->val;
 }
 
+static bool thread_started;
 
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
@@ -176,6 +177,7 @@ thread_init (void)
   
   ASSERT (intr_get_level () == INTR_OFF);
 
+  thread_started = false;
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
@@ -200,6 +202,7 @@ thread_init (void)
 void
 thread_start (void) 
 {
+  thread_started = true;
   /* Create the idle thread. */
   struct semaphore idle_started;
   sema_init (&idle_started, 0);
@@ -597,6 +600,8 @@ thread_exit (void)
 void
 thread_yield (void) 
 {
+  if (!thread_started) return;
+    
   struct thread *cur = thread_current ();
   enum intr_level old_level;
   
@@ -912,11 +917,10 @@ schedule (void)
         list_push_back(&last_tslice_list, &next->lastrun_elem);
    }
     
-    if (cur != next) {
-        prev = switch_threads (cur, next);
-        thread_schedule_tail (prev);
-    }
-    
+  if (cur != next) 
+    prev = switch_threads (cur, next);
+
+  thread_schedule_tail (prev);
 }
 
 /* Returns a tid to use for a new thread. */
