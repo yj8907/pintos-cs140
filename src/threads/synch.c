@@ -280,7 +280,7 @@ lock_release (struct lock *lock)
   curr->priority = priority;
     
   sema_up (&lock->semaphore);
-//  thread_yield();
+    
 }
 
 /* Returns true if the current thread holds LOCK, false

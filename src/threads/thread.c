@@ -912,10 +912,11 @@ schedule (void)
         list_push_back(&last_tslice_list, &next->lastrun_elem);
    }
     
-  if (cur != next)
-    prev = switch_threads (cur, next);
-
-  thread_schedule_tail (prev);
+    if (cur != next) {
+        prev = switch_threads (cur, next);
+        thread_schedule_tail (prev);
+    }
+    
 }
 
 /* Returns a tid to use for a new thread. */
