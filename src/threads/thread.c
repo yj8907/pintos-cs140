@@ -600,8 +600,7 @@ thread_exit (void)
 void
 thread_yield (void) 
 {
-  if (!thread_started) return;
-    
+      
   struct thread *cur = thread_current ();
   enum intr_level old_level;
   
@@ -876,7 +875,7 @@ thread_schedule_tail (struct thread *prev)
 
 #ifdef USERPROG
   /* Activate the new address space. */
-  process_activate ();
+  if (thread_started) process_activate ();
 #endif
 
   /* If the thread we switched from is dying, destroy its struct
