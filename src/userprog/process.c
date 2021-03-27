@@ -64,7 +64,7 @@ start_process (void *file_name_)
     char *args[max_argc];
     char *saveptr; char *argstr, *token, *esp;
     int argc, strsize;
-    argstr  = filename;
+    argstr  = file_name;
     token = strtok_r(argstr, " ", &saveptr);
     
   success = load (token, &if_.eip, &if_.esp);
@@ -74,7 +74,7 @@ start_process (void *file_name_)
     for (argc = 0, argstr = NULL; argc < max_argc;argc++){
         token = strtok_r(argstr, " ", &saveptr);
         if (token == NULL) break;
-        strsize = sizeof *token
+        strsize = sizeof *token;
         esp -= strsize;
         memcpy(esp, token, strsize);
         args[argc] = esp;
