@@ -600,7 +600,8 @@ thread_exit (void)
 void
 thread_yield (void) 
 {
-      
+  if (!thread_started) return;
+    
   struct thread *cur = thread_current ();
   enum intr_level old_level;
   
