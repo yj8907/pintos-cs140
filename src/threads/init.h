@@ -8,5 +8,7 @@
 
 /* Page directory with kernel mappings only. */
 extern uint32_t *init_page_dir;
+#define FILESYS 1
+#define USERPROG 1
 
 #endif /* threads/init.h */
