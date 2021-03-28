@@ -605,7 +605,7 @@ thread_yield (void)
   struct thread *cur = thread_current ();
   enum intr_level old_level;
   
-//  ASSERT (!intr_context ());
+  ASSERT (!intr_context ());
 
   old_level = intr_disable ();
   if (cur != idle_thread ) {
