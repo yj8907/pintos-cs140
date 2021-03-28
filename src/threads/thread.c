@@ -579,7 +579,7 @@ thread_exit (void)
   ASSERT (!intr_context ());
 
 #ifdef USERPROG
-  proc_status = 0;
+//  proc_status = 0;
   process_exit ();
 #endif
 
@@ -794,7 +794,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->nice.val = inttoreal(0);
 
 #ifdef USERPROG
-  list_init(child_list);
+  list_init(&child_list);
 #endif
     
   if (!thread_mlfqs) {
