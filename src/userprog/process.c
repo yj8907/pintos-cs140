@@ -71,7 +71,6 @@ start_process (void *file_name_)
     
   /* extract file arguments */
     esp = (char*)(&if_.esp);
-    esp -= 4;
     for (argc = 0, argstr = NULL; argc < max_argc;argc++){
         token = strtok_r(argstr, " ", &saveptr);
         if (token == NULL) break;
@@ -84,13 +83,13 @@ start_process (void *file_name_)
         args[argc] = esp;
     }
     
-//    esp -= (uintptr_t)esp % 4;
-//
-//    for (int i = argc; i > 0; i--){
-//        strsize = sizeof args[i-1];
-//        esp -= strsize;
-//        memcpy(esp, &args[i-1], strsize);
-//    }
+    esp -= (uintptr_t)esp % 4;
+
+    for (int i = argc; i > 0; i--){
+        strsize = sizeof(args[i-1]);
+        esp -= strsize;
+        memcpy(esp, &args[i-1], strsize);
+    }
 //    strsize = sizeof esp;
 //    memcpy(esp-strsize, &esp, strsize);
 //    esp -= strsize + sizeof argc;
