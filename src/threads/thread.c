@@ -525,8 +525,8 @@ void wakeup_threads(void)
     while ( e != list_end (&sleep_list) )
       {
         struct thread *t = list_entry (e, struct thread, elem);
-        ASSERT(t->sleep_start_time != NULL);
-        ASSERT(t->sleep_time != NULL);
+        ASSERT(t->sleep_start_time);
+        ASSERT(t->sleep_time);
           if (timer_elapsed (t->sleep_start_time) >= t->sleep_time) {
               e = list_remove (e);
               thread_wakeup(t);
@@ -605,6 +605,7 @@ thread_yield (void)
   struct thread *cur = thread_current ();
   enum intr_level old_level;
   
+  if (!intr_context ()) msg(cur->name);
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
