@@ -83,18 +83,27 @@ start_process (void *file_name_)
         args[argc] = esp;
     }
     
+    /* round esp to multiples of 4 */
     esp -= (uintptr_t)esp % 4;
 
+    /* push argv address */
     for (int i = argc; i > 0; i--){
         strsize = sizeof(args[i-1]);
         esp -= strsize;
         memcpy(esp, &args[i-1], strsize);
     }
-//    strsize = sizeof esp;
-//    memcpy(esp-strsize, &esp, strsize);
-//    esp -= strsize + sizeof argc;
-//    memcpy(esp, &argc, sizeof argc);
-//    esp -= sizeof esp;
+    
+    /* push char **argv */
+    strsize = sizeof(esp);
+    memcpy(esp-strsize, &esp, strsize);
+    
+    /* push arg count */
+    esp -= strsize + sizeof(argc);
+    memcpy(esp, &argc, sizeof(argc));
+    
+    /* set return address to 0 */
+    esp -= sizeof(esp);
+    memset(esp, 0, sizeof(esp));
 //
 //    if_.esp = (void*) esp;
     
