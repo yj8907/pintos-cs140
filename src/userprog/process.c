@@ -85,12 +85,16 @@ start_process (void *file_name_)
     
     /* round esp to multiples of 4 */
     esp -= (uintptr_t)esp % 4;
-
+    
+    /* push null pointer sentinel */
+    memset(esp, 0, sizeof(esp));
+    esp -= sizeof(esp);
+    
     /* push argv address */
     for (int i = argc; i > 0; i--){
         strsize = sizeof(args[i-1]);
         esp -= strsize;
-        memcpy(esp, &args[i-1], strsize);
+//        memcpy(esp, &args[i-1], strsize);
     }
     
     /* push char **argv */
