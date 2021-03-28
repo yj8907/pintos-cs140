@@ -60,39 +60,39 @@ start_process (void *file_name_)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
     
-    int max_argc = 128;
-    char *args[max_argc];
-    char *saveptr; char *argstr, *token, *esp;
-    int argc, strsize;
-    argstr  = file_name;
-    token = strtok_r(argstr, " ", &saveptr);
+//    int max_argc = 128;
+//    char *args[max_argc];
+//    char *saveptr; char *argstr, *token, *esp;
+//    int argc, strsize;
+//    argstr  = file_name;
+//    token = strtok_r(argstr, " ", &saveptr);
     
-  success = load (token, &if_.eip, &if_.esp);
+  success = load (file_name, &if_.eip, &if_.esp);
     
   /* extract file arguments */
-    esp = (char*)(&if_.esp);
-    for (argc = 0, argstr = NULL; argc < max_argc;argc++){
-        token = strtok_r(argstr, " ", &saveptr);
-        if (token == NULL) break;
-        strsize = sizeof *token;
-        esp -= strsize;
-        memcpy(esp, token, strsize);
-        args[argc] = esp;
-    }
-    esp -= (uintptr_t)esp % 4;
-    
-    for (int i = argc; i > 0; i--){
-        strsize = sizeof args[i-1];
-        esp -= strsize;
-        memcpy(esp, &args[i-1], strsize);
-    }
-    strsize = sizeof esp;
-    memcpy(esp-strsize, &esp, strsize);
-    esp -= strsize + sizeof argc;
-    memcpy(esp, &argc, sizeof argc);
-    esp -= sizeof esp;
-    
-    if_.esp = (void*) esp;
+//    esp = (char*)(&if_.esp);
+//    for (argc = 0, argstr = NULL; argc < max_argc;argc++){
+//        token = strtok_r(argstr, " ", &saveptr);
+//        if (token == NULL) break;
+//        strsize = sizeof *token;
+//        esp -= strsize;
+//        memcpy(esp, token, strsize);
+//        args[argc] = esp;
+//    }
+//    esp -= (uintptr_t)esp % 4;
+//
+//    for (int i = argc; i > 0; i--){
+//        strsize = sizeof args[i-1];
+//        esp -= strsize;
+//        memcpy(esp, &args[i-1], strsize);
+//    }
+//    strsize = sizeof esp;
+//    memcpy(esp-strsize, &esp, strsize);
+//    esp -= strsize + sizeof argc;
+//    memcpy(esp, &argc, sizeof argc);
+//    esp -= sizeof esp;
+//
+//    if_.esp = (void*) esp;
     
   /* If load failed, quit. */
   palloc_free_page (file_name);
