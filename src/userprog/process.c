@@ -77,17 +77,12 @@ start_process (void *file_name_)
         strsize = strlen(token) + 1;
         esp -= strsize;
         strlcpy(esp, token, strsize);
-        printf("size %d", strsize);
-        printf("first arg %s ", token);
-        printf("second arg %s ", esp);
         args[argc] = esp;
     }
     
     /* round esp to multiples of 4 */
-    printf("round esp to multiples of 4");
     esp -= (uintptr_t)esp % 4;
     
-    printf("push null pointer sentinel");
     /* push null pointer sentinel */
     memset(esp, 0, sizeof(esp));
     esp -= sizeof(esp);
@@ -96,6 +91,7 @@ start_process (void *file_name_)
     for (int i = argc; i > 0; i--){
         strsize = sizeof(args[i-1]);
         esp -= strsize;
+        printf("size %d", strsize);
 //        memcpy(esp, &args[i-1], strsize);
     }
     
