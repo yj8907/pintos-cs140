@@ -77,9 +77,11 @@ start_process (void *file_name_)
         strsize = sizeof *token;
         esp -= strsize;
         memcpy(esp, token, strsize);
+        printf("first arg %s", token);
+        printf("second arg %s", esp);
         args[argc] = esp;
     }
-    printf("first arg %s", args[0]);
+    
 //    esp -= (uintptr_t)esp % 4;
 //
 //    for (int i = argc; i > 0; i--){
