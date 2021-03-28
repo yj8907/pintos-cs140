@@ -84,8 +84,10 @@ start_process (void *file_name_)
     }
     
     /* round esp to multiples of 4 */
+    printf("round esp to multiples of 4");
     esp -= (uintptr_t)esp % 4;
     
+    printf("push null pointer sentinel");
     /* push null pointer sentinel */
     memset(esp, 0, sizeof(esp));
     esp -= sizeof(esp);
