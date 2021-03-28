@@ -66,19 +66,20 @@ start_process (void *file_name_)
     int argc, strsize;
     argstr  = file_name;
     token = strtok_r(argstr, " ", &saveptr);
-    
+    printf("command %s", token);
   success = load (token, &if_.eip, &if_.esp);
     
   /* extract file arguments */
-//    esp = (char*)(&if_.esp);
-//    for (argc = 0, argstr = NULL; argc < max_argc;argc++){
-//        token = strtok_r(argstr, " ", &saveptr);
-//        if (token == NULL) break;
-//        strsize = sizeof *token;
-//        esp -= strsize;
-//        memcpy(esp, token, strsize);
-//        args[argc] = esp;
-//    }
+    esp = (char*)(&if_.esp);
+    for (argc = 0, argstr = NULL; argc < max_argc;argc++){
+        token = strtok_r(argstr, " ", &saveptr);
+        if (token == NULL) break;
+        strsize = sizeof *token;
+        esp -= strsize;
+        memcpy(esp, token, strsize);
+        args[argc] = esp;
+    }
+    printf("first arg %s", args[0]);
 //    esp -= (uintptr_t)esp % 4;
 //
 //    for (int i = argc; i > 0; i--){
