@@ -71,6 +71,7 @@ start_process (void *file_name_)
     
   /* extract file arguments */
     esp = (char*)(&if_.esp);
+    esp -= 4;
     for (argc = 0, argstr = NULL; argc < max_argc;argc++){
         token = strtok_r(argstr, " ", &saveptr);
         if (token == NULL) break;
