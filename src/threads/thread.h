@@ -4,7 +4,6 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-#include "threads/synch.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -12,13 +11,8 @@ enum thread_status
     THREAD_RUNNING,     /* Running thread. */
     THREAD_READY,       /* Not running but ready to run. */
     THREAD_BLOCKED,     /* Waiting for an event to trigger. */
-    THREAD_SLEEPING,    /* Waiting for an event to awoken. */
     THREAD_DYING        /* About to be destroyed. */
   };
-
-typedef struct number {
-    int val;
-} real;
 
 /* Thread identifier type.
    You can redefine this to whatever type you like. */
@@ -29,7 +23,6 @@ typedef int tid_t;
 #define PRI_MIN 0                       /* Lowest priority. */
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
-#define DQ 14
 
 /* A kernel thread or user process.
 
@@ -95,27 +88,11 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
-    int init_priority;
-    
-    int64_t sleep_start_time;
-    int64_t sleep_time;
-      
-    real nice;
-    real recent_cpu  /* recent_cpu as real number */;
-    
     struct list_elem allelem;           /* List element for all threads list. */
-    struct lock* lock_waited_on;
-      
+
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
-    /* list for lock record keeping */
-    struct list thread_wait_list;
-    struct list_elem wait_elem;
-      
-    struct list_elem lastrun_elem; /* list element to record threads run during last second */
-    
-      
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
@@ -142,10 +119,6 @@ tid_t thread_create (const char *name, int priority, thread_func *, void *);
 void thread_block (void);
 void thread_unblock (struct thread *);
 
-void thread_sleep (int64_t sleep_start_time, int64_t duration);
-void thread_wakeup (struct thread *);
-void wakeup_threads (void);
-
 struct thread *thread_current (void);
 tid_t thread_tid (void);
 const char *thread_name (void);
@@ -159,14 +132,6 @@ void thread_foreach (thread_action_func *, void *);
 
 int thread_get_priority (void);
 void thread_set_priority (int);
-
-void update_mlfqs_parameters(void);
-void calculate_mlfqs_thread_priority(struct thread *, void *);
-
-void clear_lastrun_list(void);
-
-void update_last_run_mlfqs_priority_and_queue(void);
-void upadte_thread_mlfqs_ready_list(struct thread *);
 
 int thread_get_nice (void);
 void thread_set_nice (int);
