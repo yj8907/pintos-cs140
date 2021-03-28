@@ -76,7 +76,7 @@ start_process (void *file_name_)
         if (token == NULL) break;
         strsize = sizeof *token;
         esp -= strsize;
-        memcpy(esp, token, strsize);
+        strlcpy(esp, token, strsize);
         printf("first arg %s", token);
         printf("second arg %s", esp);
         args[argc] = esp;
