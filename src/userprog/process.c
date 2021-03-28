@@ -78,7 +78,7 @@ start_process (void *file_name_)
         strsize = sizeof *token;
         esp -= strsize;
         strlcpy(esp, token, strsize);
-        print("size %d", strsize);
+        printf("size %d", strsize);
         printf("first arg %s ", token);
         printf("second arg %s ", esp);
         args[argc] = esp;
