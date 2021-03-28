@@ -20,7 +20,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 }
 
 int
-sys_wait(pid_t pid)
+sys_wait(tid_t tid)
 {
     
 }

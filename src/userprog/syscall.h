@@ -3,6 +3,6 @@
 
 void syscall_init (void);
 
-int sys_wait(pid_t pid);
+int sys_wait(tid_t tid);
 
 #endif /* userprog/syscall.h */
