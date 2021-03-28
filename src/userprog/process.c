@@ -75,7 +75,7 @@ start_process (void *file_name_)
     for (argc = 0, argstr = NULL; argc < max_argc;argc++){
         token = strtok_r(argstr, " ", &saveptr);
         if (token == NULL) break;
-        strsize = sizeof *token;
+        strsize = strlen(token) + 1;
         esp -= strsize;
         strlcpy(esp, token, strsize);
         printf("size %d", strsize);
