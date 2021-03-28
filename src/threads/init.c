@@ -123,9 +123,7 @@ main (void)
 #ifdef FILESYS
   /* Initialize file system. */
   ide_init ();
-  printf("ckpt1");
   locate_block_devices ();
-  printf("ckpt2");
   filesys_init (format_filesys);
 #endif
 
