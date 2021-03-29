@@ -81,11 +81,13 @@ start_process (void *file_name_)
     }
 
     /* round esp to multiples of 4 */
-    esp -= (uintptr_t)esp % 4;
+    int ofs = (uintptr_t)esp % 4
+    esp -= ofs;
 
     /* push null pointer sentinel */
     esp -= sizeof(esp);
-    memset((void*)esp, 0, sizeof(esp));
+    strlcpy(esp, file_name, strsize);
+//    memset((void*)esp, 0, sizeof(esp));
 
     /* push argv address */
 //    for (int i = argc; i > 0; i--){
