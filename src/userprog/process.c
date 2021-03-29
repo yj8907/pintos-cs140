@@ -214,7 +214,7 @@ void*
 load_argument(void *esp, char* saveptr)
 {
     char* argv_addr[max_argc];
-    char *argstr, *token, *esp;
+    char *argstr, *token;
     int argc, strsize;
     
     /* extract file arguments */
