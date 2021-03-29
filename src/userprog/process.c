@@ -79,9 +79,9 @@ start_process (void *file_name_)
         strlcpy(esp, token, strsize);
         argv[argc] = esp;
     }
-//
-//    /* round esp to multiples of 4 */
-//    esp -= (uintptr_t)esp % 4;
+
+    /* round esp to multiples of 4 */
+    esp -= (uintptr_t)esp % 4;
 //
 //    /* push null pointer sentinel */
 //    esp -= sizeof(esp);
