@@ -67,7 +67,8 @@ start_process (void *file_name_)
     argstr  = file_name;
     token = strtok_r(argstr, " ", &saveptr);
     printf("command %s", token);
-  success = load (token, &if_.eip, &if_.esp);
+    
+  success = load (file_name, &if_.eip, &if_.esp);
     
   /* extract file arguments */
 //    esp = (char*)(&if_.esp);
