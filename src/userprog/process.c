@@ -62,7 +62,8 @@ start_process (void *file_name_)
   if_.gs = if_.fs = if_.es = if_.ds = if_.ss = SEL_UDSEG;
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
-    
+
+  char* token, saveptr;
   token = strtok_r(file_name, " ", &saveptr);
   success = load (token, &if_.eip, &if_.esp);
     
