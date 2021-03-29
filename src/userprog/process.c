@@ -257,7 +257,7 @@ load_argument(void *esp, char* saveptr)
    /* set return address to 0 */
    esp -= sizeof(esp);
    memset(esp, 0, sizeof(esp));
-    printf("arg: %s", *(char**)(*(char**)(esp+8)) );
+//    printf("arg: %s", *(char**)(*(char**)(esp+8)) );
    return (void*)esp;
 }
 
@@ -497,7 +497,7 @@ setup_stack (void **esp)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
-        *esp = PHYS_BASE - 12;
+        *esp = PHYS_BASE;
       else
         palloc_free_page (kpage);
     }
