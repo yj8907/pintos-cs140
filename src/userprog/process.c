@@ -87,7 +87,7 @@ start_process (void *file_name_)
     /* push null pointer sentinel */
     esp -= sizeof(esp);
 //    memset((void*)esp, 0, sizeof(esp));
-//    *((uint32_t*) esp) = 0;
+    *((uint32_t*) esp) = 0;
 
     /* push argv address */
 //    esp = (char**)esp;
