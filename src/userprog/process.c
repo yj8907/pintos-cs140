@@ -94,6 +94,7 @@ start_process (void *file_name_)
         strsize = sizeof(argv_addr[i-1]);
         esp -= strsize;
         printf("addr 0x%08x ", argv_addr[i-1]);
+        printf("addr sp 0x%08x ", esp);
         memcpy(esp, &argv_addr[i-1], strsize);
     }
 
