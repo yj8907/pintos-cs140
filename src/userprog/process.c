@@ -78,6 +78,7 @@ start_process (void *file_name_)
         esp -= strsize;
         strlcpy(esp, token, strsize);
         argv[argc] = esp;
+        printf("token %s ", esp);
     }
 
     /* round esp to multiples of 4 */
@@ -493,7 +494,7 @@ setup_stack (void **esp)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
-        *esp = PHYS_BASE - 12;
+        *esp = PHYS_BASE;
       else
         palloc_free_page (kpage);
     }
