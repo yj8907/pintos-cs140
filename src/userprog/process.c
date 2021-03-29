@@ -113,7 +113,8 @@ start_process (void *file_name_)
     printf("argv_addr 0x%08x ", esp+8 );
     printf("argv 0x%08x ", ((char**)(esp+8)) );
     printf("arg1 0x%08x ", (char*)(*((char**)(esp+8))) );
-    printf("arg1 %s ", (char*)(*((char**)(esp+8))) );
+    printf("arg1 0x%08x ", *(char*)(*((char**)(esp+8))) );
+    printf("arg1 %s ", *(char*)(*((char**)(esp+8))) );
     
     if_.esp = (void*) esp;
         
