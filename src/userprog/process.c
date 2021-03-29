@@ -105,12 +105,13 @@ start_process (void *file_name_)
     esp -= 4;
     *((void**)esp) = (esp + 4);
 
-    printf("addr sp 0x%08x ", esp);
+    printf("addr sp 0x%08x ", *((void*)esp));
     /* push arg count */
     esp -= sizeof(argc);
     memcpy(esp, &argc, sizeof(argc));
 
-    printf("addr sp 0x%08x ", esp+4);
+    printf("addr sp 0x%08x ", *((void*)(esp+4)));
+    
     /* set return address to 0 */
     esp -= sizeof(esp);
     memset(esp, 0, sizeof(esp));
