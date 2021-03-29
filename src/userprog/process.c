@@ -85,8 +85,9 @@ start_process (void *file_name_)
     printf("ofs %d", ofs);
 //    esp = (void*)((unsigned int)(esp) & 0xfffffffc);
     
-//    esp -= 2;
-
+    esp -= 2;
+    memset((void*)esp, 0, 2);
+    
     /* push null pointer sentinel */
     esp -= sizeof(esp);
     memset((void*)esp, 0, sizeof(esp));
