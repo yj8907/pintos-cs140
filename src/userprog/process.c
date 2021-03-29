@@ -97,7 +97,7 @@ start_process (void *file_name_)
     }
     
     /* push char **argv */
-    eps = (char*)esp;
+    esp = (char*)esp;
     strsize = sizeof(esp);
     memcpy(esp-strsize, &esp, strsize);
 
