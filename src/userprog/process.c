@@ -70,15 +70,15 @@ start_process (void *file_name_)
   success = load (token, &if_.eip, &if_.esp);
     
   /* extract file arguments */
-//    esp = (char*)(&if_.esp);
-//    for (argc = 0, argstr = NULL; argc < max_argc;argc++){
-//        token = strtok_r(argstr, " ", &saveptr);
-//        if (token == NULL) break;
-//        strsize = strlen(token) + 1;
-//        esp -= strsize;
-//        strlcpy(esp, token, strsize);
-//        argv[argc] = esp;
-//    }
+    esp = (char*)(&if_.esp);
+    for (argc = 0, argstr = NULL; argc < max_argc;argc++){
+        token = strtok_r(argstr, " ", &saveptr);
+        if (token == NULL) break;
+        strsize = strlen(token) + 1;
+        esp -= strsize;
+        strlcpy(esp, token, strsize);
+        argv[argc] = esp;
+    }
 //
 //    /* round esp to multiples of 4 */
 //    esp -= (uintptr_t)esp % 4;
