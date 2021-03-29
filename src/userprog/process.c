@@ -82,10 +82,10 @@ start_process (void *file_name_)
 
     /* round esp to multiples of 4 */
     esp -= (uintptr_t)esp % 4;
-//
-//    /* push null pointer sentinel */
-//    esp -= sizeof(esp);
-//    memset(esp, 0, sizeof(esp));
+
+    /* push null pointer sentinel */
+    esp -= sizeof(esp);
+    memset(esp, 0, sizeof(esp));
 
     /* push argv address */
 //    for (int i = argc; i > 0; i--){
