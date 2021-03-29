@@ -85,16 +85,13 @@ start_process (void *file_name_)
     printf("ofs %d", ofs);
 //    esp = (void*)((unsigned int)(esp) & 0xfffffffc);
     
-    esp -= 2;
-    memset((void*)esp, 0, 2);
+//    esp -= ofs;
+//    memset((void*)esp, 0, ofs);
     
     /* push null pointer sentinel */
     esp -= sizeof(esp);
     memset((void*)esp, 0, sizeof(esp));
     
-    esp -= 12;
-//    *((uint32_t*) esp) = 0;
-
     /* push argv address */
 //    esp = (char**)esp;
 //    for (int i = argc; i > 0; i--){
@@ -120,7 +117,9 @@ start_process (void *file_name_)
 //    /* set return address to 0 */
 //    esp -= sizeof(esp);
 //    memset(esp, 0, sizeof(esp));
-//
+
+    esp -= 12;
+    
 //    if_.esp = (void*) esp;
     
   /* If load failed, quit. */
