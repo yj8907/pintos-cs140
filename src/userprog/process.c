@@ -83,7 +83,7 @@ start_process (void *file_name_)
     /* round esp to multiples of 4 */
     uint32_t ofs = ((uintptr_t)(void*)esp) % 4;
     printf("ofs %d", ofs);
-    esp -= ofs;
+    esp -= 2;
 
     /* push null pointer sentinel */
     esp -= sizeof(esp);
