@@ -61,7 +61,7 @@ start_process (void *file_name_)
   if_.eflags = FLAG_IF | FLAG_MBS;
     
     int max_argc = 128;
-    char **args[max_argc];
+    char *argv[max_argc];
     char *saveptr; char *argstr, *token, *esp;
     int argc, strsize;
     argstr  = file_name;
@@ -77,39 +77,43 @@ start_process (void *file_name_)
         strsize = strlen(token) + 1;
         esp -= strsize;
         strlcpy(esp, token, strsize);
-        args[argc] = &esp;
+        argv[argc] = esp;
     }
     
     /* round esp to multiples of 4 */
     esp -= (uintptr_t)esp % 4;
     
     /* push null pointer sentinel */
-    memset(esp, 0, sizeof(esp));
     esp -= sizeof(esp);
+    memset(esp, 0, sizeof(esp));
     
     esp = (char**)esp;
     /* push argv address */
     for (int i = argc; i > 0; i--){
-        strsize = sizeof(args[i-1]);
+        strsize = sizeof(argv[i-1]);
         esp -= strsize;
         printf("size %d", argc);
-        esp = args[i-1];
+//        esp = argv[i-1];
+        memcpy(esp, &argv[i-1], strsize);
     }
     
-    /* push char **argv */
-    esp = (char*)esp;
-    strsize = sizeof(esp);
-    memcpy(esp-strsize, &esp, strsize);
-
-    /* push arg count */
-    esp -= strsize + sizeof(argc);
-    memcpy(esp, &argc, sizeof(argc));
-
-    /* set return address to 0 */
-    esp -= sizeof(esp);
-    memset(esp, 0, sizeof(esp));
-
-    if_.esp = (void*) esp;
+//    /* push char **argv */
+//    char **argv = &esp;
+//    esp -= sizeof(esp);
+//    esp = argv;
+//    esp = (char*)esp;
+//    strsize = sizeof(esp);
+//    memcpy(esp-strsize, &esp, strsize);
+//
+//    /* push arg count */
+//    esp -= strsize + sizeof(argc);
+//    memcpy(esp, &argc, sizeof(argc));
+//
+//    /* set return address to 0 */
+//    esp -= sizeof(esp);
+//    memset(esp, 0, sizeof(esp));
+//
+//    if_.esp = (void*) esp;
     
   /* If load failed, quit. */
   palloc_free_page (file_name);
