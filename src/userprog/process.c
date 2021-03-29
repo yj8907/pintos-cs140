@@ -91,7 +91,7 @@ start_process (void *file_name_)
     for (int i = argc; i > 0; i--){
         strsize = sizeof(argv[i-1]);
         esp -= strsize;
-        printf("size %d", argv[i-1]);
+        printf("size %s", argv[i-1]);
         
 //        memcpy(esp, &argv[i-1], strsize);
     }
