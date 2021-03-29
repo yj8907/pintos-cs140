@@ -88,12 +88,12 @@ start_process (void *file_name_)
     memset(esp, 0, sizeof(esp));
 
     /* push argv address */
-    for (int i = argc; i > 0; i--){
-        strsize = sizeof(argv[i-1]);
-        esp -= strsize;
-//        printf("size %s", argv[i-1]);
-        memcpy(esp, &argv[i-1], strsize);
-    }
+//    for (int i = argc; i > 0; i--){
+//        strsize = sizeof(argv[i-1]);
+//        esp -= strsize;
+////        printf("size %s", argv[i-1]);
+//        memcpy(esp, &argv[i-1], strsize);
+//    }
     
 //    printf("ckpt1");
 //    /* push char **argv */
