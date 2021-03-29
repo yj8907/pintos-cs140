@@ -97,18 +97,19 @@ start_process (void *file_name_)
     }
     
     /* push char **argv */
-//    strsize = sizeof(esp);
-//    memcpy(esp-strsize, &esp, strsize);
-//
-//    /* push arg count */
-//    esp -= strsize + sizeof(argc);
-//    memcpy(esp, &argc, sizeof(argc));
-//
-//    /* set return address to 0 */
-//    esp -= sizeof(esp);
-//    memset(esp, 0, sizeof(esp));
-//
-//    if_.esp = (void*) esp;
+    eps = (char*)esp;
+    strsize = sizeof(esp);
+    memcpy(esp-strsize, &esp, strsize);
+
+    /* push arg count */
+    esp -= strsize + sizeof(argc);
+    memcpy(esp, &argc, sizeof(argc));
+
+    /* set return address to 0 */
+    esp -= sizeof(esp);
+    memset(esp, 0, sizeof(esp));
+
+    if_.esp = (void*) esp;
     
   /* If load failed, quit. */
   palloc_free_page (file_name);
