@@ -96,7 +96,7 @@ start_process (void *file_name_)
         
 //        memcpy(esp, &argv[i-1], strsize);
     }
-    
+    printf("ckpt1");
 //    /* push char **argv */
 //    char **argv = &esp;
 //    esp -= sizeof(esp);
@@ -113,7 +113,7 @@ start_process (void *file_name_)
 //    esp -= sizeof(esp);
 //    memset(esp, 0, sizeof(esp));
 //
-//    if_.esp = (void*) esp;
+    if_.esp = (void*) esp;
     
   /* If load failed, quit. */
   palloc_free_page (file_name);
