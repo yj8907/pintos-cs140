@@ -78,6 +78,7 @@ start_process (void *file_name_)
         esp -= strsize;
         strlcpy(esp, token, strsize);
         argv_addr[argc] = (uintptr_t)esp;
+        printf("addr 0x%08x ", (uintptr_t)esp)
     }
 
     /* round esp to multiples of 4 */
