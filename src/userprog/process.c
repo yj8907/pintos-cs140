@@ -97,9 +97,9 @@ start_process (void *file_name_)
     }
 
     /* push char **argv */
-    char **argv_addr = &esp;
+    uintptr_t argv_addr = (uintptr_t)&esp;
     esp -= sizeof(esp);
-    memcpy(esp, argv_addr, sizeof(esp));
+    memcpy(esp, &argv_addr, sizeof(argv_addr));
 
     /* push arg count */
     esp -= sizeof(argc);
