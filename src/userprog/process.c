@@ -60,14 +60,14 @@ start_process (void *file_name_)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
     
-//    int max_argc = 128;
-//    char *argv[max_argc];
-//    char *saveptr; char *argstr, *token, *esp;
-//    int argc, strsize;
-//    argstr  = file_name;
-//    token = strtok_r(argstr, " ", &saveptr);
+    int max_argc = 128;
+    char *argv[max_argc];
+    char *saveptr; char *argstr, *token, *esp;
+    int argc, strsize;
+    argstr  = file_name;
+    token = strtok_r(argstr, " ", &saveptr);
     
-  success = load (file_name, &if_.eip, &if_.esp);
+  success = load (token, &if_.eip, &if_.esp);
     
   /* extract file arguments */
 //    esp = (char*)(&if_.esp);
@@ -494,7 +494,7 @@ setup_stack (void **esp)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
-        *esp = PHYS_BASE - 4;
+        *esp = PHYS_BASE - 12;
       else
         palloc_free_page (kpage);
     }
