@@ -82,9 +82,6 @@ start_process (void *file_name_)
 
     /* round esp to multiples of 4 */
     uint32_t ofs = ((uintptr_t)(void*)esp) % 4;
-    printf("ofs %d", ofs);
-
-    esp = (void*)esp;
     esp -= ofs;
     memset(esp, 0, ofs);
     
@@ -93,15 +90,12 @@ start_process (void *file_name_)
     memset((void*)esp, 0, sizeof(esp));
     
     /* push argv address */
-//    esp = (char**)esp;
-//    for (int i = argc; i > 0; i--){
-//        strsize = sizeof(argv[i-1]);
-//        esp -= strsize;
-////        printf("size %s", argv[i-1]);
-//        *esp = argv[i-1];
-////        memcpy(esp, &argv[i-1], strsize);
-//    }
-//
+    for (int i = argc; i > 0; i--){
+        strsize = sizeof(argv[i-1]);
+        esp -= strsize;
+        memcpy(esp, &argv[i-1], strsize);
+    }
+
 //    printf("ckpt1");
 //    /* push char **argv */
 //    char **argv = &esp;
