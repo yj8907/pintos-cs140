@@ -99,9 +99,10 @@ start_process (void *file_name_)
     }
 
     /* push char **argv */
-    uint32_t argv = (uint32_t)esp;
-    esp -= sizeof(argv);
-    memcpy(esp, &argv, sizeof(argv));
+//    uint32_t argv = (uint32_t)esp;
+//    esp -= sizeof(argv);
+//    memcpy(esp, &argv, sizeof(argv));
+    *((void**)esp) = (esp + 4);
 
     /* push arg count */
     esp -= sizeof(argc);
