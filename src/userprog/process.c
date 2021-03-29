@@ -92,7 +92,7 @@ start_process (void *file_name_)
         strsize = sizeof(args[i-1]);
         esp -= strsize;
         printf("size %d", argc);
-        memcpy(esp, args[i-1], strsize);
+        memcpy(esp, &esp, strsize);
     }
     
     /* push char **argv */
