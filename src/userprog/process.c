@@ -100,7 +100,7 @@ start_process (void *file_name_)
 
     /* push char **argv */
     uintptr_t argv = (uintptr_t)esp;
-    esp -= sizeof(esp);
+    esp -= sizeof(argv);
     memcpy(esp, &argv, sizeof(argv));
 
     /* push arg count */
