@@ -98,6 +98,7 @@ start_process (void *file_name_)
         memcpy(esp, &argv_addr[i-1], strsize);
     }
 
+    esp -= 4;
     /* push char **argv */
     uintptr_t argv = (uintptr_t)esp;
     esp -= sizeof(argv);
