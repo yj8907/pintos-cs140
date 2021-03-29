@@ -87,6 +87,7 @@ start_process (void *file_name_)
     memset(esp, 0, sizeof(esp));
     esp -= sizeof(esp);
     
+    esp = (char**)esp;
     /* push argv address */
     for (int i = argc; i > 0; i--){
         strsize = sizeof(args[i-1]);
