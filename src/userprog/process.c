@@ -61,7 +61,7 @@ start_process (void *file_name_)
   if_.eflags = FLAG_IF | FLAG_MBS;
     
     int max_argc = 128;
-    uint32_t argv_addr[max_argc];
+    char* argv_addr[max_argc];
     char *saveptr; char *argstr, *token, *esp;
     int argc, strsize;
     argstr  = file_name;
@@ -77,7 +77,7 @@ start_process (void *file_name_)
         strsize = strlen(token) + 1;
         esp -= strsize;
         strlcpy(esp, token, strsize);
-        argv_addr[argc] = (uint32_t)esp;
+        argv_addr[argc] = esp;
     }
 
     /* round esp to multiples of 4 */
