@@ -70,24 +70,24 @@ start_process (void *file_name_)
   success = load (token, &if_.eip, &if_.esp);
     
   /* extract file arguments */
-    esp = (char*)(&if_.esp);
-    for (argc = 0, argstr = NULL; argc < max_argc;argc++){
-        token = strtok_r(argstr, " ", &saveptr);
-        if (token == NULL) break;
-        strsize = strlen(token) + 1;
-        esp -= strsize;
-        strlcpy(esp, token, strsize);
-        argv[argc] = esp;
-    }
-
-    /* round esp to multiples of 4 */
-    int ofs = (uintptr_t)esp % 4;
-    esp -= ofs;
-
-    /* push null pointer sentinel */
-    esp -= sizeof(esp);
+//    esp = (char*)(&if_.esp);
+//    for (argc = 0, argstr = NULL; argc < max_argc;argc++){
+//        token = strtok_r(argstr, " ", &saveptr);
+//        if (token == NULL) break;
+//        strsize = strlen(token) + 1;
+//        esp -= strsize;
+//        strlcpy(esp, token, strsize);
+//        argv[argc] = esp;
+//    }
+//
+//    /* round esp to multiples of 4 */
+//    int ofs = (uintptr_t)esp % 4;
+//    esp -= ofs;
+//
+//    /* push null pointer sentinel */
+//    esp -= sizeof(esp);
 //    memset((void*)esp, 0, sizeof(esp));
-//    *((uint32_t*) esp) = 0; 
+//    *((uint32_t*) esp) = 0;
 
     /* push argv address */
 //    esp = (char**)esp;
