@@ -110,7 +110,7 @@ start_process (void *file_name_)
     memset(esp, 0, sizeof(esp));
     
     printf("arg count %d", *(int*)(esp+4));
-    printf("arg1 %s", *(char*)(*(esp+8)) );
+//    printf("arg1 %s", *(char*)(*(esp+8)) );
     if_.esp = (void*) esp;
         
   /* If load failed, quit. */
