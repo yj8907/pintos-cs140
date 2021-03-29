@@ -78,8 +78,6 @@ start_process (void *file_name_)
         esp -= strsize;
         strlcpy(esp, token, strsize);
         argv[argc] = esp;
-        char* test = esp;
-        printf("token %s ", test);
     }
 
     /* round esp to multiples of 4 */
@@ -88,17 +86,18 @@ start_process (void *file_name_)
 
     /* push null pointer sentinel */
     esp -= sizeof(esp);
-//    strlcpy(esp, file_name, strsize);
 //    memset((void*)esp, 0, sizeof(esp));
+    *((uint32_t*) esp) = 0;
 
     /* push argv address */
+//    esp = (char**)esp;
 //    for (int i = argc; i > 0; i--){
 //        strsize = sizeof(argv[i-1]);
 //        esp -= strsize;
 ////        printf("size %s", argv[i-1]);
 //        memcpy(esp, &argv[i-1], strsize);
 //    }
-    
+//
 //    printf("ckpt1");
 //    /* push char **argv */
 //    char **argv = &esp;
