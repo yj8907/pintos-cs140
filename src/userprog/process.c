@@ -18,6 +18,8 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+static int max_argc = 128;
+
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 
@@ -60,57 +62,12 @@ start_process (void *file_name_)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
     
-    int max_argc = 128;
-    char* argv_addr[max_argc];
-    char *saveptr; char *argstr, *token, *esp;
-    int argc, strsize;
-    argstr  = file_name;
-    token = strtok_r(argstr, " ", &saveptr);
-    
+  token = strtok_r(file_name, " ", &saveptr);
   success = load (token, &if_.eip, &if_.esp);
     
-  /* extract file arguments */
-    esp = (char*)(if_.esp);
-    for (argc = 0, argstr = NULL; argc < max_argc;argc++){
-        token = strtok_r(argstr, " ", &saveptr);
-        if (token == NULL) break;
-        strsize = strlen(token) + 1;
-        esp -= strsize;
-        strlcpy(esp, token, strsize);
-        argv_addr[argc] = esp;
-    }
-
-    /* round esp to multiples of 4 */
-    uint32_t ofs = ((uint32_t)(void*)esp) % 4;
-    esp -= ofs;
-    memset(esp, 0, ofs);
+  /* push arguments */
+  if_.esp = load_argument(if_.esp, saveptr);
     
-    /* push null pointer sentinel */
-    esp -= sizeof(esp);
-    memset((void*)esp, 0, sizeof(esp));
-    
-    /* push argv address */
-    for (int i = argc; i > 0; i--){
-        strsize = sizeof(argv_addr[i-1]);
-        esp -= strsize;
-        memcpy(esp, &argv_addr[i-1], strsize);
-    }
-
-    /* push char **argv */
-    char* argv = esp;
-    esp -= sizeof(argv);
-    memcpy(esp, &argv, sizeof(argv));
-
-    /* push arg count */
-    esp -= sizeof(argc);
-    memcpy(esp, &argc, sizeof(argc));
-    
-    /* set return address to 0 */
-    esp -= sizeof(esp);
-    memset(esp, 0, sizeof(esp));
-    
-    if_.esp = (void*) esp;
-        
   /* If load failed, quit. */
   palloc_free_page (file_name);
   if (!success) 
@@ -251,6 +208,56 @@ static bool validate_segment (const struct Elf32_Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
                           bool writable);
+
+void*
+load_argument(void *esp, char* saveptr)
+{
+    char* argv_addr[max_argc];
+    char *argstr, *token, *esp;
+    int argc, strsize;
+    
+    /* extract file arguments */
+   esp = (char*)(esp);
+   for (argc = 0, argstr = NULL; argc < max_argc;argc++){
+       token = strtok_r(argstr, " ", &saveptr);
+       if (token == NULL) break;
+       strsize = strlen(token) + 1;
+       esp -= strsize;
+       strlcpy(esp, token, strsize);
+       argv_addr[argc] = esp;
+   }
+
+   /* round esp to multiples of 4 */
+   uint32_t ofs = ((uint32_t)(void*)esp) % 4;
+   esp -= ofs;
+   memset(esp, 0, ofs);
+   
+   /* push null pointer sentinel */
+   esp -= sizeof(esp);
+   memset((void*)esp, 0, sizeof(esp));
+   
+   /* push argv address */
+   for (int i = argc; i > 0; i--){
+       strsize = sizeof(argv_addr[i-1]);
+       esp -= strsize;
+       memcpy(esp, &argv_addr[i-1], strsize);
+   }
+
+   /* push char **argv */
+   char* argv = esp;
+   esp -= sizeof(argv);
+   memcpy(esp, &argv, sizeof(argv));
+
+   /* push arg count */
+   esp -= sizeof(argc);
+   memcpy(esp, &argc, sizeof(argc));
+   
+   /* set return address to 0 */
+   esp -= sizeof(esp);
+   memset(esp, 0, sizeof(esp));
+    printf("arg: %s", *(char**)(*(char**)(esp+8)) );
+   return (void*)esp;
+}
 
 /* Loads an ELF executable from FILE_NAME into the current thread.
    Stores the executable's entry point into *EIP
