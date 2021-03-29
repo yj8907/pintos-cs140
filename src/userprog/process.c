@@ -93,8 +93,6 @@ start_process (void *file_name_)
     for (int i = argc; i > 0; i--){
         strsize = sizeof(argv_addr[i-1]);
         esp -= strsize;
-        printf("addr 0x%08x ", argv_addr[i-1]);
-        printf("addr sp 0x%08x ", esp);
         memcpy(esp, &argv_addr[i-1], strsize);
     }
 
@@ -113,9 +111,7 @@ start_process (void *file_name_)
     
     printf("addr sp 0x%08x ", *((char**)(esp+4)));
     printf("addr sp 0x%08x ", *((char**)(esp+8)));
-    
-    printf("arg count %d ", *(int*)(esp+4));
-    printf("argv_addr 0x%08x ", esp+8 );
+
     printf("argv 0x%08x ", ((char**)(esp+8)) );
     printf("arg1 0x%08x ", (char*)(*((char**)(esp+8))) );
     printf("arg1 0x%08x ", *(char*)(*((char**)(esp+8))) );
