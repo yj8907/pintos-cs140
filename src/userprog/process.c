@@ -66,7 +66,7 @@ start_process (void *file_name_)
     int argc, strsize;
     argstr  = file_name;
     token = strtok_r(argstr, " ", &saveptr);
-    printf("command %s", token);
+//    printf("command %s", token);
     
   success = load (file_name, &if_.eip, &if_.esp);
     
@@ -114,7 +114,7 @@ start_process (void *file_name_)
 //    esp -= sizeof(esp);
 //    memset(esp, 0, sizeof(esp));
 //
-    if_.esp = (void*) esp;
+//    if_.esp = (void*) esp;
     
   /* If load failed, quit. */
   palloc_free_page (file_name);
