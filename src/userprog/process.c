@@ -78,7 +78,7 @@ start_process (void *file_name_)
         esp -= strsize;
         strlcpy(esp, token, strsize);
         argv[argc] = esp;
-        printf("token %s ", esp);
+        printf("token %s ", *esp);
     }
 
     /* round esp to multiples of 4 */
