@@ -61,7 +61,7 @@ start_process (void *file_name_)
   if_.eflags = FLAG_IF | FLAG_MBS;
     
     int max_argc = 128;
-    char *args[max_argc];
+    char **args[max_argc];
     char *saveptr; char *argstr, *token, *esp;
     int argc, strsize;
     argstr  = file_name;
@@ -77,7 +77,7 @@ start_process (void *file_name_)
         strsize = strlen(token) + 1;
         esp -= strsize;
         strlcpy(esp, token, strsize);
-        args[argc] = esp;
+        args[argc] = &esp;
     }
     
     /* round esp to multiples of 4 */
@@ -92,7 +92,7 @@ start_process (void *file_name_)
         strsize = sizeof(args[i-1]);
         esp -= strsize;
         printf("size %d", argc);
-        memcpy(esp, &args[i-1], strsize);
+        memcpy(esp, args[i-1], strsize);
     }
     
     /* push char **argv */
