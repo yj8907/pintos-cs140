@@ -86,7 +86,7 @@ start_process (void *file_name_)
 
     /* push null pointer sentinel */
     esp -= sizeof(esp);
-    strlcpy(esp, file_name, strsize);
+//    strlcpy(esp, file_name, strsize);
 //    memset((void*)esp, 0, sizeof(esp));
 
     /* push argv address */
