@@ -99,23 +99,19 @@ start_process (void *file_name_)
     }
 
     /* push char **argv */
-//    uint32_t argv = (uint32_t)esp;
-//    esp -= sizeof(argv);
-//    memcpy(esp, &argv, sizeof(argv));
-    esp -= 4;
-    *((void**)esp) = (esp + 4);
+    char* argv = esp;
+    esp -= sizeof(argv);
+    memcpy(esp, &argv, sizeof(argv));
 
-    printf("addr sp 0x%08x ", *((char**)esp));
     /* push arg count */
     esp -= sizeof(argc);
     memcpy(esp, &argc, sizeof(argc));
-
-    printf("addr sp 0x%08x ", *((char**)(esp+4)));
     
     /* set return address to 0 */
     esp -= sizeof(esp);
     memset(esp, 0, sizeof(esp));
     
+    printf("addr sp 0x%08x ", *((char**)(esp+4)));
     printf("addr sp 0x%08x ", *((char**)(esp+8)));
     
     printf("arg count %d ", *(int*)(esp+4));
