@@ -70,7 +70,7 @@ start_process (void *file_name_)
   success = load (token, &if_.eip, &if_.esp);
     
   /* extract file arguments */
-    esp = (char*)(&if_.esp);
+    esp = (char*)(if_.esp);
     for (argc = 0, argstr = NULL; argc < max_argc;argc++){
         token = strtok_r(argstr, " ", &saveptr);
         if (token == NULL) break;
@@ -98,7 +98,8 @@ start_process (void *file_name_)
 //        strsize = sizeof(argv[i-1]);
 //        esp -= strsize;
 ////        printf("size %s", argv[i-1]);
-//        memcpy(esp, &argv[i-1], strsize);
+//        *esp = argv[i-1];
+////        memcpy(esp, &argv[i-1], strsize);
 //    }
 //
 //    printf("ckpt1");
