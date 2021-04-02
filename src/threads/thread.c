@@ -402,7 +402,8 @@ thread_create (const char *name, int priority,
   /* Initialize thread. */
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
-
+  t->tcb->tid = tid;
+    
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
   kf->eip = NULL;
@@ -579,7 +580,6 @@ thread_exit (void)
   ASSERT (!intr_context ());
 
 #ifdef USERPROG
-//  proc_status = 0;
   process_exit ();
 #endif
 
@@ -795,6 +795,18 @@ init_thread (struct thread *t, const char *name, int priority)
 
 #ifdef USERPROG
   list_init(&t->child_list);
+  t->tcb = palloc_get_page (PAL_ZERO);
+  
+  /* init sema for sync */
+  sema_init(&t->tcb->sema, 0);
+    
+  /* establish parent/child relatioship */
+  thread* parent_thread = thread_current();
+  t->tcb->parent_td = parent_thread;
+  t->tcb->parent_exit = false;
+  t->thread_exit = false;
+  list_push_back(&parent_thread->child_list, &t->tcb->elem);
+  
 #endif
     
   if (!thread_mlfqs) {

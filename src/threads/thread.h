@@ -20,6 +20,22 @@ typedef struct number {
     int val;
 } real;
 
+#ifdef USERPROG
+
+typeof struct thread_control_block {
+    tid_t tid;
+    struct semaphore sema;
+    
+    thread* parent_td;
+    list_elem elem;
+    
+    int exit_status;
+    bool thread_exit;
+    bool parent_exit;
+};
+
+#endif
+
 /* Thread identifier type.
    You can redefine this to whatever type you like. */
 typedef int tid_t;
@@ -119,7 +135,7 @@ struct thread
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
-    
+    thread_control_block *tcb;
     struct list child_list;
     
 #endif

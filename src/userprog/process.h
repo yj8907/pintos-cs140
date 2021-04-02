@@ -3,6 +3,14 @@
 
 #include "threads/thread.h"
 
+struct child_thread_info
+{
+    struct list_elem elem;
+    int status;
+    bool waited;
+};
+
+
 tid_t process_execute (const char *file_name);
 int process_wait (tid_t);
 void process_exit (void);
