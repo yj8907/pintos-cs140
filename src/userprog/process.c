@@ -122,7 +122,7 @@ process_wait (tid_t child_tid)
     while(!child_tcb->thread_exit) {
         thread_yield();
     }
-    
+    printf("finished");
 }
 
 /* Free the current process's resources. */
