@@ -132,28 +132,29 @@ process_exit (void)
     }
   else {
       cur->tcb->thread_exit = true;
-      printf("child exit");
       sema_up(&cur->tcb->sema);
   }
 
   /* set parent status to 0 for all child processes */
-  struct list_elem *e = list_front(&cur->child_list);
+  if (!list_empty(&cur->child_list)){
+    struct list_elem *e = list_front(&cur->child_list);
 
-  struct thread_control_block *tcb;
-  while(e != list_tail(&cur->child_list)) {
-      tcb = list_entry(e, struct thread_control_block, elem);
+    struct thread_control_block *tcb;
+    while(e != list_tail(&cur->child_list)) {
+        tcb = list_entry(e, struct thread_control_block, elem);
 
-      /* free tcb page if child thread exit already */
-      sema_down(&tcb->sema);
-      tcb->parent_exit = true;
-      if (tcb->thread_exit) {
-          e = list_remove(e);
-          palloc_free_page(tcb);
-      }
-      else {
-          sema_up(&tcb->sema);
-          e = list_next(e);
-      }
+        /* free tcb page if child thread exit already */
+        sema_down(&tcb->sema);
+        tcb->parent_exit = true;
+        if (tcb->thread_exit) {
+            e = list_remove(e);
+            palloc_free_page(tcb);
+        }
+        else {
+            sema_up(&tcb->sema);
+            e = list_next(e);
+        }
+    }
   }
         
   uint32_t *pd;
