@@ -409,7 +409,7 @@ thread_create (const char *name, int priority,
   /* Initialize thread. */
   tid = t->tid = allocate_tid ();
   init_thread (t, name, priority);
-  t->tcb->tid = t->tid;
+  t->tcb->tid = tid;
 
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
