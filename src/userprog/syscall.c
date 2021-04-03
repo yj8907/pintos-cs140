@@ -26,6 +26,7 @@ static int
 load_arguments(void *esp, char** argv)
 {
     int syscall_no = *((int*)esp);
+    printf("syscall no %d ", syscall_no);
     
     esp += sizeof(esp);
     *argv = (char*)esp;
@@ -44,8 +45,9 @@ syscall_handler (struct intr_frame *f)
 {
   printf ("system call!\n");
   char** argv;
-//  int syscall_no = load_arguments(f->esp, argv);
-//  printf("syscall no %d ", syscall_no);
+  int syscall_no;
+  syscall_no = load_arguments(f->esp, argv);
+  printf("syscall no %d ", syscall_no);
   thread_exit();
  
   int syscall_no;
