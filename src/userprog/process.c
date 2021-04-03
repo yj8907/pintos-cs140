@@ -98,6 +98,7 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid)
 {
+    struct thread* cur = thread_current();
     struct list_elem *e = list_front(&cur->child_list);
     struct thread_control_block *child_tcb;
     
