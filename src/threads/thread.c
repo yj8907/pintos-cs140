@@ -800,6 +800,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     if (setup_parent) {
         struct thread* parent_thread = thread_current();
         t->tcb->parent_td = parent_thread;
+        list_push_back(&parent_thread->child_list, &t->tcb->elem);
     }
 }
 
