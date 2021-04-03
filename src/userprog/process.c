@@ -123,8 +123,6 @@ process_exit (void)
 {
   struct thread *cur = thread_current ();
 
-    printf("thread exiting: %d ", cur->tid);
-  printf("thread exiting: %d ", cur->tcb->tid);
   /* if parent thread already exists, free tcb page
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
@@ -134,6 +132,7 @@ process_exit (void)
     }
   else {
       cur->tcb->thread_exit = true;
+      print("child exit");
       sema_up(&cur->tcb->sema);
   }
 
