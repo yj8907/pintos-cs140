@@ -136,7 +136,7 @@ struct thread
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
-    thread_control_block *tcb;
+    struct thread_control_block *tcb;
     struct list child_list;
     
 #endif
