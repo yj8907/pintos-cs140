@@ -797,7 +797,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     t->tcb->parent_exit = false;
     t->tcb->thread_exit = false;
     t->tcb->tid = t->tid;
-    if (setup_parent && strcmp(t->thread_name(), "idle") != 0) {
+    if (setup_parent && strcmp(t->name, "idle") != 0) {
         struct thread* parent_thread = thread_current();
         t->tcb->parent_td = parent_thread;
         list_push_back(&parent_thread->child_list, &t->tcb->elem);
