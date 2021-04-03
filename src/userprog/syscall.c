@@ -44,8 +44,8 @@ syscall_handler (struct intr_frame *f)
 {
   printf ("system call!\n");
   char** argv;
-  int syscall_no = load_arguments(f->esp, argv);
-  printf("syscall no %d ", syscall_no);
+//  int syscall_no = load_arguments(f->esp, argv);
+//  printf("syscall no %d ", syscall_no);
   thread_exit();
     
   switch ((syscall_no)) {
