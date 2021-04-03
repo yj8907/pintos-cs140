@@ -104,8 +104,8 @@ process_wait (tid_t child_tid)
 
     while(e != list_tail(&cur->child_list)) {
         child_tcb = list_entry(e, struct thread_control_block, elem);
-//        print("child thread id: %d", child_tcb->tid);
-        if (child_tcb->tid == child_tid) break;
+        print("child thread id: %d", child_tcb->tid);
+//        if (child_tcb->tid == child_tid) break;
         e = list_next(e);
     }
     
