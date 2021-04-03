@@ -113,8 +113,6 @@ process_wait (tid_t child_tid)
         thread_yield();
     }
     
-    while(true) {};
-    
 }
 
 /* Free the current process's resources. */
