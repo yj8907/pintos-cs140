@@ -407,7 +407,8 @@ thread_create (const char *name, int priority,
     return TID_ERROR;
 
   /* Initialize thread. */
-  tid = t->tid = allocate_tid ();
+  tid = allocate_tid ();
+  t->tid = tid;
   init_thread (t, name, priority);
   t->tcb->tid = tid;
 
