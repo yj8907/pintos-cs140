@@ -795,10 +795,10 @@ init_thread (struct thread *t, const char *name, int priority)
 
 #ifdef USERPROG
   list_init(&t->child_list);
-  t->tcb = palloc_get_page (PAL_ZERO);
-  
-  /* init sema for sync */
-  sema_init(&t->tcb->sema, 0);
+//  t->tcb = palloc_get_page (PAL_ZERO);
+//
+//  /* init sema for sync */
+//  sema_init(&t->tcb->sema, 0);
     
   /* establish parent/child relatioship */
 //  struct thread* parent_thread = thread_current();
