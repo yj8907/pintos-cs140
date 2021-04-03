@@ -34,6 +34,7 @@ typedef int tid_t;
 
 #ifdef USERPROG
 
+struct thread;
 struct thread_control_block {
     tid_t tid;
     struct semaphore sema;
