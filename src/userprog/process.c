@@ -132,7 +132,7 @@ process_exit (void)
     }
   else {
       cur->tcb->thread_exit = true;
-      print("child exit");
+      printf("child exit");
       sema_up(&cur->tcb->sema);
   }
 
