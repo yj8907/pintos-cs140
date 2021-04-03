@@ -5,7 +5,7 @@
 #include "threads/thread.h"
 
 static void syscall_handler (struct intr_frame *);
-static int load_arguments(void *esp, char*);
+static int load_arguments(void *esp, char**);
 
 /* syscall handlers */
 static void sys_halt(struct intr_frame *f, char** argv);
