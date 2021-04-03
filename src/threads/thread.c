@@ -405,11 +405,11 @@ thread_create (const char *name, int priority,
     sema_init(&t->tcb->sema, 0);
       
     /* establish parent/child relatioship */
-    struct thread* parent_thread = thread_current();
-    t->tcb->parent_td = parent_thread;
-    t->tcb->parent_exit = false;
-    t->tcb->thread_exit = false;
-    list_push_back(&parent_thread->child_list, &t->tcb->elem);
+//    struct thread* parent_thread = thread_current();
+//    t->tcb->parent_td = parent_thread;
+//    t->tcb->parent_exit = false;
+//    t->tcb->thread_exit = false;
+//    list_push_back(&parent_thread->child_list, &t->tcb->elem);
     
   #endif
     
