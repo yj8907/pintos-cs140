@@ -123,9 +123,9 @@ process_exit (void)
   /* if parent thread already exists, free tcb page
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
-  cur->tcb->status = 0;
+  cur->tcb->exit_status = 0;
   if (cur->tcb->parent_exit) {
-        palloc_free_page(curr->tcb);
+        palloc_free_page(cur->tcb);
     }
   else {
       cur->tcb->thread_exit = true;
