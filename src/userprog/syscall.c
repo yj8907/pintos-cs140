@@ -47,7 +47,8 @@ syscall_handler (struct intr_frame *f)
 //  int syscall_no = load_arguments(f->esp, argv);
 //  printf("syscall no %d ", syscall_no);
   thread_exit();
-    
+ 
+  int syscall_no;
   switch ((syscall_no)) {
       case SYS_HALT:
           sys_halt(f, argv);
