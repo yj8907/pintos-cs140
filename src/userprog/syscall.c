@@ -170,9 +170,3 @@ sys_close(struct intr_frame *f, char** argv)
     
 };
 
-
-static void
-sys_wait(tid_t tid)
-{
-    
-};
