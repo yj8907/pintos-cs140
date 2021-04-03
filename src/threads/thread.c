@@ -409,6 +409,7 @@ thread_create (const char *name, int priority,
   /* Initialize thread. */
   tid = allocate_tid ();
   t->tid = tid;
+    printf("thread id: %d ", t->tid);
   init_thread (t, name, priority);
   t->tcb->tid = tid;
 
