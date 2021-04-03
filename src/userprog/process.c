@@ -104,21 +104,12 @@ process_wait (tid_t child_tid)
 
     while(e != list_tail(&cur->child_list)) {
         child_tcb = list_entry(e, struct thread_control_block, elem);
-//        printf("child thread id: %d", child_tcb->tid);
         if (child_tcb->tid == child_tid) break;
         e = list_next(e);
     }
     
     if (e == list_tail(&cur->child_list)) return -1;
-//    if (e == list_tail(&cur->child_list)) {
-////        printf("child list size %d", list_size(&cur->child_list));
-//        printf("parent thread name %s", list_entry(list_front(&cur->child_list),
-//                                                struct thread_control_block, elem)->parent_td->name);
-//        printf("child thread id %d", list_entry(list_front(&cur->child_list),
-//                                                struct thread_control_block, elem)->tid);
-////        printf("thread id %d", child_tid);
-//        while(true) {}
-//    }
+
     while(!child_tcb->thread_exit) {
         printf("waiting");
         thread_yield();
@@ -132,6 +123,7 @@ process_exit (void)
 {
   struct thread *cur = thread_current ();
 
+  printf("thread exiting: %d ", cur->tid);
   /* if parent thread already exists, free tcb page
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
