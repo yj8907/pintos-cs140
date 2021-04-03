@@ -407,13 +407,10 @@ thread_create (const char *name, int priority,
     return TID_ERROR;
 
   /* Initialize thread. */
-  tid = allocate_tid ();
-  t->tid = tid;
-  printf("allocated thread id: %d ", t->tid);
+  tid = t->tid = allocate_tid ();
   init_thread (t, name, priority);
   t->tcb->tid = t->tid;
-  printf("thread id: %d", t->tcb->tid);
-  tid = t->tid;
+
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
   kf->eip = NULL;
