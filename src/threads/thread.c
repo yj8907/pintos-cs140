@@ -410,6 +410,8 @@ thread_create (const char *name, int priority,
   tid = t->tid = allocate_tid ();
   printf("allocated thread id: %d ", t->tid);
   init_thread (t, name, priority);
+  t->tcb->tid = tid;
+  printf("thread id: %d", t->tcb->tid);
     
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
@@ -797,7 +799,6 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     /* establish parent/child relatioship */
     t->tcb->parent_exit = false;
     t->tcb->thread_exit = false;
-    printf("thread id: %d", t->tid);
     t->tcb->tid = t->tid;
     if (setup_parent && strcmp(t->name, "idle") != 0) {
         struct thread* parent_thread = thread_current();
