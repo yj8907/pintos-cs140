@@ -50,7 +50,7 @@ syscall_handler (struct intr_frame *f)
     printf("fd: %d ", fd);
     
     char print_output[4];
-    argv += sizeof(argv);
+    argv += sizeof(fd);
     strlcpy(&print_output, argv, 3);
     printf("buffer %s ", print_output);
     
