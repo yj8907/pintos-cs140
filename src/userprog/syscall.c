@@ -39,9 +39,9 @@ syscall_handler (struct intr_frame *f)
 {
   printf ("system call!\n");
   
-  int syscall_no = *((int*)esp);
+  int syscall_no = *((int*)f->esp);
   
-  char *argv = (char*)esp;
+  char *argv = (char*)f->esp;
   argv += sizeof(syscall_no);
     
   printf("syscall no %d ", syscall_no);
