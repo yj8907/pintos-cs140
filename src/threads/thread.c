@@ -396,6 +396,9 @@ thread_create (const char *name, int priority,
 
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
+  
+  t->tcb = palloc_get_page (PAL_ZERO);
+    
   if (t == NULL)
     return TID_ERROR;
 
@@ -795,7 +798,7 @@ init_thread (struct thread *t, const char *name, int priority)
 
 #ifdef USERPROG
   list_init(&t->child_list);
-  t->tcb = palloc_get_page (0);
+//  t->tcb = palloc_get_page (PAL_ZERO);
 
   /* init sema for sync */
 //  sema_init(&t->tcb->sema, 0);
