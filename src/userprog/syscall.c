@@ -5,7 +5,7 @@
 #include "threads/thread.h"
 
 static void syscall_handler (struct intr_frame *);
-static int load_arguments(void *esp, char**);
+static int load_arguments(void *esp, char*);
 
 /* syscall handlers */
 static void sys_halt(struct intr_frame *f, char** argv);
@@ -26,10 +26,9 @@ static int
 load_arguments(void *esp, char** argv)
 {
     int syscall_no = *((int*)esp);
+    
     esp += sizeof(esp);
-    for (int i = 0; i < numArg; i++){
-        *(argv + i) = (char*)esp;
-    }
+    *argv = (char*)esp;
     
     return syscall_no;
 }
