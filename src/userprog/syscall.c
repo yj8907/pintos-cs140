@@ -44,7 +44,9 @@ syscall_handler (struct intr_frame *f)
   char *argv = (char*)f->esp;
   argv += sizeof(syscall_no);
     
-  printf("syscall no %d ", syscall_no);
+  printf("syscall no %d", syscall_no);
+    printf("syscall no %d", SYS_WRITE);
+
   thread_exit();
  
   switch ((syscall_no)) {
