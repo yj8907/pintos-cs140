@@ -112,6 +112,8 @@ process_wait (tid_t child_tid)
 //    if (e == list_tail(&cur->child_list)) return -1;
     if (e == list_tail(&cur->child_list)) {
         printf("child list size %d", list_size(&cur->child_list));
+        printf("child thread id %d", list_entry(list_front(&cur->child_list),
+                                                struct thread_control_block, elem)->tid);
         printf("thread id %d", child_tid);
         while(true) {}
     }
