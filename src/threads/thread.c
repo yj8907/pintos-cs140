@@ -109,6 +109,7 @@ static void idle (void *aux UNUSED);
 static struct thread *running_thread (void);
 static struct thread *next_thread_to_run (void);
 static void init_thread (struct thread *, const char *name, int priority);
+static void init_thread_control_block (struct thread *);
 static bool is_thread (struct thread *) UNUSED;
 static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
@@ -206,6 +207,11 @@ thread_start (void)
   /* Create the idle thread. */
   struct semaphore idle_started;
   sema_init (&idle_started, 0);
+
+  #ifdef USERPROG
+  init_thread_control_block(t, false);
+  #endif
+    
   thread_create ("idle", PRI_MIN, idle, &idle_started);
 
   /* Start preemptive thread scheduling. */
@@ -776,6 +782,27 @@ is_thread (struct thread *t)
   return t != NULL && t->magic == THREAD_MAGIC;
 }
 
+/* Initialize thread control block. It's only available after
+ paging has been initialized */
+static void
+init_thread_control_block(struct thread *t, bool setup_parent)
+{
+    list_init(&t->child_list);
+      
+    t->tcb = palloc_get_page (PAL_ZERO);
+
+    /* init sema for sync */
+    sema_init(&t->tcb->sema, 0);
+      
+    /* establish parent/child relatioship */
+    t->tcb->parent_exit = false;
+    t->tcb->thread_exit = false;
+    if (setup_parent) {
+        struct thread* parent_thread = thread_current();
+        t->tcb->parent_td = parent_thread;
+    }
+}
+
 /* Does basic initialization of T as a blocked thread named
    NAME. */
 static void
@@ -802,21 +829,8 @@ init_thread (struct thread *t, const char *name, int priority)
   }
     
   #ifdef USERPROG
-  if (strcmp(name, "main") != 0) {
-    list_init(&t->child_list);
-    t->tcb = palloc_get_page (PAL_ZERO);
-
-    /* init sema for sync */
-    sema_init(&t->tcb->sema, 0);
-      
-    /* establish parent/child relatioship */
-    struct thread* parent_thread = thread_current();
-    t->tcb->parent_td = parent_thread;
-    t->tcb->parent_exit = false;
-    t->tcb->thread_exit = false;
-//    list_push_back(&parent_thread->child_list, &t->tcb->elem);
-  }
-    
+  if (strcmp(name, "main") != 0)
+      init_thread_control_block(t, true);
   #endif
     
   t->magic = THREAD_MAGIC;
