@@ -5,6 +5,4 @@
 
 void syscall_init (void);
 
-int sys_wait(tid_t tid);
-
 #endif /* userprog/syscall.h */

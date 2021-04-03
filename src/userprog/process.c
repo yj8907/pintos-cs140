@@ -111,10 +111,9 @@ process_wait (tid_t child_tid)
     if (e == list_tail(&cur->child_list)) return -1;
 
     while(!child_tcb->thread_exit) {
-//        printf("waiting");
         thread_yield();
     }
-    printf("finished");
+    
 }
 
 /* Free the current process's resources. */
