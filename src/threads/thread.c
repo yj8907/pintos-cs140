@@ -397,7 +397,21 @@ thread_create (const char *name, int priority,
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
   
-  t->tcb = palloc_get_page (PAL_ZERO);
+  #ifdef USERPROG
+    list_init(&t->child_list);
+    t->tcb = palloc_get_page (PAL_ZERO);
+
+    /* init sema for sync */
+    sema_init(&t->tcb->sema, 0);
+      
+    /* establish parent/child relatioship */
+    struct thread* parent_thread = thread_current();
+    t->tcb->parent_td = parent_thread;
+    t->tcb->parent_exit = false;
+    t->tcb->thread_exit = false;
+    list_push_back(&parent_thread->child_list, &t->tcb->elem);
+    
+  #endif
     
   if (t == NULL)
     return TID_ERROR;
@@ -795,22 +809,6 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->recent_cpu.val = inttoreal(0);
   t->nice.val = inttoreal(0);
-
-#ifdef USERPROG
-  list_init(&t->child_list);
-//  t->tcb = palloc_get_page (PAL_ZERO);
-
-  /* init sema for sync */
-//  sema_init(&t->tcb->sema, 0);
-    
-  /* establish parent/child relatioship */
-//  struct thread* parent_thread = thread_current();
-//  t->tcb->parent_td = parent_thread;
-//  t->tcb->parent_exit = false;
-//  t->tcb->thread_exit = false;
-//  list_push_back(&parent_thread->child_list, &t->tcb->elem);
-  
-#endif
     
   if (!thread_mlfqs) {
       t->priority = priority;
