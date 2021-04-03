@@ -27,8 +27,7 @@ load_arguments(void *esp, char** argv)
 {
     int syscall_no = *((int*)esp);
 
-    *argv = esp + sizeof(esp);
-    
+    memcpy(argv, &esp, sizeof(esp));
     printf("syscall no %d ", syscall_no);
     return syscall_no;
 }
