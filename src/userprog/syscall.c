@@ -5,31 +5,27 @@
 #include "threads/thread.h"
 
 static void syscall_handler (struct intr_frame *);
-static int load_arguments(void *esp, char**);
+static int load_arguments(void *esp, char*);
 
 /* syscall handlers */
-static void sys_halt(struct intr_frame *f, char** argv);
-static void sys_exit(struct intr_frame *f, char** argv);
-static void sys_exec(struct intr_frame *f, char** argv);
-static void sys_wait(struct intr_frame *f, char** argv);
-static void sys_create(struct intr_frame *f, char** argv);
-static void sys_remove(struct intr_frame *f, char** argv);
-static void sys_open(struct intr_frame *f, char** argv);
-static void sys_filesize(struct intr_frame *f, char** argv);
-static void sys_read(struct intr_frame *f, char** argv);
-static void sys_write(struct intr_frame *f, char** argv);
-static void sys_seek(struct intr_frame *f, char** argv);
-static void sys_tell(struct intr_frame *f, char** argv);
-static void sys_close(struct intr_frame *f, char** argv);
+static void sys_halt(struct intr_frame *f, char* argv);
+static void sys_exit(struct intr_frame *f, char* argv);
+static void sys_exec(struct intr_frame *f, char* argv);
+static void sys_wait(struct intr_frame *f, char* argv);
+static void sys_create(struct intr_frame *f, char* argv);
+static void sys_remove(struct intr_frame *f, char* argv);
+static void sys_open(struct intr_frame *f, char* argv);
+static void sys_filesize(struct intr_frame *f, char* argv);
+static void sys_read(struct intr_frame *f, char* argv);
+static void sys_write(struct intr_frame *f, char* argv);
+static void sys_seek(struct intr_frame *f, char* argv);
+static void sys_tell(struct intr_frame *f, char* argv);
+static void sys_close(struct intr_frame *f, char* argv);
 
 static int
-load_arguments(void *esp, char** argv)
+load_arguments(void *esp, char* argv)
 {
-    int syscall_no = *((int*)esp);
-
-    memcpy(argv, &esp, sizeof(esp));
-    printf("syscall no %d ", syscall_no);
-    return syscall_no;
+    
 }
 
 void
@@ -42,9 +38,12 @@ static void
 syscall_handler (struct intr_frame *f)
 {
   printf ("system call!\n");
-  char** argv;
-  int syscall_no;
-  syscall_no = load_arguments(f->esp, argv);
+  
+  int syscall_no = *((int*)esp);
+  
+  char *argv = (char*)esp;
+  argv += sizeof(syscall_no);
+    
   printf("syscall no %d ", syscall_no);
   thread_exit();
  
@@ -96,75 +95,75 @@ syscall_handler (struct intr_frame *f)
 }
 
 static void
-sys_halt(struct intr_frame *f, char** argv)
+sys_halt(struct intr_frame *f, char* argv)
 {
     
 };
 
 static void
-sys_exit(struct intr_frame *f, char** argv)
+sys_exit(struct intr_frame *f, char* argv)
 {
     
 };
 
-static void sys_exec(struct intr_frame *f, char** argv)
+static void sys_exec(struct intr_frame *f, char* argv)
 {
     
 };
 
-static void sys_wait(struct intr_frame *f, char** argv)
+static void sys_wait(struct intr_frame *f, char* argv)
 {
     
 };
 
-static void sys_create(struct intr_frame *f, char** argv)
+static void sys_create(struct intr_frame *f, char* argv)
 {
     
 };
 
-static void sys_remove(struct intr_frame *f, char** argv)
-{
-    
-};
-
-static void
-sys_open(struct intr_frame *f, char** argv)
+static void sys_remove(struct intr_frame *f, char* argv)
 {
     
 };
 
 static void
-sys_filesize(struct intr_frame *f, char** argv)
+sys_open(struct intr_frame *f, char* argv)
 {
     
 };
 
 static void
-sys_read(struct intr_frame *f, char** argv)
+sys_filesize(struct intr_frame *f, char* argv)
 {
     
 };
 
 static void
-sys_write(struct intr_frame *f, char** argv)
+sys_read(struct intr_frame *f, char* argv)
 {
     
 };
 
 static void
-sys_seek(struct intr_frame *f, char** argv)
+sys_write(struct intr_frame *f, char* argv)
 {
     
 };
 
 static void
-sys_tell(struct intr_frame *f, char** argv)
+sys_seek(struct intr_frame *f, char* argv)
 {
     
 };
 
 static void
-sys_close(struct intr_frame *f, char** argv)
+sys_tell(struct intr_frame *f, char* argv)
+{
+    
+};
+
+static void
+sys_close(struct intr_frame *f, char* argv)
 {
     
 };
