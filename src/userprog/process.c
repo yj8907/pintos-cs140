@@ -107,8 +107,12 @@ process_wait (tid_t child_tid)
         if (child_tcb->tid == child_tid) break;
         e = list_next(e);
     }
-    if (e == list_tail(&cur->child_list)) return -1;
-
+    
+//    if (e == list_tail(&cur->child_list)) return -1;
+    if (e == list_tail(&cur->child_list)) {
+        printf("thread id %d", child_tid);
+        while(true) {}
+    }
     while(!child_tcb->thread_exit) {
         thread_yield();
     }
