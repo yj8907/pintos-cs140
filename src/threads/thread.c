@@ -407,9 +407,8 @@ thread_create (const char *name, int priority,
     return TID_ERROR;
 
   /* Initialize thread. */
-  init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
-//  t->tcb->tid = tid;
+  init_thread (t, name, priority);
     
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
@@ -797,6 +796,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     /* establish parent/child relatioship */
     t->tcb->parent_exit = false;
     t->tcb->thread_exit = false;
+    t->tcb->tid = t->tid;
     if (setup_parent) {
         struct thread* parent_thread = thread_current();
         t->tcb->parent_td = parent_thread;
