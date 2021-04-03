@@ -34,13 +34,12 @@ typedef int tid_t;
 
 #ifdef USERPROG
 
-struct thread;
 struct thread_control_block {
     tid_t tid;
     struct semaphore sema;
     
-    thread* parent_td;
-    list_elem elem;
+    struct thread* parent_td;
+    struct list_elem elem;
     
     int exit_status;
     bool thread_exit;
