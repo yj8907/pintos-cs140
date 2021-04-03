@@ -795,7 +795,7 @@ init_thread (struct thread *t, const char *name, int priority)
 
 #ifdef USERPROG
   list_init(&t->child_list);
-//  t->tcb = palloc_get_page (PAL_ZERO);
+  t->tcb = palloc_get_page (0);
 
   /* init sema for sync */
 //  sema_init(&t->tcb->sema, 0);
