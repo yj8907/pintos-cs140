@@ -50,8 +50,7 @@ syscall_handler (struct intr_frame *f)
     printf("fd: %d ", fd);
     
     argv += sizeof(argv);
-    char b = *((const char*)argv);
-    printf("buffer %s ", b);
+    printf("buffer %s ", (const char*)argv);
     
     argv += sizeof(argv);
     int sz = *((int*)argv);
