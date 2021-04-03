@@ -109,7 +109,7 @@ static void idle (void *aux UNUSED);
 static struct thread *running_thread (void);
 static struct thread *next_thread_to_run (void);
 static void init_thread (struct thread *, const char *name, int priority);
-static void init_thread_control_block (struct thread *);
+static void init_thread_control_block (struct thread *, bool);
 static bool is_thread (struct thread *) UNUSED;
 static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
@@ -209,7 +209,7 @@ thread_start (void)
   sema_init (&idle_started, 0);
 
   #ifdef USERPROG
-  init_thread_control_block(t, false);
+  init_thread_control_block(thread_current(), false);
   #endif
     
   thread_create ("idle", PRI_MIN, idle, &idle_started);
