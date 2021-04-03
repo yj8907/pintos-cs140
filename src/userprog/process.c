@@ -98,20 +98,22 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid)
 {
-    struct thread* cur = thread_current();
-    struct list_elem *e = list_front(&cur->child_list);
-    struct thread_control_block *child_tcb;
+//    struct thread* cur = thread_current();
+//    struct list_elem *e = list_front(&cur->child_list);
+//    struct thread_control_block *child_tcb;
+//
+//    while(e != list_tail(&cur->child_list)) {
+//        child_tcb = list_entry(e, struct thread_control_block, elem);
+//        if (child_tcb->tid == child_tid) break;
+//        e = list_next(e);
+//    }
+//    if (e == list_tail(&cur->child_list)) return -1;
+//
+//    while(!child_tcb->thread_exit) {
+//        thread_yield();
+//    }
     
-    while(e != list_tail(&cur->child_list)) {
-        child_tcb = list_entry(e, struct thread_control_block, elem);
-        if (child_tcb->tid == child_tid) break;
-        e = list_next(e);
-    }
-    if (e == list_tail(&cur->child_list)) return -1;
-    
-    while(!child_tcb->thread_exit) {
-        thread_yield();
-    }
+    while(true) {};
     
 }
 
@@ -119,39 +121,39 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
-  struct thread *cur = thread_current ();
-          
-  /* if parent thread already exists, free tcb page
-   set current process exit state as true */
-  sema_down(&cur->tcb->sema);
-  cur->tcb->exit_status = 0;
-  if (cur->tcb->parent_exit) {
-        palloc_free_page(cur->tcb);
-    }
-  else {
-      cur->tcb->thread_exit = true;
-      sema_up(&cur->tcb->sema);
-  }
-    
-  /* set parent status to 0 for all child processes */
-  struct list_elem *e = list_front(&cur->child_list);
-  
-  struct thread_control_block *tcb;
-  while(e != list_tail(&cur->child_list)) {
-      tcb = list_entry(e, struct thread_control_block, elem);
-      
-      /* free tcb page if child thread exit already */
-      sema_down(&tcb->sema);
-      tcb->parent_exit = true;
-      if (tcb->thread_exit) {
-          e = list_remove(e);
-          palloc_free_page(tcb);
-      }
-      else {
-          sema_up(&tcb->sema);
-          e = list_next(e);
-      }
-  }
+//  struct thread *cur = thread_current ();
+//
+//  /* if parent thread already exists, free tcb page
+//   set current process exit state as true */
+//  sema_down(&cur->tcb->sema);
+//  cur->tcb->exit_status = 0;
+//  if (cur->tcb->parent_exit) {
+//        palloc_free_page(cur->tcb);
+//    }
+//  else {
+//      cur->tcb->thread_exit = true;
+//      sema_up(&cur->tcb->sema);
+//  }
+//
+//  /* set parent status to 0 for all child processes */
+//  struct list_elem *e = list_front(&cur->child_list);
+//
+//  struct thread_control_block *tcb;
+//  while(e != list_tail(&cur->child_list)) {
+//      tcb = list_entry(e, struct thread_control_block, elem);
+//
+//      /* free tcb page if child thread exit already */
+//      sema_down(&tcb->sema);
+//      tcb->parent_exit = true;
+//      if (tcb->thread_exit) {
+//          e = list_remove(e);
+//          palloc_free_page(tcb);
+//      }
+//      else {
+//          sema_up(&tcb->sema);
+//          e = list_next(e);
+//      }
+//  }
         
   uint32_t *pd;
   
