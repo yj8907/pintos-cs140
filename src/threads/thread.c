@@ -408,7 +408,7 @@ thread_create (const char *name, int priority,
 
   /* Initialize thread. */
   tid = t->tid = allocate_tid ();
-  print("allocated thread id: %d ", t->tid);
+  printf("allocated thread id: %d ", t->tid);
   init_thread (t, name, priority);
     
   /* Stack frame for kernel_thread(). */
