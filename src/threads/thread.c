@@ -772,6 +772,7 @@ running_thread (void)
 static bool
 is_thread (struct thread *t)
 {
+  if (t->magic != THREAD_MAGIC) printf("bad thread");
   return t != NULL && t->magic == THREAD_MAGIC;
 }
 
