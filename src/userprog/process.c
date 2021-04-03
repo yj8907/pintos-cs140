@@ -120,6 +120,7 @@ process_wait (tid_t child_tid)
 //        while(true) {}
 //    }
     while(!child_tcb->thread_exit) {
+        printf("waiting");
         thread_yield();
     }
     printf("finished");
