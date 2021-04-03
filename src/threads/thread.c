@@ -542,7 +542,7 @@ void wakeup_threads(void)
           }
       }
     intr_set_level (old_level);
-//}
+}
 
 /* Returns the name of the running thread. */
 const char *
