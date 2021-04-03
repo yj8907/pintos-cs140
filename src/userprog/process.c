@@ -121,8 +121,8 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
-//  struct thread *cur = thread_current ();
-//
+  struct thread *cur = thread_current ();
+
 //  /* if parent thread already exists, free tcb page
 //   set current process exit state as true */
 //  sema_down(&cur->tcb->sema);
