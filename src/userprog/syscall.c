@@ -151,7 +151,7 @@ sys_write(struct intr_frame *f, char* argv)
     argv += sizeof(buffer);
     
     int size = *(int*)argv;
-    
+    int ret;
     if(fd == 1) { // write to stdout
       putbuf(buffer, size);
       ret = size;
