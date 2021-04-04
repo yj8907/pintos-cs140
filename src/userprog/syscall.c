@@ -56,10 +56,10 @@ syscall_handler (struct intr_frame *f)
     memcpy(&print_output, (char*)(*argv), 2);
     
     char print_output2[4];
-    strlcpy(&print_output2, print_output, 3);
+//    strlcpy(&print_output2, print_output, 3);
 //    printf("buffer 0x%08x ", argv);
 //    printf("buffer 0x%08x ", (char*)(*argv));
-    printf("buffer %s ", print_output2);
+    printf("buffer %s ", print_output);
     
     argv = (char*)argv;
     argv += sizeof(argv);
