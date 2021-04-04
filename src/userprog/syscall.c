@@ -53,7 +53,7 @@ syscall_handler (struct intr_frame *f)
     argv += sizeof(fd);
     argv = (char**)argv;
     
-    memcpy(&print_output, (char*)(*argv), 2);
+    memcpy(print_output, (char*)(*argv), 2);
     
     char print_output2[4];
 //    strlcpy(&print_output2, print_output, 3);
