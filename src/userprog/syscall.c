@@ -5,27 +5,30 @@
 #include "threads/thread.h"
 
 static void syscall_handler (struct intr_frame *);
-static int load_arguments(void *esp, char*);
+static void load_arguments(void *esp, char*);
 
 /* syscall handlers */
-static void sys_halt(struct intr_frame *f, char* argv);
-static void sys_exit(struct intr_frame *f, char* argv);
-static void sys_exec(struct intr_frame *f, char* argv);
-static void sys_wait(struct intr_frame *f, char* argv);
-static void sys_create(struct intr_frame *f, char* argv);
-static void sys_remove(struct intr_frame *f, char* argv);
-static void sys_open(struct intr_frame *f, char* argv);
-static void sys_filesize(struct intr_frame *f, char* argv);
-static void sys_read(struct intr_frame *f, char* argv);
-static void sys_write(struct intr_frame *f, char* argv);
-static void sys_seek(struct intr_frame *f, char* argv);
-static void sys_tell(struct intr_frame *f, char* argv);
-static void sys_close(struct intr_frame *f, char* argv);
+static void sys_halt(struct intr_frame *f, char* args);
+static void sys_exit(struct intr_frame *f, char* args);
+static void sys_exec(struct intr_frame *f, char* args);
+static void sys_wait(struct intr_frame *f, char* args);
+static void sys_create(struct intr_frame *f, char* args);
+static void sys_remove(struct intr_frame *f, char* args);
+static void sys_open(struct intr_frame *f, char* args);
+static void sys_filesize(struct intr_frame *f, char* args);
+static void sys_read(struct intr_frame *f, char* args);
+static void sys_write(struct intr_frame *f, char* args);
+static void sys_seek(struct intr_frame *f, char* args);
+static void sys_tell(struct intr_frame *f, char* args);
+static void sys_close(struct intr_frame *f, char* args);
 
-static int
-load_arguments(void *esp, char* argv)
+static void
+load_arguments(int argc, char* args, char** argv)
 {
-    
+    for (int i = 0; i < argc; i++){
+        *argv = args;
+        args += sizeof(args);
+    }
 }
 
 void
@@ -94,65 +97,66 @@ syscall_handler (struct intr_frame *f)
 }
 
 static void
-sys_halt(struct intr_frame *f, char* argv)
+sys_halt(struct intr_frame *f, char* args)
 {
     
 };
 
 static void
-sys_exit(struct intr_frame *f, char* argv)
+sys_exit(struct intr_frame *f, char* args)
 {
     
 };
 
-static void sys_exec(struct intr_frame *f, char* argv)
+static void sys_exec(struct intr_frame *f, char* args)
 {
     
 };
 
-static void sys_wait(struct intr_frame *f, char* argv)
+static void sys_wait(struct intr_frame *f, char* args)
 {
     
 };
 
-static void sys_create(struct intr_frame *f, char* argv)
+static void sys_create(struct intr_frame *f, char* args)
 {
     
 };
 
-static void sys_remove(struct intr_frame *f, char* argv)
-{
-    
-};
-
-static void
-sys_open(struct intr_frame *f, char* argv)
+static void sys_remove(struct intr_frame *f, char* args)
 {
     
 };
 
 static void
-sys_filesize(struct intr_frame *f, char* argv)
+sys_open(struct intr_frame *f, char* args)
 {
     
 };
 
 static void
-sys_read(struct intr_frame *f, char* argv)
+sys_filesize(struct intr_frame *f, char* args)
 {
     
 };
 
 static void
-sys_write(struct intr_frame *f, char* argv)
+sys_read(struct intr_frame *f, char* args)
 {
-    int fd = *(int*)argv;
-    argv += sizeof(fd);
     
-    const void* buffer = *(char**)argv;
-    argv += sizeof(buffer);
+};
+
+static void
+sys_write(struct intr_frame *f, char* args)
+{
+    int numArg = 3;
+    char *argv[numArg];
+    load_arguments(numArg, args, argv);
     
-    int size = *(int*)argv;
+    int fd = *(int*)argv[0];
+    const void* buffer = *(char**)argv[1];
+    int size = *(int*)argv[2];
+    
     int ret;
     if(fd == 1) { // write to stdout
       putbuf(buffer, size);
@@ -162,19 +166,19 @@ sys_write(struct intr_frame *f, char* argv)
 };
 
 static void
-sys_seek(struct intr_frame *f, char* argv)
+sys_seek(struct intr_frame *f, char* args)
 {
     
 };
 
 static void
-sys_tell(struct intr_frame *f, char* argv)
+sys_tell(struct intr_frame *f, char* args)
 {
     
 };
 
 static void
-sys_close(struct intr_frame *f, char* argv)
+sys_close(struct intr_frame *f, char* args)
 {
     
 };
