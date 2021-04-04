@@ -26,6 +26,7 @@ static void
 load_arguments(int argc, char* args, char** argv)
 {
     for (int i = 0; i < argc; i++){
+        memcpy(argv, &args, sizeof(args));
         *argv = args;
         args += sizeof(args);
         argv += 1;
@@ -152,7 +153,7 @@ sys_write(struct intr_frame *f, char* args)
 {
     int numArg = 3;
     char *argv[numArg];
-//    load_arguments(numArg, args, argv);
+    load_arguments(numArg, args, argv);
     
     int fd = *(int*)args;
     args += sizeof(fd);
