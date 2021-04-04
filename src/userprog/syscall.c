@@ -53,7 +53,8 @@ syscall_handler (struct intr_frame *f)
     argv += sizeof(fd);
     argv = (char**)argv;
 //    strlcpy(&print_output, *argv, 2);
-    
+    printf("buffer 0x%08x ", argv);
+    printf("buffer 0x%08x ", (char*)(*argv));
     printf("buffer %s ", (char*)(*argv));
     
     argv = (char*)argv;
