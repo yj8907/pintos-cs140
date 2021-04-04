@@ -155,7 +155,7 @@ sys_write(struct intr_frame *f, char* args)
     char *argv[numArg];
     load_arguments(numArg, args, argv);
     
-    int fd = *(int*)args;
+//    int fd = *(int*)args;
     args += sizeof(fd);
     
     const void* buffer = *(char**)args;
