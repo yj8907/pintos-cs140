@@ -28,6 +28,7 @@ load_arguments(int argc, char* args, char** argv)
     for (int i = 0; i < argc; i++){
         *argv = args;
         args += sizeof(args);
+        argv += 1;
     }
 }
 
@@ -151,11 +152,19 @@ sys_write(struct intr_frame *f, char* args)
 {
     int numArg = 3;
     char *argv[numArg];
-    load_arguments(numArg, args, argv);
+//    load_arguments(numArg, args, argv);
     
-    int fd = *(int*)argv[0];
-    const void* buffer = *(char**)argv[1];
-    int size = *(int*)argv[2];
+    int fd = *(int*)args;
+    args += sizeof(fd);
+    
+    const void* buffer = *(char**)args;
+    args += sizeof(buffer);
+    
+    int size = *(int*)args;
+    
+//    int fd = *(int*)argv[0];
+//    const void* buffer = *(char**)argv[1];
+//    int size = *(int*)argv[2];
     
     int ret;
     if(fd == 1) { // write to stdout
