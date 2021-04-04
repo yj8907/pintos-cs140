@@ -44,27 +44,6 @@ syscall_handler (struct intr_frame *f)
   char *argv = (char*)f->esp;
   argv += sizeof(syscall_no);
         
-  printf("syscall no %d", syscall_no);
-    
-    int fd = *((int*)argv);
-    printf("fd: %d ", fd);
-    
-    char print_output[4];
-    argv += sizeof(fd);
-    argv = (char**)argv;
-    
-    memcpy(print_output, (char*)(*argv), 2);
-
-//    strlcpy(&print_output2, print_output, 3);
-//    printf("buffer 0x%08x ", argv);
-//    printf("buffer 0x%08x ", (char*)(*argv));
-    printf("buffer %d ", (*(char*)print_output));
-    
-    argv = (char*)argv;
-    argv += sizeof(argv);
-    int sz = *((int*)argv);
-    printf("size %d ", sz);
-    
   thread_exit();
  
   switch ((syscall_no)) {
