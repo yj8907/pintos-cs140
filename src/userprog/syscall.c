@@ -43,8 +43,6 @@ syscall_handler (struct intr_frame *f)
   
   char *argv = (char*)f->esp;
   argv += sizeof(syscall_no);
-        
-  thread_exit();
  
   switch ((syscall_no)) {
       case SYS_HALT:
@@ -146,6 +144,18 @@ sys_read(struct intr_frame *f, char* argv)
 static void
 sys_write(struct intr_frame *f, char* argv)
 {
+    int fd = *(int*)argv;
+    argv += sizeof(fd);
+    
+    const void* buffer = argv;
+    argv += sizeof(buffer);
+    
+    int size = *(int*)argv;
+    
+    if(fd == 1) { // write to stdout
+      putbuf(buffer, size);
+      ret = size;
+    }
     
 };
 
