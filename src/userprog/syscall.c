@@ -148,7 +148,7 @@ sys_write(struct intr_frame *f, char* argv)
     int fd = *(int*)argv;
     argv += sizeof(fd);
     
-    const void* buffer = argv;
+    const void* buffer = *(char**)argv;
     argv += sizeof(buffer);
     
     int size = *(int*)argv;
