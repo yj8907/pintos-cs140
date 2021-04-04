@@ -155,18 +155,18 @@ sys_write(struct intr_frame *f, char* args)
     char *argv[numArg];
     load_arguments(numArg, args, argv);
     
-    int fd = *(int*)args;
-    args += sizeof(fd);
+//    int fd = *(int*)args;
+//    args += sizeof(fd);
+//
+//    const void* buffer = *(char**)args;
+//    args += sizeof(buffer);
+//    
+//    int size = *(int*)args;
     
-    const void* buffer = *(char**)args;
-    args += sizeof(buffer);
-    
-    int size = *(int*)args;
-    
-//    int fd = *(int*)argv[0];
-    fd = *(int*)argv[0];
-//    const void* buffer = *(char**)argv[1];
-//    int size = *(int*)argv[2];
+    int fd = *(int*)argv[0];
+//    fd = *(int*)argv[0];
+    const void* buffer = *(char**)argv[1];
+    int size = *(int*)argv[2];
     
     int ret;
     if(fd == 1) { // write to stdout
