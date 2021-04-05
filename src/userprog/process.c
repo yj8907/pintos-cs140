@@ -163,7 +163,7 @@ process_exit (void)
   if (!list_empty(&cur->fildes)){
       struct list_elem* e = list_front(&cur->fildes);
       struct file_descriptor* fd;
-      while (e! = list_tail(&cur->fildes)){
+      while (e != list_tail(&cur->fildes)){
           fd = list_entry(e, struct file_descriptor, elem);
           file_close(fd->fp);
           palloc_free_page(fd); /* free page */
