@@ -180,7 +180,7 @@ void thread_yield (void);
 
 /* maintain file descriptor table */
 int allocate_fd (struct file*);
-void fetch_file(int, struct file*);
+struct file* fetch_file(int);
 
 /* Performs some operation on thread t, given auxiliary data AUX. */
 typedef void thread_action_func (struct thread *t, void *aux);

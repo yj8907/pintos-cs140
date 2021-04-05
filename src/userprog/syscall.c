@@ -6,27 +6,60 @@
 #include "threads/thread.h"
 #include "filesys/file.h"
 
+static int argc_max = 3;
+
+/* Reads a byte at user virtual address UADDR.
+   UADDR must be below PHYS_BASE.
+   Returns the byte value if successful, -1 if a segfault
+   occurred. */
+static int
+get_user (const uint8_t *uaddr)
+{
+  int result;
+  asm ("movl $1f, %0; movzbl %1, %0; 1:"
+       : "=&a" (result) : "m" (*uaddr));
+  return result;
+}
+ 
+/* Writes BYTE to user address UDST.
+   UDST must be below PHYS_BASE.
+   Returns true if successful, false if a segfault occurred. */
+static bool
+put_user (uint8_t *udst, uint8_t byte)
+{
+  int error_code;
+  asm ("movl $1f, %0; movb %b2, %1; 1:"
+       : "=&a" (error_code), "=m" (*udst) : "q" (byte));
+  return error_code != -1;
+}
+
 static void syscall_handler (struct intr_frame *);
 static void load_arguments(int, char*, char**);
 
 /* syscall handlers */
-static void sys_halt(struct intr_frame *f, char* args);
-static void sys_exit(struct intr_frame *f, char* args);
-static void sys_exec(struct intr_frame *f, char* args);
-static void sys_wait(struct intr_frame *f, char* args);
-static void sys_create(struct intr_frame *f, char* args);
-static void sys_remove(struct intr_frame *f, char* args);
-static void sys_open(struct intr_frame *f, char* args);
-static void sys_filesize(struct intr_frame *f, char* args);
-static void sys_read(struct intr_frame *f, char* args);
-static void sys_write(struct intr_frame *f, char* args);
-static void sys_seek(struct intr_frame *f, char* args);
-static void sys_tell(struct intr_frame *f, char* args);
-static void sys_close(struct intr_frame *f, char* args);
+static void sys_halt(struct void *eax, char** argv);
+static void sys_exit(struct void *eax, char** argv);
+static void sys_exec(struct void *eax, char** argv);
+static void sys_wait(struct void *eax, char** argv);
+static void sys_create(struct void *eax, char** argv);
+static void sys_remove(struct void *eax, char** argv);
+static void sys_open(struct void *eax, char** argv);
+static void sys_filesize(struct void *eax, char** argv);
+static void sys_read(struct void *eax, char** argv);
+static void sys_write(struct void *eax, char** argv);
+static void sys_seek(struct void *eax, char** argv);
+static void sys_tell(struct void *eax, char** argv);
+static void sys_close(struct void *eax, char** argv);
 
 static void
 load_arguments(int argc, char* args, char** argv)
 {
+    if (!is_user_vaddr(args) || get_user(args) == -1) {
+        int status = -1;
+        memcpy(argv, &status, sizeof(status));
+        sys_exit(NULL, argv);
+    }
+        
     for (int i = 0; i < argc; i++){
         memcpy(argv, &args, sizeof(args));
         *argv = args;
@@ -46,48 +79,62 @@ syscall_handler (struct intr_frame *f)
 {
   int syscall_no = *((int*)f->esp);
   
-  char *argv = (char*)f->esp;
-  argv += sizeof(syscall_no);
- 
+  char *args = (char*)f->esp;
+  args += sizeof(syscall_no);
+  
+  void *eax = f->eax;
+    
+  int argc = 1;
+  char *argv[argc_max];
+  load_arguments(argc, args, argv);
+    
   switch ((syscall_no)) {
       case SYS_HALT:
-          sys_halt(f, argv);
+          sys_halt(eax, argv);
           break;
       case SYS_EXIT:
-          sys_exit(f, argv);
+          sys_exit(eax, argv);
           break;
       case SYS_EXEC:
-          sys_exec(f, argv);
+          sys_exec(eax, argv);
           break;
       case SYS_WAIT:
-          sys_wait(f, argv);
+          sys_wait(eax, argv);
           break;
       case SYS_CREATE:
-          sys_create(f, argv);
+          argc = 2;
+          load_arguments(argc, args, argv);
+          sys_create(eax, argv);
           break;
       case SYS_REMOVE:
-          sys_remove(f, argv);
+          sys_remove(eax, argv);
           break;
       case SYS_OPEN:
-          sys_open(f, argv);
+          sys_open(eax, argv);
           break;
       case SYS_FILESIZE:
-          sys_filesize(f, argv);
+          sys_filesize(eax, argv);
           break;
       case SYS_READ:
-          sys_read(f, argv);
+          argc = 3;
+          load_arguments(argc, args, argv);
+          sys_read(eax, argv);
           break;
       case SYS_WRITE:
-          sys_write(f, argv);
+          argc = 3;
+          load_arguments(argc, args, argv);
+          sys_write(eax, argv);
           break;
       case SYS_SEEK:
-          sys_seek(f, argv);
+          argc = 2;
+          load_arguments(argc, args, argv);
+          sys_seek(eax, argv);
           break;
       case SYS_TELL:
-          sys_tell(f, argv);
+          sys_tell(eax, argv);
           break;
       case SYS_CLOSE:
-          sys_close(f, argv);
+          sys_close(eax, argv);
           break;
                 
       default:
@@ -97,37 +144,28 @@ syscall_handler (struct intr_frame *f)
 }
 
 static void
-sys_halt(struct intr_frame *f, char* args)
+sys_halt(struct void *eax, char** argv)
 {
     shutdown_power_off();
 };
 
 static void
-sys_exit(struct intr_frame *f, char* args)
+sys_exit(struct void *eax, char** argv)
 {
-    
-    int argc = 1;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
+
     int status = *(int*)argv[0];
     
     struct thread *t = thread_current();
-    printf ("%s: exit(%d)\n", t->name, status);
+    printf ("%s: exit(%d)\n", t->thread_name(), status);
     t->tcb->exit_status = status;
     thread_exit();
 };
 
-static void sys_exec(struct intr_frame *f, char* args)
+static void sys_exec(struct void *eax, char** argv)
 {
     int ret;
     
-    int argc = 1;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
     const char* cmd_line = *(char**)argv[0];
-    
     tid_t child_tid = process_execute(cmd_line);
     
     /* fetch child thread tcb */
@@ -146,23 +184,17 @@ static void sys_exec(struct intr_frame *f, char* args)
     
 };
 
-static void sys_wait(struct intr_frame *f, char* args)
+static void sys_wait(struct void *eax, char** argv)
 {
-    int argc = 1;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
+
     tid_t child_tid = *(int*)argv[0];
-    
     int ret = process_wait(child_tid);
     
 };
 
-static void sys_create(struct intr_frame *f, char* args)
+static void sys_create(struct void *eax, char** argv)
 {
-    int argc = 2;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
+
     const char* filename = *(char**)argv[0];
     uint32_t initial_size = *(uint32_t*)argv[1];
     
@@ -170,24 +202,17 @@ static void sys_create(struct intr_frame *f, char* args)
     
 };
 
-static void sys_remove(struct intr_frame *f, char* args)
+static void sys_remove(struct void *eax, char** argv)
 {
-    int argc = 1;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
+
     const char* filename = *(char**)argv[0];
     
     bool ret = filesys_remove(filename);
 };
 
 static void
-sys_open(struct intr_frame *f, char* args)
+sys_open(struct void *eax, char** argv)
 {
-    int argc = 1;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
     const char* filename = *(char**)argv[0];
         
     int ret = -1;
@@ -200,36 +225,25 @@ sys_open(struct intr_frame *f, char* args)
 };
 
 static void
-sys_filesize(struct intr_frame *f, char* args)
+sys_filesize(struct void *eax, char** argv)
 {
-    int argc = 1;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
     int fd = *(int*)argv[0];
     
-    struct file* fp;
-    fetch_file(fd, fp);
-    
+    struct file* fp = fetch_file(fd);
     int ret = fp == NULL ? 0 : file_length(fp);
     
 };
 
 static void
-sys_read(struct intr_frame *f, char* args)
+sys_read(struct void *eax, char** argv)
 {
-    int argc = 3;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
     int fd = *(int*)argv[0];
     const char* buffer = *(char**)argv[1];
     int size = *(int*)argv[2];
     
     int bytes_read = 0;
     if (fd != 0){
-        struct file* fp;
-        fetch_file(fd, fp);
+        struct file* fp = fetch_file(fd);
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
     } else {
         while(bytes_read < size) {
@@ -243,12 +257,8 @@ sys_read(struct intr_frame *f, char* args)
 };
 
 static void
-sys_write(struct intr_frame *f, char* args)
+sys_write(struct void *eax, char** argv)
 {
-    int argc = 3;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
     int fd = *(int*)argv[0];
     const void* buffer = *(char**)argv[1];
     int size = *(int*)argv[2];
@@ -258,54 +268,38 @@ sys_write(struct intr_frame *f, char* args)
       putbuf(buffer, size);
       bytes_write = size;
     } else {
-        struct file* fp;
-        fetch_file(fd, fp);
+        struct file* fp = fetch_file(fd);
         bytes_write = fp == NULL ? 0 : file_write(fp, buffer, size);
     }
     
 };
 
 static void
-sys_seek(struct intr_frame *f, char* args)
+sys_seek(struct void *eax, char** argv)
 {
-    int argc = 2;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
     int fd = *(int*)argv[0];
     uint32_t position = *(int*)argv[1];
     
-    struct file* fp;
-    fetch_file(fd, fp);
+    struct file* fp = fetch_file(fd);
     file_seek(fp, position);
     
 };
 
 static void
-sys_tell(struct intr_frame *f, char* args)
+sys_tell(struct void *eax, char** argv)
 {
-    int argc = 1;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
     int fd = *(int*)argv[0];
-    struct file* fp;
-    fetch_file(fd, fp);
+    struct file* fp = fetch_file(fd);
     
     int ret;
     if (fp != NULL) ret = file_tell(fp);
 };
 
 static void
-sys_close(struct intr_frame *f, char* args)
+sys_close(struct void *eax, char** argv)
 {
-    int argc = 1;
-    char *argv[argc];
-    load_arguments(argc, args, argv);
-    
     int fd = *(int*)argv[0];
-    struct file* fp;
-    fetch_file(fd, fp);
+    struct file* fp = fetch_file(fd);
     
     if (fp != NULL) file_close(fp);
     
