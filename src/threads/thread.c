@@ -981,16 +981,16 @@ allocate_tid (void)
 
 /* Allocate file descriptor for a new file. */
 int
-allocate_fd (struct file*)
+allocate_fd (struct file* fp)
 {
   struct file_descriptor *fd =  palloc_get_page(PAL_ZERO);
   struct thread *cur = thread_current();
   
-  fd->fp = file;
+  fd->fp = fp;
   fd->fd_no = cur->fd_no++;
   list_push_back(&cur->fildes, &fd->elem);
   
-  return fd-fd_no;
+  return fd->fd_no;
         
 }
 
