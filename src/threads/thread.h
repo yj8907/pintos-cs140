@@ -142,7 +142,7 @@ struct thread
     struct list child_list;
       
     struct list fildes;
-    int fd_no = 2;
+    int fd_no;
 #endif
 
     /* Owned by thread.c. */
