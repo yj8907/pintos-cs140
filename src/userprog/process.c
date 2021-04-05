@@ -292,6 +292,7 @@ load_argument(void *esp, char* saveptr)
        strlcpy(esp, token, strsize);
        argv_addr[argc] = esp;
    }
+   argc++; /* account for null sentinel */
 
    /* round esp to multiples of 4 */
    uint32_t ofs = ((uint32_t)(void*)esp) % 4;
