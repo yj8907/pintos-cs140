@@ -108,6 +108,7 @@ sys_halt(struct intr_frame *f, char* args)
 static void
 sys_exit(struct intr_frame *f, char* args)
 {
+    printf("exiting");
     int argc = 1;
     char *argv[argc];
     load_arguments(argc, args, argv);
