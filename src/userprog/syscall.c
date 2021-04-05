@@ -44,7 +44,7 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f)
 {
-  
+    printf("syscall");
   int syscall_no = *((int*)f->esp);
   
   char *argv = (char*)f->esp;
