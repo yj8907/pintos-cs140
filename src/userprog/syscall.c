@@ -156,7 +156,7 @@ sys_exit(void *eax, char** argv)
     int status = *(int*)argv[0];
     
     struct thread *t = thread_current();
-    printf ("%s: exit(%d)\n", thread_name(t), status);
+    printf ("%s: exit(%d)\n", thread_name(), status);
     t->tcb->exit_status = status;
     thread_exit();
 };
