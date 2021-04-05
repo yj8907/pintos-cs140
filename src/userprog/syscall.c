@@ -105,7 +105,7 @@ sys_halt(struct intr_frame *f, char* args)
 static void
 sys_exit(struct intr_frame *f, char* args)
 {
-    while(true);
+    
     int argc = 1;
     char *argv[argc];
     load_arguments(argc, args, argv);
@@ -113,6 +113,7 @@ sys_exit(struct intr_frame *f, char* args)
     int status = *(int*)argv[0];
     
     struct thread *t = thread_current();
+    printf ("%s: exit(%d)\n", t->name, status);
     t->tcb->exit_status = status;
     thread_exit();
 };
