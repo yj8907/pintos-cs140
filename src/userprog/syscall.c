@@ -35,6 +35,7 @@ put_user (uint8_t *udst, uint8_t byte)
 
 static void syscall_handler (struct intr_frame *);
 static void load_arguments(int, char*, char**);
+static void validate_vaddr(void *addr);
 
 /* syscall handlers */
 static void sys_halt(void *eax, char** argv);
@@ -52,7 +53,7 @@ static void sys_tell(void *eax, char** argv);
 static void sys_close(void *eax, char** argv);
 
 static void
-load_arguments(int argc, char* args, char** argv)
+validate_vaddr(void *addr)
 {
     if (!is_user_vaddr(args)) printf("bad pointer");
     
@@ -61,6 +62,13 @@ load_arguments(int argc, char* args, char** argv)
         memcpy(argv, &status, sizeof(status));
         sys_exit(NULL, argv);
     }
+    
+}
+
+static void
+load_arguments(int argc, char* args, char** argv)
+{
+    validate_vaddr(args);
         
     for (int i = 0; i < argc; i++){
         memcpy(argv, &args, sizeof(args));
@@ -82,6 +90,7 @@ syscall_handler (struct intr_frame *f)
   int syscall_no = *((int*)f->esp);
   
   char *args = (char*)f->esp;
+  validate_vaddr(args);
   args += sizeof(syscall_no);
   
   void *eax = f->eax;
