@@ -285,9 +285,12 @@ load_argument(void *esp, char* file_name)
     
     /* extract file arguments */
    esp = (char*)(esp);
-   for (argc = 0, argstr = file_name; argc < max_argc;argc++, argstr=NULL){
+   
+   argstr = file_name;
+   for (argc = 0; argc < max_argc;argc++){
        token = strtok_r(argstr, " ", &saveptr);
        if (token == NULL) break;
+       argstr = NULL;
        printf("token %s ", token);
        strsize = strlen(token) + 1;
        esp -= strsize;
