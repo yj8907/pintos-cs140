@@ -2,7 +2,6 @@
 #define USERPROG_SYSCALL_H
 
 #include "threads/thread.h"
-#include "filesys/file.h"
 #include "filesys/filesys.h"
 #include "devices/shutdown.h"
 #include "devices/input.h"
