@@ -54,6 +54,8 @@ static void sys_close(void *eax, char** argv);
 static void
 load_arguments(int argc, char* args, char** argv)
 {
+    if (!is_user_vaddr(args)) printf("bad pointer");
+    
     if (!is_user_vaddr(args) || get_user(args) == -1) {
         int status = -1;
         memcpy(argv, &status, sizeof(status));
