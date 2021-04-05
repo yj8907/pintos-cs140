@@ -287,7 +287,8 @@ sys_tell(struct intr_frame *f, char* args)
     int fd = *(int*)argv[0];
     struct file* fp = fetch_file(fd);
     
-    if (fp != NULL) int ret = fp->pos;
+    int ret;
+    if (fp != NULL) ret = fp->pos;
 };
 
 static void
