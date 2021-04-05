@@ -70,12 +70,15 @@ start_process (void *file_name_)
     
   /* push arguments */
   if_.esp = load_argument(if_.esp, saveptr);
+  
+  thread_current()->tcb->loaded = success;
+  sema_up(&thread_current()->tcb->sema);
     
   /* If load failed, quit. */
   palloc_free_page (file_name);
   if (!success) 
     thread_exit ();
-
+  
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
      threads/intr-stubs.S).  Because intr_exit takes all of its
@@ -155,7 +158,18 @@ process_exit (void)
         }
     }
   }
-        
+   
+  /* close files and free page for fd */
+  if (!list_empty(&cur->fildes)){
+      struct list_elem* e = list_front(&cur->fildes);
+      struct file_descriptor* fd;
+      while (e! = list_tail(&cur->fildes)){
+          fd = list_entry(e, struct file_descriptor, elem);
+          file_close(fd->fp);
+          palloc_free_page(fd); /* free page */
+      }
+  }
+    
   uint32_t *pd;
   
   /* Destroy the current process's page directory and switch back

@@ -5,6 +5,7 @@
 #include <list.h>
 #include <stdint.h>
 #include "threads/synch.h"
+#include "filesys/file.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -42,6 +43,7 @@ struct thread_control_block {
     struct list_elem elem;
     
     int exit_status;
+    bool loaded;
     bool thread_exit;
     bool parent_exit;
 };
@@ -138,7 +140,9 @@ struct thread
     uint32_t *pagedir;                  /* Page directory. */
     struct thread_control_block *tcb;
     struct list child_list;
-    
+      
+    struct list fildes;
+    int fd_no = 2;
 #endif
 
     /* Owned by thread.c. */
@@ -172,6 +176,10 @@ const char *thread_name (void);
 
 void thread_exit (void) NO_RETURN;
 void thread_yield (void);
+
+/* maintain file descriptor table */
+int allocate_fd (struct file*);
+struct file* fetch_file(int);
 
 /* Performs some operation on thread t, given auxiliary data AUX. */
 typedef void thread_action_func (struct thread *t, void *aux);

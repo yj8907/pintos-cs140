@@ -788,15 +788,18 @@ static void
 init_thread_control_block(struct thread *t, bool setup_parent)
 {
     list_init(&t->child_list);
-      
+    list_init(&t->fildes);
+    
     t->tcb = palloc_get_page (PAL_ZERO);
 
     /* init sema for sync */
-    sema_init(&t->tcb->sema, 1);
+    sema_init(&t->tcb->sema, 0);
       
     /* establish parent/child relatioship */
     t->tcb->parent_exit = false;
     t->tcb->thread_exit = false;
+    t->tcb->loaded = false;
+    
     t->tcb->tid = t->tid;
     if (setup_parent && strcmp(t->name, "idle") != 0) {
         struct thread* parent_thread = thread_current();
@@ -972,6 +975,42 @@ allocate_tid (void)
 
   return tid;
 }
+
+/* Allocate file descriptor for a new file. */
+int
+allocate_fd (struct file*)
+{
+  struct file_descriptor *fd =  palloc_get_page(PAL_ZERO);
+  struct thread *cur = thread_current();
+  
+  fd->fp = file;
+  fd->fd_no = cur->fd_no++;
+  list_push_back(&cur->fildes, &fd->elem);
+  
+  return fd-fd_no;
+        
+}
+
+/* Fetch file pointer for file descriptor. */
+struct file*
+fetch_file(int fd_no)
+{
+    struct thread *cur = thread_current();
+    struct file_descriptor *fd;
+    
+    struct list_elem *e = list_front($cur->fildes);
+    while (e != list_tail(&cur->fildes)) {
+        fd = list_entry(e, struct file_descriptor, elem);
+        if (fd->fd_no == fd_no) break;
+        e = list_next(e);
+    }
+        
+    if (e != list_tail(&cur->fildes))
+        return fd->fp;
+    else
+        return NULL;
+};
+
 
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
