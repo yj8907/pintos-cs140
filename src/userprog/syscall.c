@@ -142,7 +142,7 @@ static void sys_exec(struct intr_frame *f, char* args)
     }
     ASSERT(e != list_tail(&cur->child_list));
             
-    sema_down(child_tcb->sema);
+    sema_down(&child_tcb->sema);
     ret = child_tcb->loaded ? child_tid : -1;
     
 };
@@ -179,7 +179,7 @@ static void sys_remove(struct intr_frame *f, char* args)
     
     const char* filename = *(char**)argv[0];
     
-    bool ret = filesys_remove(filename, initial_size);
+    bool ret = filesys_remove(filename);
 };
 
 static void
@@ -190,13 +190,12 @@ sys_open(struct intr_frame *f, char* args)
     load_arguments(argc, args, argv);
     
     const char* filename = *(char**)argv[0];
-    struct file* fp =  filesys_open(filename);
-    
+        
     int ret = -1;
-    if (file == NULL) return;
+    if (fp == NULL) return;
     
     struct file *fp = filesys_open(filename);
-    ret = thread_current()->allocate_fd(file);
+    ret = allocate_fd(fp);
     
 };
 
@@ -208,7 +207,7 @@ sys_filesize(struct intr_frame *f, char* args)
     load_arguments(argc, args, argv);
     
     int fd = *(int*)argv[0];
-    struct file* fp = thread_current()->fetch_file(fd);
+    struct file* fp = fetch_file(fd);
     
     int ret = fp == NULL ? 0 : file_length(fp);
     
@@ -227,7 +226,7 @@ sys_read(struct intr_frame *f, char* args)
     
     int bytes_read = 0;
     if (fd != 0){
-        struct file* fp = thread_current()->fetch_file(fd);
+        struct file* fp = fetch_file(fd);
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
     } else {
         while(bytes_read < size) {
@@ -256,7 +255,7 @@ sys_write(struct intr_frame *f, char* args)
       putbuf(buffer, size);
       bytes_write = size;
     } else {
-        struct file* fp = thread_current()->fetch_file(fd);
+        struct file* fp = fetch_file(fd);
         bytes_write = fp == NULL ? 0 : file_write(fp, buffer, size);
     }
     
@@ -272,7 +271,7 @@ sys_seek(struct intr_frame *f, char* args)
     int fd = *(int*)argv[0];
     uint32_t position = *(int*)argv[1];
     
-    struct file* fp = thread_current()->fetch_file(fd);
+    struct file* fp = fetch_file(fd);
     file_seek(fp, position);
     
 };
