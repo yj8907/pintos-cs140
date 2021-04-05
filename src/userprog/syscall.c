@@ -192,9 +192,10 @@ sys_open(struct intr_frame *f, char* args)
     const char* filename = *(char**)argv[0];
         
     int ret = -1;
-    if (fp == NULL) return;
     
     struct file *fp = filesys_open(filename);
+    if (fp == NULL) return;
+    
     ret = allocate_fd(fp);
     
 };
@@ -284,7 +285,7 @@ sys_tell(struct intr_frame *f, char* args)
     load_arguments(argc, args, argv);
     
     int fd = *(int*)argv[0];
-    struct file* fp = thread_current()->fetch_file(fd);
+    struct file* fp = fetch_file(fd);
     
     int ret = fp->pos;
 };
@@ -297,7 +298,7 @@ sys_close(struct intr_frame *f, char* args)
     load_arguments(argc, args, argv);
     
     int fd = *(int*)argv[0];
-    struct file* fp = thread_current()->fetch_file(fd);
+    struct file* fp = fetch_file(fd);
     if (fp != NULL) file_close(fp);
     
 };
