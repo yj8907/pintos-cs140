@@ -212,7 +212,7 @@ sys_filesize(struct intr_frame *f, char* args)
     struct file* fp;
     fetch_file(fd, fp);
     
-    int ret = fp == NULL ? 0  = : file_length(fp);
+    int ret = fp == NULL ? 0 : file_length(fp);
     
 };
 
