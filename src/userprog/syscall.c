@@ -44,7 +44,6 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f)
 {
-  printf ("system call!\n");
   
   int syscall_no = *((int*)f->esp);
   
@@ -209,6 +208,7 @@ sys_filesize(struct intr_frame *f, char* args)
     load_arguments(argc, args, argv);
     
     int fd = *(int*)argv[0];
+    
     struct file* fp;
     fetch_file(fd, fp);
     
