@@ -69,7 +69,7 @@ start_process (void *file_name_)
   success = load (token, &if_.eip, &if_.esp);
     
   /* push arguments */
-  if_.esp = load_argument(if_.esp, file_name);
+  if_.esp = load_argument(if_.esp, saveptr);
   
   thread_current()->tcb->loaded = success;
   sema_up(&thread_current()->tcb->sema);
@@ -276,17 +276,15 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           bool writable);
 
 void*
-load_argument(void *esp, char* file_name)
+load_argument(void *esp, char* saveptr)
 {
-    char* saveptr;
     char* argv_addr[max_argc];
     char *argstr, *token;
     int argc, strsize;
     
     /* extract file arguments */
    esp = (char*)(esp);
-   
-   for (argc = 0, argstr = file_name; argc < max_argc;argc++, argstr=NULL){
+   for (argc = 0, argstr = NULL; argc < max_argc;argc++){
        token = strtok_r(argstr, " ", &saveptr);
        if (token == NULL) break;
        strsize = strlen(token) + 1;
