@@ -22,7 +22,7 @@ static int max_argc = 128;
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
-static void* load_argument(void *esp, char*);
+static void* load_argument(void *esp, char*, char* saveptr);
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -64,14 +64,12 @@ start_process (void *file_name_)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
 
-  char *token, *saveptr, *file_name2;
-  file_name2 = file_name;
-    
+  char *token, *saveptr;
   token = strtok_r(file_name, " ", &saveptr);
   success = load (token, &if_.eip, &if_.esp);
     
   /* push arguments */
-  if_.esp = load_argument(if_.esp, file_name2);
+  if_.esp = load_argument(if_.esp, token, saveptr);
   
   thread_current()->tcb->loaded = success;
   sema_up(&thread_current()->tcb->sema);
@@ -278,9 +276,8 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           bool writable);
 
 void*
-load_argument(void *esp, char* file_name)
+load_argument(void *esp, char* binary, char* saveptr)
 {
-    char* saveptr;
     char* argv_addr[max_argc];
     char *argstr, *token;
     int argc, strsize;
@@ -288,7 +285,13 @@ load_argument(void *esp, char* file_name)
     /* extract file arguments */
    esp = (char*)(esp);
     
-   for (argc = 0, argstr = file_name; argc < max_argc;argc++, argstr=NULL){
+    argc = 0;
+    strsize = strlen(binary) + 1;
+    esp -= strsize;
+    strlcpy(esp, binary, strsize);
+    argv_addr[argc] = esp;
+    
+   for (argc = 1, argstr = NULL; argc < max_argc;argc++){
        token = strtok_r(argstr, " ", &saveptr);
        if (token == NULL) break;
        strsize = strlen(token) + 1;
