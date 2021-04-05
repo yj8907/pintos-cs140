@@ -4,7 +4,6 @@
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
-#include "filesys/file.c"
 
 static void syscall_handler (struct intr_frame *);
 static void load_arguments(int, char*, char**);
