@@ -42,7 +42,9 @@ process_execute (const char *file_name)
   strlcpy (fn_copy, file_name, PGSIZE);
 
   /* Create a new thread to execute FILE_NAME. */
-  tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
+  char *token, *saveptr;
+  token = strtok_r(file_name, " ", &saveptr);
+  tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
         
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
@@ -66,7 +68,6 @@ start_process (void *file_name_)
 
   char *token, *saveptr;
   token = strtok_r(file_name, " ", &saveptr);
-  thread_current()->name = token;
   
   success = load (token, &if_.eip, &if_.esp);
       
