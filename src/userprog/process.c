@@ -66,9 +66,10 @@ start_process (void *file_name_)
 
   char *token, *saveptr;
   token = strtok_r(file_name, " ", &saveptr);
+  thread_current()->name = token;
+  
   success = load (token, &if_.eip, &if_.esp);
-    
-  printf("token %s ", token);
+      
   /* push arguments */
   if_.esp = load_argument(if_.esp, token, saveptr);
   
