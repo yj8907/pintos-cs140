@@ -44,7 +44,6 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f)
 {
-    printf("syscall");
   int syscall_no = *((int*)f->esp);
   
   char *argv = (char*)f->esp;
@@ -106,6 +105,7 @@ sys_halt(struct intr_frame *f, char* args)
 static void
 sys_exit(struct intr_frame *f, char* args)
 {
+    while(true);
     int argc = 1;
     char *argv[argc];
     load_arguments(argc, args, argv);
