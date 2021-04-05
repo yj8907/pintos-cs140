@@ -55,15 +55,14 @@ static void sys_close(void *eax, char** argv);
 static void
 validate_vaddr(void *addr)
 {
-    if (!is_user_vaddr(args)) printf("bad pointer");
+    if (!is_user_vaddr(addr)) printf("bad pointer");
     
-    if (!is_user_vaddr(args) || get_user(args) == -1) {
+    if (!is_user_vaddr(addr) || get_user(addr) == -1) {
         int status = -1;
         char *argv[argc_max];
         memcpy(argv, &status, sizeof(status));
         sys_exit(NULL, argv);
     }
-    
 }
 
 static void
