@@ -996,8 +996,8 @@ allocate_fd (struct file* fp)
 }
 
 /* Fetch file pointer for file descriptor. */
-struct file*
-fetch_file(int fd_no)
+void
+fetch_file(int fd_no, struct file* fp)
 {
     struct thread *cur = thread_current();
     struct file_descriptor *fd;
@@ -1008,11 +1008,9 @@ fetch_file(int fd_no)
         if (fd->fd_no == fd_no) break;
         e = list_next(e);
     }
-        
-    if (e != list_tail(&cur->fildes))
-        return fd->fp;
-    else
-        return NULL;
+    
+    fp = e != list_tail(&cur->fildes) ? fd->fp : NULL;
+    
 };
 
 

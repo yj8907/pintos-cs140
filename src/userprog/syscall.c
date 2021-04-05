@@ -209,9 +209,10 @@ sys_filesize(struct intr_frame *f, char* args)
     load_arguments(argc, args, argv);
     
     int fd = *(int*)argv[0];
-    struct file* fp = fetch_file(fd);
+    struct file* fp;
+    fetch_file(fd, fp);
     
-    int ret = fp == NULL ? 0 : file_length(fp);
+    int ret = fp == NULL ? 0  = : file_length(fp);
     
 };
 
@@ -228,7 +229,8 @@ sys_read(struct intr_frame *f, char* args)
     
     int bytes_read = 0;
     if (fd != 0){
-        struct file* fp = fetch_file(fd);
+        struct file* fp;
+        fetch_file(fd, fp);
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
     } else {
         while(bytes_read < size) {
@@ -257,7 +259,8 @@ sys_write(struct intr_frame *f, char* args)
       putbuf(buffer, size);
       bytes_write = size;
     } else {
-        struct file* fp = fetch_file(fd);
+        struct file* fp;
+        fetch_file(fd, fp);
         bytes_write = fp == NULL ? 0 : file_write(fp, buffer, size);
     }
     
@@ -273,7 +276,8 @@ sys_seek(struct intr_frame *f, char* args)
     int fd = *(int*)argv[0];
     uint32_t position = *(int*)argv[1];
     
-    struct file* fp = fetch_file(fd);
+    struct file* fp;
+    fetch_file(fd, fp);
     file_seek(fp, position);
     
 };
@@ -286,7 +290,8 @@ sys_tell(struct intr_frame *f, char* args)
     load_arguments(argc, args, argv);
     
     int fd = *(int*)argv[0];
-    struct file* fp = fetch_file(fd);
+    struct file* fp;
+    fetch_file(fd, fp);
     
     int ret;
     if (fp != NULL) ret = fp->pos;
@@ -300,7 +305,9 @@ sys_close(struct intr_frame *f, char* args)
     load_arguments(argc, args, argv);
     
     int fd = *(int*)argv[0];
-    struct file* fp = fetch_file(fd);
+    struct file* fp;
+    fetch_file(fd, fp);
+    
     if (fp != NULL) file_close(fp);
     
 };
