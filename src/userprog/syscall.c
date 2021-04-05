@@ -59,6 +59,7 @@ validate_vaddr(void *addr)
     
     if (!is_user_vaddr(args) || get_user(args) == -1) {
         int status = -1;
+        char *argv[argc_max];
         memcpy(argv, &status, sizeof(status));
         sys_exit(NULL, argv);
     }
