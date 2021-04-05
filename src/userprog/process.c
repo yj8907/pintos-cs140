@@ -288,7 +288,7 @@ load_argument(void *esp, char* file_name)
    for (argc = 0, argstr = file_name; argc < max_argc;argc++, argstr=NULL){
        token = strtok_r(argstr, " ", &saveptr);
        if (token == NULL) break;
-       print("token %s ", token);
+       printf("token %s ", token);
        strsize = strlen(token) + 1;
        esp -= strsize;
        strlcpy(esp, token, strsize);
