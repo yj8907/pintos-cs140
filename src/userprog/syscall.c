@@ -50,9 +50,6 @@ syscall_handler (struct intr_frame *f)
   char *argv = (char*)f->esp;
   argv += sizeof(syscall_no);
  
-    printf("syscall %d ", syscall_no);
-  if (syscall_no != SYS_WRITE) thread_exit();
-    
   switch ((syscall_no)) {
       case SYS_HALT:
           sys_halt(f, argv);
