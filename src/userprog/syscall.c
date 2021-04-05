@@ -37,19 +37,19 @@ static void syscall_handler (struct intr_frame *);
 static void load_arguments(int, char*, char**);
 
 /* syscall handlers */
-static void sys_halt(struct void *eax, char** argv);
-static void sys_exit(struct void *eax, char** argv);
-static void sys_exec(struct void *eax, char** argv);
-static void sys_wait(struct void *eax, char** argv);
-static void sys_create(struct void *eax, char** argv);
-static void sys_remove(struct void *eax, char** argv);
-static void sys_open(struct void *eax, char** argv);
-static void sys_filesize(struct void *eax, char** argv);
-static void sys_read(struct void *eax, char** argv);
-static void sys_write(struct void *eax, char** argv);
-static void sys_seek(struct void *eax, char** argv);
-static void sys_tell(struct void *eax, char** argv);
-static void sys_close(struct void *eax, char** argv);
+static void sys_halt(void *eax, char** argv);
+static void sys_exit(void *eax, char** argv);
+static void sys_exec(void *eax, char** argv);
+static void sys_wait(void *eax, char** argv);
+static void sys_create(void *eax, char** argv);
+static void sys_remove(void *eax, char** argv);
+static void sys_open(void *eax, char** argv);
+static void sys_filesize(void *eax, char** argv);
+static void sys_read(void *eax, char** argv);
+static void sys_write(void *eax, char** argv);
+static void sys_seek(void *eax, char** argv);
+static void sys_tell(void *eax, char** argv);
+static void sys_close(void *eax, char** argv);
 
 static void
 load_arguments(int argc, char* args, char** argv)
@@ -144,13 +144,13 @@ syscall_handler (struct intr_frame *f)
 }
 
 static void
-sys_halt(struct void *eax, char** argv)
+sys_halt(void *eax, char** argv)
 {
     shutdown_power_off();
 };
 
 static void
-sys_exit(struct void *eax, char** argv)
+sys_exit(void *eax, char** argv)
 {
 
     int status = *(int*)argv[0];
@@ -161,7 +161,7 @@ sys_exit(struct void *eax, char** argv)
     thread_exit();
 };
 
-static void sys_exec(struct void *eax, char** argv)
+static void sys_exec(void *eax, char** argv)
 {
     int ret;
     
@@ -184,7 +184,7 @@ static void sys_exec(struct void *eax, char** argv)
     
 };
 
-static void sys_wait(struct void *eax, char** argv)
+static void sys_wait(void *eax, char** argv)
 {
 
     tid_t child_tid = *(int*)argv[0];
@@ -192,7 +192,7 @@ static void sys_wait(struct void *eax, char** argv)
     
 };
 
-static void sys_create(struct void *eax, char** argv)
+static void sys_create(void *eax, char** argv)
 {
 
     const char* filename = *(char**)argv[0];
@@ -202,7 +202,7 @@ static void sys_create(struct void *eax, char** argv)
     
 };
 
-static void sys_remove(struct void *eax, char** argv)
+static void sys_remove(void *eax, char** argv)
 {
 
     const char* filename = *(char**)argv[0];
@@ -211,7 +211,7 @@ static void sys_remove(struct void *eax, char** argv)
 };
 
 static void
-sys_open(struct void *eax, char** argv)
+sys_open(void *eax, char** argv)
 {
     const char* filename = *(char**)argv[0];
         
@@ -225,7 +225,7 @@ sys_open(struct void *eax, char** argv)
 };
 
 static void
-sys_filesize(struct void *eax, char** argv)
+sys_filesize(void *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     
@@ -235,7 +235,7 @@ sys_filesize(struct void *eax, char** argv)
 };
 
 static void
-sys_read(struct void *eax, char** argv)
+sys_read(void *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     const char* buffer = *(char**)argv[1];
@@ -257,7 +257,7 @@ sys_read(struct void *eax, char** argv)
 };
 
 static void
-sys_write(struct void *eax, char** argv)
+sys_write(void *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     const void* buffer = *(char**)argv[1];
@@ -275,7 +275,7 @@ sys_write(struct void *eax, char** argv)
 };
 
 static void
-sys_seek(struct void *eax, char** argv)
+sys_seek(void *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     uint32_t position = *(int*)argv[1];
@@ -286,7 +286,7 @@ sys_seek(struct void *eax, char** argv)
 };
 
 static void
-sys_tell(struct void *eax, char** argv)
+sys_tell(void *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     struct file* fp = fetch_file(fd);
@@ -296,7 +296,7 @@ sys_tell(struct void *eax, char** argv)
 };
 
 static void
-sys_close(struct void *eax, char** argv)
+sys_close(void *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     struct file* fp = fetch_file(fd);
