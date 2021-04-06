@@ -38,6 +38,7 @@ static void load_arguments(int, char*, char**);
 
 static void validate_vaddr(void *addr, int);
 static void validate_char_vaddr(void *addr);
+static void validate_filename(void *addr);
 
 static void force_exit(void);
 
@@ -76,6 +77,13 @@ validate_vaddr(void *addr, int sz)
     } else {
         force_exit();
     }
+}
+
+static void
+validate_filename(void *filename)
+{
+    if (filename == NULL) force_exit();
+    validate_char_vaddr(filename);
 }
 
 static void
@@ -234,8 +242,7 @@ static void sys_create(uint32_t *eax, char** argv)
     const char* filename = *(char**)argv[0];
     uint32_t initial_size = *(uint32_t*)argv[1];
     
-    if (filename == NULL) force_exit();
-    validate_char_vaddr(filename);
+    validate_filename(filename);
     
     int ret = filesys_create(filename, initial_size) ? 1 : 0;
     memcpy(eax, &ret, sizeof(ret));
@@ -245,6 +252,7 @@ static void sys_remove(uint32_t *eax, char** argv)
 {
 
     const char* filename = *(char**)argv[0];
+    validate_filename(filename);
     
     int ret = filesys_remove(filename) ? 1 : 0;
     memcpy(eax, &ret, sizeof(ret));
@@ -254,9 +262,9 @@ static void
 sys_open(uint32_t *eax, char** argv)
 {
     const char* filename = *(char**)argv[0];
-        
-    int ret = -1;
+    validate_filename(filename);
     
+    int ret = -1;
     struct file *fp = filesys_open(filename);
     if (fp != NULL) ret = allocate_fd(fp);
     
@@ -320,7 +328,7 @@ sys_seek(uint32_t *eax, char** argv)
     uint32_t position = *(int*)argv[1];
     
     struct file* fp = fetch_file(fd);
-    file_seek(fp, position);
+    if (fp != NULL) file_seek(fp, position);
     
 };
 
