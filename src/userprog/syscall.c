@@ -58,14 +58,14 @@ validate_vaddr(void *addr)
  
     int status = -1;
     char *argv[argc_max];
-    argv[0] = &status;
+    memcpy(&argv, &status, sizeof(status));
     sys_exit(NULL, argv);
     
     if (!is_user_vaddr(addr)) while (true);
     if (!is_user_vaddr(addr) || get_user(addr) == -1) {
         int status = -1;
         char *argv[argc_max];
-        memcpy(argv, &status, sizeof(status));
+        memcpy(&argv, &status, sizeof(status));
         sys_exit(NULL, argv);
     }
 }
