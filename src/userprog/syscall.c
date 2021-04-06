@@ -354,7 +354,7 @@ sys_close(uint32_t *eax, char** argv)
     int fd = *(int*)argv[0];
     struct file* fp = fetch_file(fd);
     
-    if (fp->deny_write) printf("deny: %d \n", file->deny_write);
+    if (fp->deny_write) printf("deny: %d \n", fp->deny_write);
         
     sema_down(&filesys_sema);
     if (fp != NULL) file_close(fp);
