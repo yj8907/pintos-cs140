@@ -358,6 +358,7 @@ sys_close(uint32_t *eax, char** argv)
         
     sema_down(&filesys_sema);
     if (fp != NULL) file_close(fp);
+    fd->closed = true;
     sema_up(&filesys_sema);
 };
 

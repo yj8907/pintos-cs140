@@ -147,16 +147,16 @@ file_allow_write (struct file *file)
   ASSERT (file != NULL);
   if (file->deny_write) 
     {
-        if (file->deny_write) {
-            printf("close\n");
-            printf("deny: %d \n", file->deny_write);
-            printf("pos: %d \n", file->pos);
-            printf("pos: 0x%08x \n", file->pos);
-            printf("name: %s \n", thread_current()->name);
-        }
-        
+//        if (file->deny_write) {
+//            printf("close\n");
+//            printf("deny: %d \n", file->deny_write);
+//            printf("pos: %d \n", file->pos);
+//            printf("pos: 0x%08x \n", file->pos);
+//            printf("name: %s \n", thread_current()->name);
+//        }
+//
       file->deny_write = false;
-//      inode_allow_write (file->inode);
+      inode_allow_write (file->inode);
     }
 }
 
