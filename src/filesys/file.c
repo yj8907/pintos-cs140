@@ -19,7 +19,6 @@ struct file
 struct file *
 file_open (struct inode *inode) 
 {
-    printf("open");
   struct file *file = calloc (1, sizeof *file);
   if (inode != NULL && file != NULL)
     {
@@ -50,6 +49,12 @@ file_close (struct file *file)
 {
   if (file != NULL)
     {
+        if (file->inode->deny_write_cnt <= file->inode->open_cnt) {
+            printf("close\n");
+            printf("deny: %d\n", file->deny_write);
+            printf("deny_write_cnt: %d\n", file->inode->deny_write_cnt);
+            printf("open_cnt: %d\n", file->inode->open_cnt);
+        }
       file_allow_write (file);
       inode_close (file->inode);
       free (file); 
