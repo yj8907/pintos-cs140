@@ -89,6 +89,7 @@ syscall_handler (struct intr_frame *f)
   int syscall_no = *((int*)f->esp);
   
   char *args = (char*)f->esp;
+  printf("addr: 0x%08x", args);
   validate_vaddr(args);
   args += sizeof(syscall_no);
   
