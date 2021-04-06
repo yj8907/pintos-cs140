@@ -1010,7 +1010,7 @@ fetch_file(int fd_no)
             if (fd->fd_no == fd_no) break;
             e = list_next(e);
         }
-        return e != list_tail(&cur->fildes) ? e : NULL;
+        return e != list_tail(&cur->fildes) ? fd : NULL;
     } else {
         return NULL;
     }
