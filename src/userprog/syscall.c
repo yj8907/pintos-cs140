@@ -61,7 +61,7 @@ validate_vaddr(void *addr, int sz)
     
     if (isValid) {
         for (int i = 0; i < sz; i++) {
-            if (get_user(addr) == -1) {
+            if (get_user(addr+i) == -1) {
                 isValid = false;
                 break;
             }
