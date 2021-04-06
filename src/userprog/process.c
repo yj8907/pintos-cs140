@@ -169,8 +169,7 @@ process_exit (void)
       while (e != list_tail(&cur->fildes)){
           fd = list_entry(e, struct file_descriptor, elem);
           sema_down(&filesys_sema);
-//          if (!fd->closed) 
-          file_close(fd->fp);
+          if (!fd->closed) file_close(fd->fp);
           sema_up(&filesys_sema);
           palloc_free_page(fd); /* free page */
       }
