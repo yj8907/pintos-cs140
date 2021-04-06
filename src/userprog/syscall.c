@@ -8,6 +8,9 @@
 
 static int argc_max = 3;
 
+/* synchronize file access */
+struct semaphore filesys_sema;
+
 /* Reads a byte at user virtual address UADDR.
    UADDR must be below PHYS_BASE.
    Returns the byte value if successful, -1 if a segfault
@@ -113,6 +116,7 @@ load_arguments(int argc, char* args, char** argv)
 void
 syscall_init (void) 
 {
+  sema_init(&filesys_sema, 1);
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
@@ -348,8 +352,10 @@ sys_close(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     struct file* fp = fetch_file(fd);
-    printf("close file");
-    if (fp != NULL) file_close(fp);
+    printf("close file %d", fd);
     
+    sema_down(&filesys_sema);
+    if (fp != NULL) file_close(fp);
+    sema_up(&filesys_sema);
 };
 

@@ -3,6 +3,7 @@
 
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+#include "threads/synch.h"
 #include "filesys/filesys.h"
 #include "devices/shutdown.h"
 #include "devices/input.h"

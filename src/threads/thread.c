@@ -1002,15 +1002,18 @@ fetch_file(int fd_no)
     struct thread *cur = thread_current();
     struct file_descriptor *fd;
     
-    struct list_elem *e = list_front(&cur->fildes);
-    while (e != list_tail(&cur->fildes)) {
-        fd = list_entry(e, struct file_descriptor, elem);
-        if (fd->fd_no == fd_no) break;
-        e = list_next(e);
+    if (!list_empty(&cur->fildes)) {
+        struct list_elem *e = list_front(&cur->fildes);
+        while (e != list_tail(&cur->fildes)) {
+            fd = list_entry(e, struct file_descriptor, elem);
+            if (fd->fd_no == fd_no) break;
+            e = list_next(e);
+        }
+        return e != list_tail(&cur->fildes) ? fd->fp : NULL;
+    } else {
+        return NULL;
     }
-    
-    return e != list_tail(&cur->fildes) ? fd->fp : NULL;
-    
+            
 };
 
 

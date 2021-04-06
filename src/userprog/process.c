@@ -168,7 +168,9 @@ process_exit (void)
       struct file_descriptor* fd;
       while (e != list_tail(&cur->fildes)){
           fd = list_entry(e, struct file_descriptor, elem);
+          sema_down(&filesys_sema);
           file_close(fd->fp);
+          sema_up(&filesys_sema);
           palloc_free_page(fd); /* free page */
       }
   }
@@ -356,7 +358,10 @@ load (const char *file_name, void (**eip) (void), void **esp)
   process_activate ();
 
   /* Open executable file. */
+  sema_down(&filesys_sema);
   file = filesys_open (file_name);
+  sema_up(&filesys_sema);
+    
   if (file == NULL) 
     {
       printf ("load: %s: open failed\n", file_name);
@@ -446,7 +451,9 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
  done:
   /* We arrive here whether the load is successful or not. */
+  sema_down(&filesys_sema);
   file_close (file);
+  sema_up(&filesys_sema);
   return success;
 }
 
