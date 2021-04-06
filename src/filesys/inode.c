@@ -333,6 +333,10 @@ void
 inode_allow_write (struct inode *inode) 
 {
   ASSERT (inode->deny_write_cnt > 0);
+    if (inode->deny_write_cnt > inode->open_cnt) {
+        printf("deny %d ", inode->deny_write_cnt);
+        printf("open_cnt %d ", inode->open_cnt);
+    }
   ASSERT (inode->deny_write_cnt <= inode->open_cnt);
   inode->deny_write_cnt--;
 }
