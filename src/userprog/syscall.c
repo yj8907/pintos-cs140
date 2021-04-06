@@ -79,8 +79,8 @@ validate_vaddr(void *addr, int sz)
 static void
 load_arguments(int argc, char* args, char** argv)
 {
+    validate_vaddr(args, sizeof(args)*argc);
     for (int i = 0; i < argc; i++){
-        validate_vaddr(args, sizeof(args));
         *argv = args;
         args += sizeof(args);
         argv += 1;
