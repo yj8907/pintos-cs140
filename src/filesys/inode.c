@@ -7,6 +7,8 @@
 #include "filesys/free-map.h"
 #include "threads/malloc.h"
 
+#include <stdio.h>
+
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
 
