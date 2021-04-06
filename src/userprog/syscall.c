@@ -56,7 +56,7 @@ static void
 validate_vaddr(void *addr)
 {
     
-    if (!is_user_vaddr(addr)) while (true);
+    if (!is_user_vaddr(addr)) printf("bad pointer");
     if (!is_user_vaddr(addr) || get_user(addr) == -1) {
         int status = -1;
         char *argv[argc_max];
@@ -87,7 +87,6 @@ static void
 syscall_handler (struct intr_frame *f)
 {
   char *args = (char*)f->esp;
-  printf("sp 0x%08x", args);
   validate_vaddr(args);
     
   int syscall_no = *((int*)args);
