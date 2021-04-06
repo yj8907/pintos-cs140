@@ -228,7 +228,8 @@ static void sys_remove(uint32_t *eax, char** argv)
 
     const char* filename = *(char**)argv[0];
     
-    bool ret = filesys_remove(filename);
+    int ret = filesys_remove(filename) ? 1 : 0;
+    memcpy(eax, &ret, sizeof(ret));
 };
 
 static void
