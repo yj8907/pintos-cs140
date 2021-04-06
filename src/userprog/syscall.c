@@ -86,6 +86,7 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f)
 {
+  printf("addr: 0x%08x", f->esp);
   validate_vaddr(f->esp);
   int syscall_no = *((int*)f->esp);
   char *args = (char*)f->esp;
