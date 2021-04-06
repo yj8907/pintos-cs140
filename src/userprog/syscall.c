@@ -58,7 +58,7 @@ validate_vaddr(void *addr)
  
     int status = -1;
     char *argv[argc_max];
-    memcpy(argv, &status, sizeof(status));
+    argv[0] = &status;
     sys_exit(NULL, argv);
     
     if (!is_user_vaddr(addr)) while (true);
