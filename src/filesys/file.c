@@ -49,11 +49,9 @@ file_close (struct file *file)
 {
   if (file != NULL)
     {
-        if (file->inode->deny_write_cnt <= file->inode->open_cnt) {
+        if (file->deny_write) {
             printf("close\n");
             printf("deny: %d\n", file->deny_write);
-            printf("deny_write_cnt: %d\n", file->inode->deny_write_cnt);
-            printf("open_cnt: %d\n", file->inode->open_cnt);
         }
       file_allow_write (file);
       inode_close (file->inode);
