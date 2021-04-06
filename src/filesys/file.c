@@ -53,6 +53,7 @@ file_close (struct file *file)
         if (file->deny_write) {
             printf("close\n");
             printf("deny: %d \n", file->deny_write);
+            printf("pos: %d \n", file->pos);
         } else {
             file_allow_write (file);
             inode_close (file->inode);
