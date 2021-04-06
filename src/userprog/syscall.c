@@ -35,7 +35,7 @@ put_user (uint8_t *udst, uint8_t byte)
 
 static void syscall_handler (struct intr_frame *);
 static void load_arguments(int, char*, char**);
-static void validate_vaddr(void *addr);
+static void validate_vaddr(void *addr, int);
 
 /* syscall handlers */
 static void sys_halt(void *eax, char** argv);
@@ -53,10 +53,22 @@ static void sys_tell(void *eax, char** argv);
 static void sys_close(void *eax, char** argv);
 
 static void
-validate_vaddr(void *addr)
+validate_vaddr(void *addr, int sz)
 {
+    bool isValid = true;
+    /* validate addr and addr+sz within user stack */
+    isValid = !(!is_user_vaddr(addr) || !is_user_vaddr(addr+sz));
     
-    if (!is_user_vaddr(addr) || get_user(addr) == -1) {
+    if (isValid) {
+        for (int i = 0; i < sz; i++) {
+            if (get_user(addr) == -1) {
+                isValid = false;
+                break;
+            }
+        }
+    }
+    
+    if (!isValid) {
         int status = -1;
         char *argv[argc_max];
         argv[0] = &status;
@@ -67,9 +79,8 @@ validate_vaddr(void *addr)
 static void
 load_arguments(int argc, char* args, char** argv)
 {
-    validate_vaddr(args);
-        
     for (int i = 0; i < argc; i++){
+        validate_vaddr(args, sizeof(args));
         *argv = args;
         args += sizeof(args);
         argv += 1;
@@ -86,12 +97,11 @@ static void
 syscall_handler (struct intr_frame *f)
 {
   char *args = (char*)f->esp;
-  validate_vaddr(args);
-    
+  
+  validate_vaddr(args, sizeof(int));
   int syscall_no = *((int*)args);
   args += sizeof(syscall_no);
-  validate_vaddr(args);
-    
+      
   void *eax = f->eax;
     
   int argc = 1;
