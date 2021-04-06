@@ -989,7 +989,6 @@ allocate_fd (struct file* fp)
     
   fd->fp = fp;
   fd->fd_no = cur->fd_no++;
-  fd->closed = 0;
   list_push_back(&cur->fildes, &fd->elem);
   
   return fd->fd_no;

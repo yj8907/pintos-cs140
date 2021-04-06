@@ -16,7 +16,6 @@ struct file_descriptor
     struct file* fp;
     struct list_elem elem;
     int fd_no;
-    int closed;
 };
 
 void syscall_init (void);

@@ -359,7 +359,9 @@ sys_close(uint32_t *eax, char** argv)
         
     sema_down(&filesys_sema);
     if (fp != NULL) file_close(fp);
-    fd->closed = 1;
     sema_up(&filesys_sema);
+    
+    list_remove(&fd->elem);
+    palloc_free_page(fd);
 };
 
