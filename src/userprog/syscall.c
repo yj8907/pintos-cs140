@@ -241,10 +241,9 @@ sys_open(uint32_t *eax, char** argv)
     int ret = -1;
     
     struct file *fp = filesys_open(filename);
-    if (fp == NULL) return;
+    if (fp != NULL) ret = allocate_fd(fp);
     
-    ret = allocate_fd(fp);
-    
+    memcpy(eax, &ret, sizeof(ret));
 };
 
 static void
@@ -254,7 +253,7 @@ sys_filesize(uint32_t *eax, char** argv)
     
     struct file* fp = fetch_file(fd);
     int ret = fp == NULL ? 0 : file_length(fp);
-    
+    memcpy(eax, &ret, sizeof(ret));
 };
 
 static void
@@ -276,7 +275,7 @@ sys_read(uint32_t *eax, char** argv)
             bytes_read += sizeof(key);
         }
     }
-        
+    memcpy(eax, &bytes_read, sizeof(bytes_read));
 };
 
 static void
@@ -294,7 +293,7 @@ sys_write(uint32_t *eax, char** argv)
         struct file* fp = fetch_file(fd);
         bytes_write = fp == NULL ? 0 : file_write(fp, buffer, size);
     }
-    
+    memcpy(eax, &bytes_write, sizeof(bytes_write));
 };
 
 static void
@@ -314,8 +313,9 @@ sys_tell(uint32_t *eax, char** argv)
     int fd = *(int*)argv[0];
     struct file* fp = fetch_file(fd);
     
-    int ret;
+    int ret = 0;
     if (fp != NULL) ret = file_tell(fp);
+    memcpy(eax, &ret, sizeof(ret));
 };
 
 static void
