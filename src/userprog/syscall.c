@@ -281,7 +281,7 @@ sys_filesize(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     
-    struct file* fp = fetch_file(fd);
+    struct file* fp = fetch_file(fd)->fp;
     int ret = fp == NULL ? 0 : file_length(fp);
     memcpy(eax, &ret, sizeof(ret));
 };
@@ -295,7 +295,7 @@ sys_read(uint32_t *eax, char** argv)
     
     int bytes_read = 0;
     if (fd != 0){
-        struct file* fp = fetch_file(fd);
+        struct file* fp = fetch_file(fd)->fp;
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
     } else {
         while(bytes_read < size) {
@@ -320,7 +320,7 @@ sys_write(uint32_t *eax, char** argv)
       putbuf(buffer, size);
       bytes_write = size;
     } else {
-        struct file* fp = fetch_file(fd);
+        struct file* fp = fetch_file(fd)->fp;
         bytes_write = fp == NULL ? 0 : file_write(fp, buffer, size);
     }
     memcpy(eax, &bytes_write, sizeof(bytes_write));
@@ -332,7 +332,7 @@ sys_seek(uint32_t *eax, char** argv)
     int fd = *(int*)argv[0];
     uint32_t position = *(int*)argv[1];
     
-    struct file* fp = fetch_file(fd);
+    struct file* fp = fetch_file(fd)->fp;
     if (fp != NULL) file_seek(fp, position);
     
 };
@@ -341,7 +341,7 @@ static void
 sys_tell(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
-    struct file* fp = fetch_file(fd);
+    struct file* fp = fetch_file(fd)->fp;
     
     int ret = 0;
     if (fp != NULL) ret = file_tell(fp);
@@ -351,8 +351,9 @@ sys_tell(uint32_t *eax, char** argv)
 static void
 sys_close(uint32_t *eax, char** argv)
 {
-    int fd = *(int*)argv[0];
-    struct file* fp = fetch_file(fd);
+    int fd_no = *(int*)argv[0];
+    struct file_descriptor* fd = fetch_file(fd_no);
+    struct file* fp = fd->fp;
     
     if (fp->deny_write) printf("deny: %d \n", fp->deny_write);
         
