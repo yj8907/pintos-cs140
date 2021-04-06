@@ -333,7 +333,7 @@ load_argument(void *esp, char* binary, char* saveptr)
    /* set return address to 0 */
    esp -= sizeof(esp);
    memset(esp, 0, sizeof(esp));
-//    printf("arg: %s", *(char**)(*(char**)(esp+8)) );
+    
    return (void*)esp;
 }
 
@@ -454,6 +454,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
   sema_down(&filesys_sema);
   file_close (file);
   sema_up(&filesys_sema);
+    
   return success;
 }
 
