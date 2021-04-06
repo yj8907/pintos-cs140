@@ -8,6 +8,9 @@
 #include "devices/shutdown.h"
 #include "devices/input.h"
 
+/* synchronize file access */
+struct semaphore filesys_sema;
+
 struct file_descriptor
 {
     struct file* fp;

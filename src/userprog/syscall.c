@@ -8,9 +8,6 @@
 
 static int argc_max = 3;
 
-/* synchronize file access */
-struct semaphore filesys_sema;
-
 /* Reads a byte at user virtual address UADDR.
    UADDR must be below PHYS_BASE.
    Returns the byte value if successful, -1 if a segfault
