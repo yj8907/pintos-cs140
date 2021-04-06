@@ -36,6 +36,7 @@ put_user (uint8_t *udst, uint8_t byte)
 static void syscall_handler (struct intr_frame *);
 static void load_arguments(int, char*, char**);
 static void validate_vaddr(void *addr, int);
+static void force_exit(void);
 
 /* syscall handlers */
 static void sys_halt(uint32_t *eax, char** argv);
@@ -53,26 +54,23 @@ static void sys_tell(uint32_t *eax, char** argv);
 static void sys_close(uint32_t *eax, char** argv);
 
 static void
+force_exit(void)
+{
+    int status = -1;
+    char *argv[argc_max];
+    argv[0] = &status;
+    sys_exit(NULL, argv);
+}
+
+static void
 validate_vaddr(void *addr, int sz)
 {
     bool isValid = true;
     /* validate addr and addr+sz within user stack */
-    isValid = !(!is_user_vaddr(addr) || !is_user_vaddr(addr+sz));
-    
-    if (isValid) {
+    if (isValid = !(!is_user_vaddr(addr) || !is_user_vaddr(addr+sz))) {
         for (int i = 0; i < sz; i++) {
-            if (get_user(addr+i) == -1) {
-                isValid = false;
-                break;
-            }
+            if (get_user(addr+i) == -1) force_exit();
         }
-    }
-    
-    if (!isValid) {
-        int status = -1;
-        char *argv[argc_max];
-        argv[0] = &status;
-        sys_exit(NULL, argv);
     }
 }
 
@@ -218,6 +216,8 @@ static void sys_create(uint32_t *eax, char** argv)
 
     const char* filename = *(char**)argv[0];
     uint32_t initial_size = *(uint32_t*)argv[1];
+    
+    if (filename != NULL) force_exit();
     
     int ret = filesys_create(filename, initial_size) ? 1 : 0;
     memcpy(eax, &ret, sizeof(ret));
