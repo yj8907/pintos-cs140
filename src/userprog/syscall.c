@@ -218,7 +218,7 @@ static void sys_create(uint32_t *eax, char** argv)
     const char* filename = *(char**)argv[0];
     uint32_t initial_size = *(uint32_t*)argv[1];
     
-    if (filename != NULL) force_exit();
+    if (filename == NULL) force_exit();
     
     int ret = filesys_create(filename, initial_size) ? 1 : 0;
     memcpy(eax, &ret, sizeof(ret));
