@@ -348,7 +348,7 @@ sys_close(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     struct file* fp = fetch_file(fd);
-    
+    printf("close file");
     if (fp != NULL) file_close(fp);
     
 };
