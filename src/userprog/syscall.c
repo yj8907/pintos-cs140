@@ -56,7 +56,6 @@ static void
 validate_vaddr(void *addr)
 {
     
-    if (!is_user_vaddr(addr)) printf("bad pointer");
     if (!is_user_vaddr(addr) || get_user(addr) == -1) {
         int status = -1;
         char *argv[argc_max];
