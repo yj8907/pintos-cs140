@@ -163,18 +163,17 @@ process_exit (void)
   }
    
   /* close files and free page for fd */
-//  if (!list_empty(&cur->fildes)){
-//      struct list_elem* e = list_front(&cur->fildes);
-//      struct file_descriptor* fd;
-//      while (e != list_tail(&cur->fildes)){
-//          fd = list_entry(e, struct file_descriptor, elem);
-//          sema_down(&filesys_sema);
-//          if (fd->closed) printf("thread: %s\n", thread_current()->name);
-//          file_close(fd->fp);
-//          sema_up(&filesys_sema);
-//          palloc_free_page(fd); /* free page */
-//      }
-//  }
+  if (!list_empty(&cur->fildes)){
+      struct list_elem* e = list_front(&cur->fildes);
+      struct file_descriptor* fd;
+      while (e != list_tail(&cur->fildes)){
+          fd = list_entry(e, struct file_descriptor, elem);
+          sema_down(&filesys_sema);
+          file_close(fd->fp);
+          sema_up(&filesys_sema);
+          palloc_free_page(fd); /* free page */
+      }
+  }
     
   uint32_t *pd;
   
