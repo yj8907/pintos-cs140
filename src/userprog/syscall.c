@@ -38,19 +38,19 @@ static void load_arguments(int, char*, char**);
 static void validate_vaddr(void *addr, int);
 
 /* syscall handlers */
-static void sys_halt(void *eax, char** argv);
-static void sys_exit(void *eax, char** argv);
-static void sys_exec(void *eax, char** argv);
-static void sys_wait(void *eax, char** argv);
-static void sys_create(void *eax, char** argv);
-static void sys_remove(void *eax, char** argv);
-static void sys_open(void *eax, char** argv);
-static void sys_filesize(void *eax, char** argv);
-static void sys_read(void *eax, char** argv);
-static void sys_write(void *eax, char** argv);
-static void sys_seek(void *eax, char** argv);
-static void sys_tell(void *eax, char** argv);
-static void sys_close(void *eax, char** argv);
+static void sys_halt(uint32_t *eax, char** argv);
+static void sys_exit(uint32_t *eax, char** argv);
+static void sys_exec(uint32_t *eax, char** argv);
+static void sys_wait(uint32_t *eax, char** argv);
+static void sys_create(uint32_t *eax, char** argv);
+static void sys_remove(uint32_t *eax, char** argv);
+static void sys_open(uint32_t *eax, char** argv);
+static void sys_filesize(uint32_t *eax, char** argv);
+static void sys_read(uint32_t *eax, char** argv);
+static void sys_write(uint32_t *eax, char** argv);
+static void sys_seek(uint32_t *eax, char** argv);
+static void sys_tell(uint32_t *eax, char** argv);
+static void sys_close(uint32_t *eax, char** argv);
 
 static void
 validate_vaddr(void *addr, int sz)
@@ -102,7 +102,7 @@ syscall_handler (struct intr_frame *f)
   int syscall_no = *((int*)args);
   args += sizeof(syscall_no);
       
-  void *eax = f->eax;
+  uint32_t *eax = &f->eax;
     
   int argc = 1;
   char *argv[argc_max];
@@ -164,13 +164,13 @@ syscall_handler (struct intr_frame *f)
 }
 
 static void
-sys_halt(void *eax, char** argv)
+sys_halt(uint32_t *eax, char** argv)
 {
     shutdown_power_off();
 };
 
 static void
-sys_exit(void *eax, char** argv)
+sys_exit(uint32_t *eax, char** argv)
 {
 
     int status = *(int*)argv[0];
@@ -181,7 +181,7 @@ sys_exit(void *eax, char** argv)
     thread_exit();
 };
 
-static void sys_exec(void *eax, char** argv)
+static void sys_exec(uint32_t *eax, char** argv)
 {
     int ret;
     
@@ -200,11 +200,12 @@ static void sys_exec(void *eax, char** argv)
     ASSERT(e != list_tail(&cur->child_list));
             
     sema_down(&child_tcb->sema);
-    ret = child_tcb->loaded ? child_tid : -1;
     
+    ret = child_tcb->loaded ? child_tid : -1;
+    memcpy(eax, &ret, sizeof(ret));
 };
 
-static void sys_wait(void *eax, char** argv)
+static void sys_wait(uint32_t *eax, char** argv)
 {
 
     tid_t child_tid = *(int*)argv[0];
@@ -212,17 +213,17 @@ static void sys_wait(void *eax, char** argv)
     
 };
 
-static void sys_create(void *eax, char** argv)
+static void sys_create(uint32_t *eax, char** argv)
 {
 
     const char* filename = *(char**)argv[0];
     uint32_t initial_size = *(uint32_t*)argv[1];
     
     bool ret = filesys_create(filename, initial_size);
-    
+    memcpy(eax, &ret, sizeof(ret));
 };
 
-static void sys_remove(void *eax, char** argv)
+static void sys_remove(uint32_t *eax, char** argv)
 {
 
     const char* filename = *(char**)argv[0];
@@ -231,7 +232,7 @@ static void sys_remove(void *eax, char** argv)
 };
 
 static void
-sys_open(void *eax, char** argv)
+sys_open(uint32_t *eax, char** argv)
 {
     const char* filename = *(char**)argv[0];
         
@@ -245,7 +246,7 @@ sys_open(void *eax, char** argv)
 };
 
 static void
-sys_filesize(void *eax, char** argv)
+sys_filesize(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     
@@ -255,7 +256,7 @@ sys_filesize(void *eax, char** argv)
 };
 
 static void
-sys_read(void *eax, char** argv)
+sys_read(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     const char* buffer = *(char**)argv[1];
@@ -277,7 +278,7 @@ sys_read(void *eax, char** argv)
 };
 
 static void
-sys_write(void *eax, char** argv)
+sys_write(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     const void* buffer = *(char**)argv[1];
@@ -295,7 +296,7 @@ sys_write(void *eax, char** argv)
 };
 
 static void
-sys_seek(void *eax, char** argv)
+sys_seek(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     uint32_t position = *(int*)argv[1];
@@ -306,7 +307,7 @@ sys_seek(void *eax, char** argv)
 };
 
 static void
-sys_tell(void *eax, char** argv)
+sys_tell(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     struct file* fp = fetch_file(fd);
@@ -316,7 +317,7 @@ sys_tell(void *eax, char** argv)
 };
 
 static void
-sys_close(void *eax, char** argv)
+sys_close(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     struct file* fp = fetch_file(fd);
