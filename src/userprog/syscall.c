@@ -35,7 +35,10 @@ put_user (uint8_t *udst, uint8_t byte)
 
 static void syscall_handler (struct intr_frame *);
 static void load_arguments(int, char*, char**);
+
 static void validate_vaddr(void *addr, int);
+static void validate_char_vaddr(void *addr);
+
 static void force_exit(void);
 
 /* syscall handlers */
@@ -74,6 +77,19 @@ validate_vaddr(void *addr, int sz)
         force_exit();
     }
 }
+
+static void
+validate_char_vaddr(void *addr)
+{
+    int byte_val;
+    while ( is_user_vaddr(addr) && (byte_val = get_user(addr)) != -1){
+        if ( (char)byte_val == '\0') break;
+        addr++;
+    }
+    
+    if ( is_user_vaddr(addr) || byte_val == -1) force_exit();
+}
+
 
 static void
 load_arguments(int argc, char* args, char** argv)
@@ -219,6 +235,7 @@ static void sys_create(uint32_t *eax, char** argv)
     uint32_t initial_size = *(uint32_t*)argv[1];
     
     if (filename == NULL) force_exit();
+    validate_char_vaddr(filename);
     
     int ret = filesys_create(filename, initial_size) ? 1 : 0;
     memcpy(eax, &ret, sizeof(ret));
