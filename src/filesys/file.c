@@ -57,11 +57,11 @@ file_close (struct file *file)
             printf("pos: %d \n", file->pos);
             printf("pos: 0x%08x \n", file->pos);
             printf("name: %s \n", thread_current()->name);
-        } else {
-            file_allow_write (file);
+        }
+//            file_allow_write (file);
             inode_close (file->inode);
             free (file);
-        }
+        
     }
 }
 
