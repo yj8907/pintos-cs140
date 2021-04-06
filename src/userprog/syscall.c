@@ -55,17 +55,12 @@ static void sys_close(void *eax, char** argv);
 static void
 validate_vaddr(void *addr)
 {
- 
-    int status = -1;
-    char *argv[argc_max];
-    argv[0] = &status;
-    sys_exit(NULL, argv);
     
     if (!is_user_vaddr(addr)) while (true);
     if (!is_user_vaddr(addr) || get_user(addr) == -1) {
         int status = -1;
         char *argv[argc_max];
-        memcpy(argv, &status, sizeof(status));
+        argv[0] = &status;
         sys_exit(NULL, argv);
     }
 }
@@ -76,7 +71,7 @@ load_arguments(int argc, char* args, char** argv)
     validate_vaddr(args);
         
     for (int i = 0; i < argc; i++){
-        memcpy(argv, &args, sizeof(args));
+//        memcpy(argv, &args, sizeof(args));
         *argv = args;
         args += sizeof(args);
         argv += 1;
