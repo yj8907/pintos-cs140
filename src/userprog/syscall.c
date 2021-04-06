@@ -271,6 +271,9 @@ sys_open(uint32_t *eax, char** argv)
     struct file *fp = filesys_open(filename);
     sema_up(&filesys_sema);
     
+    printf("deny write %d ", fp->deny_write);
+    printf("deny_write_cnt %d ", fp->inode->deny_write_cnt);
+    
     if (fp != NULL) ret = allocate_fd(fp);
     
     memcpy(eax, &ret, sizeof(ret));
