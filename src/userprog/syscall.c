@@ -92,7 +92,6 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f)
 {
-  if (strcmp(f->name)
   char *args = (char*)f->esp;
   validate_vaddr(args);
     
