@@ -2,6 +2,7 @@
 #include <debug.h>
 #include "filesys/inode.h"
 #include "threads/malloc.h"
+#include "threads/thread.h"
 #include "filesys/file.h"
 
 #include <stdio.h>
@@ -54,6 +55,7 @@ file_close (struct file *file)
             printf("close\n");
             printf("deny: %d \n", file->deny_write);
             printf("pos: %d \n", file->pos);
+            printf("name: %s \n", thread_current()->name);
         } else {
             file_allow_write (file);
             inode_close (file->inode);
