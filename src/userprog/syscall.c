@@ -55,7 +55,7 @@ static void sys_close(void *eax, char** argv);
 static void
 validate_vaddr(void *addr)
 {
-    if (!is_user_vaddr(addr)) printf("addr: 0x%08x", args);
+    if (!is_user_vaddr(addr)) printf("addr: 0x%08x", addr);
     if (!is_user_vaddr(addr) || get_user(addr) == -1) {
         int status = -1;
         char *argv[argc_max];
@@ -86,7 +86,6 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f)
 {
-    
   validate_vaddr(f->esp);
   int syscall_no = *((int*)f->esp);
   char *args = (char*)f->esp;
