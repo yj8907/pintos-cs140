@@ -71,7 +71,6 @@ load_arguments(int argc, char* args, char** argv)
     validate_vaddr(args);
         
     for (int i = 0; i < argc; i++){
-//        memcpy(argv, &args, sizeof(args));
         *argv = args;
         args += sizeof(args);
         argv += 1;
@@ -88,6 +87,7 @@ static void
 syscall_handler (struct intr_frame *f)
 {
   char *args = (char*)f->esp;
+  printf("sp 0x%08x", args)
   validate_vaddr(args);
     
   int syscall_no = *((int*)args);
