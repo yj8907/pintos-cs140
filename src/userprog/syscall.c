@@ -65,12 +65,13 @@ force_exit(void)
 static void
 validate_vaddr(void *addr, int sz)
 {
-    bool isValid = true;
     /* validate addr and addr+sz within user stack */
-    if (isValid = !(!is_user_vaddr(addr) || !is_user_vaddr(addr+sz))) {
+    if ( !(!is_user_vaddr(addr) || !is_user_vaddr(addr+sz)) ) {
         for (int i = 0; i < sz; i++) {
             if (get_user(addr+i) == -1) force_exit();
         }
+    } else {
+        force_exit();
     }
 }
 
