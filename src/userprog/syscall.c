@@ -87,7 +87,7 @@ validate_char_vaddr(void *addr)
         addr++;
     }
     
-    if ( is_user_vaddr(addr) || byte_val == -1) force_exit();
+    if ( !is_user_vaddr(addr) || byte_val == -1) force_exit();
 }
 
 
