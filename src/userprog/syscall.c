@@ -296,16 +296,18 @@ sys_read(uint32_t *eax, char** argv)
     validate_vaddr(buffer, size);
     
     int bytes_read = 0;
-    if (fd != 0){
+    if (fd != 0 && fd != 1){
         struct file* fp = fetch_file(fd)->fp;
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
-    } else {
+    } else if (fd == 0) {
         while(bytes_read < size) {
             uint8_t key = input_getc();
             memcpy(buffer, &key, sizeof(key));
             buffer += sizeof(key);
             bytes_read += sizeof(key);
         }
+    } else {
+        bytes_read = -1;
     }
     memcpy(eax, &bytes_read, sizeof(bytes_read));
 };
