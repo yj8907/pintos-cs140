@@ -210,7 +210,6 @@ static void sys_exec(uint32_t *eax, char** argv)
     int ret;
     
     printf("exec: %d",  0);
-    thread_exit();
     
     const char* cmd_line = *(char**)argv[0];
     validate_char_vaddr(cmd_line);
@@ -236,7 +235,7 @@ static void sys_exec(uint32_t *eax, char** argv)
 
 static void sys_wait(uint32_t *eax, char** argv)
 {
-
+    thread_exit();
     tid_t child_tid = *(int*)argv[0];
     
     int ret = process_wait(child_tid);
