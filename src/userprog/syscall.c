@@ -225,8 +225,8 @@ static void sys_exec(uint32_t *eax, char** argv)
     ASSERT(e != list_tail(&cur->child_list));
             
     sema_down(&child_tcb->sema);
-    
     ret = child_tcb->loaded ? child_tid : -1;
+    sema_up(&child_tcb->sema);
     memcpy(eax, &ret, sizeof(ret));
 };
 
