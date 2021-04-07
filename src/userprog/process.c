@@ -119,10 +119,10 @@ process_wait (tid_t child_tid)
     int count = 0;
     while(!child_tcb->thread_exit) {
         thread_yield();
-        if (count > 1000 && strcmp(thread_name(), "exec-once") == 0) {
-            printf("child_tcb: %d\n", child_tcb->thread_exit);
-            break;
-        }
+//        if (count > 1000 && strcmp(thread_name(), "exec-once") == 0) {
+//            printf("child_tcb: %d\n", child_tcb->thread_exit);
+//            break;
+//        }
         count++;
     }
     return child_tcb->exit_status;
@@ -137,12 +137,10 @@ process_exit (void)
   /* if parent thread already exists, free tcb page
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
-  if (strcmp(thread_name(), "child-simple") == 0) printf("ckpt0: %d \n", cur->tcb->parent_exit);
   if (cur->tcb->parent_exit) {
         palloc_free_page(cur->tcb);
     }
   else {
-      if (strcmp(thread_name(), "child-simple") == 0) printf("ckpt1");
       cur->tcb->thread_exit = 1;
       sema_up(&cur->tcb->sema);
   }
