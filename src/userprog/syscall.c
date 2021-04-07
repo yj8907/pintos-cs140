@@ -36,7 +36,7 @@ put_user (uint8_t *udst, uint8_t byte)
 static void syscall_handler (struct intr_frame *);
 static void load_arguments(int, char*, char**);
 
-static void validate_vaddr(void *addr, int);
+static void validate_vaddr(void *addr, uint32_t);
 static void validate_char_vaddr(void *addr);
 static void validate_filename(void *addr);
 
@@ -67,7 +67,7 @@ force_exit(void)
 }
 
 static void
-validate_vaddr(void *addr, int sz)
+validate_vaddr(void *addr, uint32_t sz)
 {
     /* validate addr and addr+sz within user stack */
     if ( !(!is_user_vaddr(addr) || !is_user_vaddr(addr+sz)) ) {
@@ -291,7 +291,9 @@ sys_read(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     const char* buffer = *(char**)argv[1];
-    int size = *(int*)argv[2];
+    uint32_t size = *(int*)argv[2];
+    
+    validate_vaddr(buffer, size);
     
     int bytes_read = 0;
     if (fd != 0){
@@ -313,7 +315,9 @@ sys_write(uint32_t *eax, char** argv)
 {
     int fd = *(int*)argv[0];
     const void* buffer = *(char**)argv[1];
-    int size = *(int*)argv[2];
+    uint32_t size = *(int*)argv[2];
+    
+    validate_vaddr(buffer, size);
     
     int bytes_write;
     if(fd == 1) { // write to stdout
