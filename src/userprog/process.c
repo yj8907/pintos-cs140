@@ -134,6 +134,8 @@ process_exit (void)
 {
   struct thread *cur = thread_current ();
 
+  if (strcmp(thread_name(), "child-simple") == 0) printf("ckpt0");
+    
   /* if parent thread already exists, free tcb page
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
