@@ -213,6 +213,11 @@ static void sys_exec(uint32_t *eax, char** argv)
     validate_char_vaddr(cmd_line);
     tid_t child_tid = process_execute(cmd_line);
     
+    if (strcmp(thread_name(), "exec-arg") == 0){
+        printf("ckpt0 exec %d\n", ret);
+        thread_exit();
+    }
+    
     /* fetch child thread tcb and wait for it to load sucessfully */
     struct thread* cur = thread_current();
     struct list_elem *e = list_front(&cur->child_list);
@@ -229,7 +234,7 @@ static void sys_exec(uint32_t *eax, char** argv)
     sema_up(&child_tcb->sema);
     
     if (strcmp(thread_name(), "exec-arg") == 0){
-        printf("exec %d\n", ret);
+        printf("ckpt1 exec %d\n", ret);
         thread_exit();
     }
     memcpy(eax, &ret, sizeof(ret));
