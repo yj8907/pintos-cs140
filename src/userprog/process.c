@@ -119,7 +119,10 @@ process_wait (tid_t child_tid)
     int count = 0;
     while(!child_tcb->thread_exit) {
         thread_yield();
-        if (count > 100 && strcmp(thread_name(), "exec-once") == 0) break;
+        if (count > 100 && strcmp(thread_name(), "exec-once") == 0) {
+            printf("child_tcb: %d\n", child_tcb->exit_status);
+            break;
+        }
         count++;
     }
     return child_tcb->exit_status;
