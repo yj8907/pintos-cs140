@@ -210,6 +210,7 @@ static void sys_exec(uint32_t *eax, char** argv)
     int ret;
     
     printf("exec: %d",  0);
+    thread_exit();
     
     const char* cmd_line = *(char**)argv[0];
     validate_char_vaddr(cmd_line);
