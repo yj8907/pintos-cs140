@@ -119,7 +119,7 @@ process_wait (tid_t child_tid)
     while(!child_tcb->thread_exit) {
         thread_yield();
     }
-    
+    return child_tcb->status;
 }
 
 /* Free the current process's resources. */
@@ -131,7 +131,6 @@ process_exit (void)
   /* if parent thread already exists, free tcb page
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
-  cur->tcb->exit_status = 0;
   if (cur->tcb->parent_exit) {
         palloc_free_page(cur->tcb);
     }
@@ -140,11 +139,11 @@ process_exit (void)
       sema_up(&cur->tcb->sema);
   }
 
-  /* set parent status to 0 for all child processes */
+  /* set parent exit status to true for all child processes */
   if (!list_empty(&cur->child_list)){
     struct list_elem *e = list_front(&cur->child_list);
-
     struct thread_control_block *tcb;
+      
     while(e != list_tail(&cur->child_list)) {
         tcb = list_entry(e, struct thread_control_block, elem);
 

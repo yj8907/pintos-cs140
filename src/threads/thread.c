@@ -802,6 +802,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     t->tcb->parent_exit = false;
     t->tcb->thread_exit = false;
     t->tcb->loaded = false;
+    t->tcb->exit_status = 0;
     
     t->tcb->tid = t->tid;
     if (setup_parent && strcmp(t->name, "idle") != 0) {
