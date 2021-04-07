@@ -209,6 +209,8 @@ static void sys_exec(uint32_t *eax, char** argv)
 {
     int ret;
     
+    printf("exec: %d",  0);
+    
     const char* cmd_line = *(char**)argv[0];
     validate_char_vaddr(cmd_line);
     tid_t child_tid = process_execute(cmd_line);
@@ -227,7 +229,7 @@ static void sys_exec(uint32_t *eax, char** argv)
     sema_down(&child_tcb->sema);
     
     ret = child_tcb->loaded ? child_tid : -1;
-    printf("return: %d",  ret);
+    
     memcpy(eax, &ret, sizeof(ret));
 };
 
@@ -235,6 +237,7 @@ static void sys_wait(uint32_t *eax, char** argv)
 {
 
     tid_t child_tid = *(int*)argv[0];
+    
     int ret = process_wait(child_tid);
     
 };
