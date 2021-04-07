@@ -213,7 +213,7 @@ static void sys_exec(uint32_t *eax, char** argv)
     validate_char_vaddr(cmd_line);
     tid_t child_tid = process_execute(cmd_line);
     
-    /* fetch child thread tcb */
+    /* fetch child thread tcb and wait for it to load sucessfully */
     struct thread* cur = thread_current();
     struct list_elem *e = list_front(&cur->child_list);
     struct thread_control_block *child_tcb;
@@ -235,7 +235,7 @@ static void sys_wait(uint32_t *eax, char** argv)
     
     tid_t child_tid = *(int*)argv[0];
     
-    int ret = process_wait(child_tid);    
+    int ret = process_wait(child_tid);
     memcpy(eax, &ret, sizeof(ret));
 };
 
