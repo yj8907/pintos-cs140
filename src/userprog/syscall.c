@@ -210,10 +210,10 @@ static void sys_exec(uint32_t *eax, char** argv)
     int ret;
     const char* cmd_line = *(char**)argv[0];
     validate_char_vaddr(cmd_line);
-    printf("ckpt0 exec %d\n");
-    thread_exit();
+    
     tid_t child_tid = process_execute(cmd_line);
-    printf("ckpt1 exec %d\n");
+    printf("ckpt1 exec \n");
+    thread_exit();
     if (strcmp(thread_name(), "exec-arg") == 0){
         printf("ckpt2 exec %d\n", ret);
         thread_exit();
@@ -234,10 +234,9 @@ static void sys_exec(uint32_t *eax, char** argv)
     ret = child_tcb->loaded ? child_tid : -1;
     sema_up(&child_tcb->sema);
     
-    if (strcmp(thread_name(), "exec-arg") == 0){
         printf("ckpt1 exec %d\n", ret);
         thread_exit();
-    }
+    
     memcpy(eax, &ret, sizeof(ret));
 };
 
