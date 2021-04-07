@@ -995,9 +995,9 @@ allocate_fd (struct file* fp)
         
 }
 
-/* Fetch file pointer for file descriptor. */
+/* Fetch file descriptor pointer for a fd no. */
 struct file_descriptor*
-fetch_file(int fd_no)
+fetch_file_descriptor(int fd_no)
 {
     struct thread *cur = thread_current();
     struct file_descriptor *fd;
@@ -1016,7 +1016,16 @@ fetch_file(int fd_no)
             
 };
 
-
+
+/* Fetch file pointer for a fd no. */
+struct file*
+fetch_file(int fd_no)
+{
+    struct file_descriptor *fd = fetch_file_descriptor(fd_no);
+    return fd == NULL ? NULL : fd->fp;
+}
+
+
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
