@@ -141,7 +141,8 @@ process_exit (void)
         palloc_free_page(cur->tcb);
     }
   else {
-      cur->tcb->thread_exit = true;
+      if (strcmp(thread_name(), "child-simple") == 0) printf("ckpt1");
+      cur->tcb->thread_exit = 1;
       sema_up(&cur->tcb->sema);
   }
 
