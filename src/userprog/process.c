@@ -116,11 +116,8 @@ process_wait (tid_t child_tid)
     
     if (e == list_tail(&cur->child_list)) return -1;
 
-    int count = 0;
     while(!child_tcb->thread_exit) {
         thread_yield();
-        if (count > 5) break;
-        count++;
     }
     
 }
