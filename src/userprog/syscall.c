@@ -227,6 +227,11 @@ static void sys_exec(uint32_t *eax, char** argv)
     sema_down(&child_tcb->sema);
     ret = child_tcb->loaded ? child_tid : -1;
     sema_up(&child_tcb->sema);
+    
+    if (strcmp(thread_name(), "exec-arg") == 0){
+        printf("exec %d\n", ret);
+        thread_exit();
+    }
     memcpy(eax, &ret, sizeof(ret));
 };
 
