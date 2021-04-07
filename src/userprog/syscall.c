@@ -235,7 +235,7 @@ static void sys_exec(uint32_t *eax, char** argv)
 
 static void sys_wait(uint32_t *eax, char** argv)
 {
-    thread_exit();
+    
     tid_t child_tid = *(int*)argv[0];
     
     int ret = process_wait(child_tid);
