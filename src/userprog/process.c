@@ -118,7 +118,8 @@ process_wait (tid_t child_tid)
         printf("no process %d\n", child_tid);
         return -1;
     }
-    
+    printf("process %d\n", child_tid);
+    return -1;
     struct list_elem *e = list_front(&cur->child_list);
     struct thread_control_block *child_tcb;
 
