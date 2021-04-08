@@ -108,7 +108,6 @@ process_wait (tid_t child_tid)
     struct thread* cur = thread_current();
     
     if (list_empty(&cur->child_list)) {
-        printf("no process %d\n", child_tid);
         return -1;
     }
 
@@ -120,18 +119,16 @@ process_wait (tid_t child_tid)
         if (child_tcb->tid == child_tid) break;
         e = list_next(e);
     }
-    return -1;
-    if (e == list_tail(&cur->child_list)) return -1;
     
-    printf("waiting 1");
-    return -1;
+    if (e == list_tail(&cur->child_list)) return -1;
+        
     int count = 0;
     while(!child_tcb->thread_exit) {
         thread_yield();
-        if (count > 100 && strcmp(thread_name(), "exec-arg") == 0) {
-            printf("child_tcb: %d\n", child_tcb->thread_exit);
-            break;
-        }
+//        if (count > 100 && strcmp(thread_name(), "exec-arg") == 0) {
+//            printf("child_tcb: %d\n", child_tcb->thread_exit);
+//            break;
+//        }
         count++;
     }
     return child_tcb->exit_status;

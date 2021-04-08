@@ -211,23 +211,11 @@ static void sys_exec(uint32_t *eax, char** argv)
     const char* cmd_line = *(char**)argv[0];
     validate_char_vaddr(cmd_line);
     
-//    printf("ckpt0 exec %s\n", cmd_line);
-//    thread_exit();
-    
     tid_t child_tid = process_execute(cmd_line);
-//    printf("ckpt1 exec %s\n", cmd_line);
-//    thread_exit();
-//    if (strcmp(thread_name(), "exec-arg") == 0){
-//        printf("ckpt2 exec %d\n", ret);
-//        thread_exit();
-//    }
     
     /* fetch child thread tcb and wait for it to load sucessfully */
-    if (child_tid == TID_ERROR) {
-        printf("tid error");
-        memcpy(eax, &ret, sizeof(ret));
-        return;
-    }
+    memcpy(eax, &ret, sizeof(ret));
+    if (child_tid == TID_ERROR) return;
         
     struct thread* cur = thread_current();
     struct list_elem *e = list_front(&cur->child_list);
