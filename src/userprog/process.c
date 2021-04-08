@@ -47,7 +47,7 @@ process_execute (const char *file_name)
     
         printf("ckpt1 exec process_execute %s \n", token);
 //        thread_exit();
-    return TID_ERROR;
+//    return TID_ERROR;
   tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
 //    return TID_ERROR;
 //    printf("ckpt1 exec process_execute1 %s\n", token);
