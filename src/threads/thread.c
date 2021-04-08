@@ -584,7 +584,7 @@ void
 thread_exit (void) 
 {
   ASSERT (!intr_context ());
-printf("thread exit 1");
+//printf("thread exit 1");
 #ifdef USERPROG
   process_exit ();
 #endif
