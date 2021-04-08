@@ -46,7 +46,7 @@ process_execute (const char *file_name)
   token = strtok_r(file_name, " ", &saveptr);
   tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
   
-    printf("ckpt1 exec %s\n", cmd_line);
+    printf("ckpt1 exec process_execute\n");
     thread_exit();
     
   if (tid == TID_ERROR)
