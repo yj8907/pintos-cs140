@@ -46,12 +46,12 @@ process_execute (const char *file_name)
   token = strtok_r(file_name, " ", &saveptr);
     
 //        printf("ckpt1 exec process_execute  \n");
-        thread_exit();
+//        thread_exit();
     
   tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
     
 //    printf("ckpt1 exec process_execute1 %s\n", token);
-//    thread_exit();
+    thread_exit();
     
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
