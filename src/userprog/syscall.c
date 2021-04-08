@@ -224,6 +224,7 @@ static void sys_exec(uint32_t *eax, char** argv)
     
     /* fetch child thread tcb and wait for it to load sucessfully */
     if (child_tid == TID_ERROR) {
+        printf("tid error");
         memcpy(eax, &ret, sizeof(ret));
         return;
     }
