@@ -152,7 +152,7 @@ process_exit (void)
       cur->tcb->thread_exit = 1;
       sema_up(&cur->tcb->sema);
   }
-
+printf("process exit 1");
   /* set parent exit status to true for all child processes */
   if (!list_empty(&cur->child_list)){
     struct list_elem *e = list_front(&cur->child_list);
