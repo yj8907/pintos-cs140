@@ -242,11 +242,6 @@ static void sys_exec(uint32_t *eax, char** argv)
     sema_down(&child_tcb->sema);
     ret = child_tcb->loaded ? child_tid : -1;
     sema_up(&child_tcb->sema);
-
-            
-    
-//        printf("ckpt1 exec %d\n", ret);
-//        thread_exit();
     
     memcpy(eax, &ret, sizeof(ret));
 };
