@@ -33,7 +33,7 @@ process_execute (const char *file_name)
 {
   char *fn_copy;
   tid_t tid;
-
+        thread_exit();
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
@@ -51,7 +51,7 @@ process_execute (const char *file_name)
   tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
     
 //    printf("ckpt1 exec process_execute1 %s\n", token);
-    thread_exit();
+//    thread_exit();
     
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
