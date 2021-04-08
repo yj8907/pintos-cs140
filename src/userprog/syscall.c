@@ -223,21 +223,25 @@ static void sys_exec(uint32_t *eax, char** argv)
 //    }
     
     /* fetch child thread tcb and wait for it to load sucessfully */
-    if (child_tid != TID_ERROR) {
-        struct thread* cur = thread_current();
-        struct list_elem *e = list_front(&cur->child_list);
-        struct thread_control_block *child_tcb;
-        while(e != list_tail(&cur->child_list)) {
-            child_tcb = list_entry(e, struct thread_control_block, elem);
-            if (child_tcb->tid == child_tid) break;
-            e = list_next(e);
-        }
-        ASSERT(e != list_tail(&cur->child_list));
-        
-        sema_down(&child_tcb->sema);
-        ret = child_tcb->loaded ? child_tid : -1;
-        sema_up(&child_tcb->sema);
+    if (child_tid == TID_ERROR) {
+        memcpy(eax, &ret, sizeof(ret));
+        return;
     }
+        
+    struct thread* cur = thread_current();
+    struct list_elem *e = list_front(&cur->child_list);
+    struct thread_control_block *child_tcb;
+    while(e != list_tail(&cur->child_list)) {
+        child_tcb = list_entry(e, struct thread_control_block, elem);
+        if (child_tcb->tid == child_tid) break;
+        e = list_next(e);
+    }
+    ASSERT(e != list_tail(&cur->child_list));
+    
+    sema_down(&child_tcb->sema);
+    ret = child_tcb->loaded ? child_tid : -1;
+    sema_up(&child_tcb->sema);
+
             
     
 //        printf("ckpt1 exec %d\n", ret);
