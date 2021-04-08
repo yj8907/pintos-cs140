@@ -45,7 +45,10 @@ process_execute (const char *file_name)
   char *token, *saveptr;
   token = strtok_r(file_name, " ", &saveptr);
   tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
-        
+  
+    printf("ckpt1 exec %s\n", cmd_line);
+    thread_exit();
+    
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
   return tid;
