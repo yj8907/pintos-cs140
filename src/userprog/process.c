@@ -113,8 +113,10 @@ process_wait (tid_t child_tid)
 {
     struct thread* cur = thread_current();
     
-    if (list_empty(&cur->child_list)) return -1;
-    
+    if (list_empty(&cur->child_list)) {
+        printf("no process %d\n", child_tid);
+        return -1;
+    }
     struct list_elem *e = list_front(&cur->child_list);
     struct thread_control_block *child_tcb;
 
