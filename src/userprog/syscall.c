@@ -212,8 +212,8 @@ static void sys_exec(uint32_t *eax, char** argv)
     validate_char_vaddr(cmd_line);
     
     tid_t child_tid = process_execute(cmd_line);
-//    printf("ckpt1 exec %s\n", cmd_line);
-//    thread_exit();
+    printf("ckpt1 exec %s\n", cmd_line);
+    thread_exit();
 //    if (strcmp(thread_name(), "exec-arg") == 0){
 //        printf("ckpt2 exec %d\n", ret);
 //        thread_exit();
