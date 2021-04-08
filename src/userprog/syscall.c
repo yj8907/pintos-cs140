@@ -213,10 +213,11 @@ static void sys_exec(uint32_t *eax, char** argv)
     
     tid_t child_tid = process_execute(cmd_line);
     
-    /* fetch child thread tcb and wait for it to load sucessfully */
+    /* if process_create fails */
     memcpy(eax, &ret, sizeof(ret));
     if (child_tid == TID_ERROR) return;
-        
+    
+    /* fetch child thread tcb and wait for it to load sucessfully */
     struct thread* cur = thread_current();
     struct list_elem *e = list_front(&cur->child_list);
     struct thread_control_block *child_tcb;
