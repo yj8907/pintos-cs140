@@ -44,10 +44,11 @@ process_execute (const char *file_name)
   /* Create a new thread to execute FILE_NAME. */
   char *token, *saveptr;
   token = strtok_r(file_name, " ", &saveptr);
-  tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
-  
-    printf("ckpt1 exec process_execute\n");
+    
+    printf("ckpt1 exec process_execute %s\n", token);
     thread_exit();
+    
+  tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
     
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
