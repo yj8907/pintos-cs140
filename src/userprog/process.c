@@ -139,6 +139,7 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
+    printf("enter process exit");
   struct thread *cur = thread_current ();
 
   /* if parent thread already exists, free tcb page
