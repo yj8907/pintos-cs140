@@ -796,7 +796,8 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     t->tcb = palloc_get_page (PAL_ZERO);
 
     /* init sema for sync */
-    sema_init(&t->tcb->sema, 0);
+    int sema_value = (strcmp(t->name, "main") == 0 || strcmp(t->name, "idle") == 0) ? 1 : 0;
+    sema_init(&t->tcb->sema, sema_value);
       
     /* establish parent/child relatioship */
     t->tcb->parent_exit = false;
