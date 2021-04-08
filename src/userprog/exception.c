@@ -153,7 +153,7 @@ page_fault (struct intr_frame *f)
   if (!user) {
       f->eip = (void*)f->eax;
       f->eax = 0xffffffff;
-      printf(thread_name());
+      printf("thread: %s", thread_name());
 //      return;
   }
     
