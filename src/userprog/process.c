@@ -128,8 +128,6 @@ process_wait (tid_t child_tid)
         e = list_next(e);
     }
 
-    printf("process %d\n", child_tid);
-    return -1;
     if (e == list_tail(&cur->child_list)) return -1;
     
     printf("waiting 1");
