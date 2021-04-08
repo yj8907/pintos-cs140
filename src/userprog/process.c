@@ -45,7 +45,7 @@ process_execute (const char *file_name)
   char *token, *saveptr;
   token = strtok_r(file_name, " ", &saveptr);
     
-        printf("ckpt1 exec process_execute  \n");
+//        printf("ckpt1 exec process_execute  \n");
         thread_exit();
     
   tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
