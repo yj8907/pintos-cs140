@@ -584,7 +584,7 @@ void
 thread_exit (void) 
 {
   ASSERT (!intr_context ());
-
+printf("thread exit 1");
 #ifdef USERPROG
   process_exit ();
 #endif
@@ -598,6 +598,7 @@ thread_exit (void)
   /* remove exiting threads from last_run list */
   if (thread_mlfqs && thread_current()->lastrun_elem.prev != NULL && thread_current()->lastrun_elem.next != NULL ) list_remove (&thread_current()->lastrun_elem);
   thread_current ()->status = THREAD_DYING;
+    printf("thread exit 2");
   schedule ();
   NOT_REACHED ();
 }
