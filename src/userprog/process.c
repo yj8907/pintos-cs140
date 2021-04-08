@@ -47,7 +47,7 @@ process_execute (const char *file_name)
     
 //        printf("ckpt1 exec process_execute  \n");
 //        thread_exit();
-    
+    return -1;
   tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
     
 //    printf("ckpt1 exec process_execute1 %s\n", token);
@@ -139,7 +139,7 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
-    printf("enter process exit");
+    
   struct thread *cur = thread_current ();
 
   /* if parent thread already exists, free tcb page
@@ -152,7 +152,7 @@ process_exit (void)
       cur->tcb->thread_exit = 1;
       sema_up(&cur->tcb->sema);
   }
-printf("process exit 1");
+
   /* set parent exit status to true for all child processes */
   if (!list_empty(&cur->child_list)){
     struct list_elem *e = list_front(&cur->child_list);
@@ -174,7 +174,7 @@ printf("process exit 1");
         }
     }
   }
-   printf("process exit 2");
+   
   /* close files and free page for fd */
   if (!list_empty(&cur->fildes)){
       struct list_elem* e = list_front(&cur->fildes);
@@ -187,7 +187,7 @@ printf("process exit 1");
           palloc_free_page(fd); /* free page */
       }
   }
-    printf("process exit 3");
+    
   uint32_t *pd;
   
   /* Destroy the current process's page directory and switch back
