@@ -97,7 +97,7 @@ kill (struct intr_frame *f)
          may cause kernel exceptions--but they shouldn't arrive
          here.)  Panic the kernel to make the point.  */
       intr_dump_frame (f);
-      PANIC ("Kernel bug - unexpected interrupt in kernel %s", thread_name());
+      PANIC ("Kernel bug - unexpected interrupt in kernel at thread: %s", thread_name());
 
     default:
       /* Some other code segment?  Shouldn't happen.  Panic the
