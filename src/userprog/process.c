@@ -174,7 +174,7 @@ printf("process exit 1");
         }
     }
   }
-   
+   printf("process exit 2");
   /* close files and free page for fd */
   if (!list_empty(&cur->fildes)){
       struct list_elem* e = list_front(&cur->fildes);
@@ -187,7 +187,7 @@ printf("process exit 1");
           palloc_free_page(fd); /* free page */
       }
   }
-    
+    printf("process exit 3");
   uint32_t *pd;
   
   /* Destroy the current process's page directory and switch back
