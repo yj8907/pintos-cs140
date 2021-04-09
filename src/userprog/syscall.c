@@ -8,6 +8,9 @@
 
 static int argc_max = 3;
 
+typedef uint32_t Elf32_Word, Elf32_Addr, Elf32_Off;
+typedef uint16_t Elf32_Half;
+
 /* Executable header.  See [ELF1] 1-4 to 1-8.
    This appears at the very beginning of an ELF binary. */
 struct Elf32_Ehdr
@@ -28,7 +31,7 @@ struct Elf32_Ehdr
     Elf32_Half    e_shstrndx;
   };
 
-static bool is_executable(file * fp)
+static bool is_executable(struct file * fp)
 {
     if (fp == NULL) return false;
     
