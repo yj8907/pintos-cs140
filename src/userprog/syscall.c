@@ -120,7 +120,7 @@ validate_write_vaddr(void *addr, int sz)
     }
 
     if ( !is_user_vaddr(addr) || byte == -1 ) force_exit();
-    if (write && !success) force_exit();
+    if (!success) force_exit();
     
 }
 
