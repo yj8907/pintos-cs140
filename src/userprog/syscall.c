@@ -108,15 +108,13 @@ validate_write_vaddr(void *addr, int sz)
     bool success = true;
     if (sz >= 0){
         while ( count < sz && (byte = get_user(addr) != -1)){
-            if (write == 1)  success = put_user(addr,  0);
-            if (write && !success) break;
+            if (!put_user(addr,  0)) break;
             addr++; count++;
         }
     } else {
         while ( is_user_vaddr(addr) && (byte = get_user(addr) != -1)){
             if ( (char)byte == '\0') break;
-            if (write == 1) success = put_user(addr,  0);
-            if (write && !success) break;
+            if (!put_user(addr,  0)) break;
             addr++;
         }
     }
