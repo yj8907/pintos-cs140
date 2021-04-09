@@ -73,17 +73,17 @@ start_process (void *file_name_)
   char *token, *saveptr;
   token = strtok_r(file_name, " ", &saveptr);
   
-  printf("token %s", token);
+//  printf("token %s", token);
   
-//  success = load (token, &if_.eip, &if_.esp);
+  success = load (token, &if_.eip, &if_.esp);
       
   /* push arguments */
-//  if_.esp = load_argument(if_.esp, token, saveptr);
+  if_.esp = load_argument(if_.esp, token, saveptr);
   
-//  thread_current()->tcb->loaded = success;
+  thread_current()->tcb->loaded = success;
   sema_up(&thread_current()->tcb->sema);
     
-    thread_exit();
+//    thread_exit();
   /* If load failed, quit. */
   palloc_free_page (file_name);
   if (!success) 
