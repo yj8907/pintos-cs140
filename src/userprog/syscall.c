@@ -76,15 +76,22 @@ static void
 validate_vaddr(void *addr, int sz, bool write)
 {
     
-    if ( !is_user_vaddr(addr) || (sz > 0 && !is_user_vaddr(addr+sz)) ) force_exit();
+    if ( !is_user_vaddr(addr) || (sz >= 0 && !is_user_vaddr(addr+sz)) ) force_exit();
         
     int count = 0;
-    while ( (sz < 0 || count < sz) && is_user_vaddr(addr) && get_user(addr) != -1){
-        if ( (char)get_user(addr) == '\0') break;
-        if (write && put_user(addr,  0) == -1) break;
-        addr++; count++;
+    if (sz >= 0){
+        while ( count < sz && get_user(addr) != -1){
+            if (write && put_user(addr,  0) == -1) break;
+            addr++; count++;
+        }
+    } else {
+        while ( is_user_vaddr(addr) && get_user(addr) != -1){
+            if ( (char)get_user(addr) == '\0') break;
+            if (write && put_user(addr,  0) == -1) break;
+            addr++;
+        }
     }
-    
+
     if ( !is_user_vaddr(addr) || get_user(addr) == -1 ) force_exit();
     if (write && put_user(addr,  0) == -1) force_exit();
 }
