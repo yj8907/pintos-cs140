@@ -36,7 +36,8 @@ put_user (uint8_t *udst, uint8_t byte)
 static void syscall_handler (struct intr_frame *);
 static void load_arguments(int, char*, char**);
 
-static void validate_vaddr(void *addr, int, int);
+static void validate_read_vaddr(void *addr, int);
+static void validate_write_vaddr(void *addr, int);
 static void validate_filename(void *addr);
 
 static void force_exit(void);
@@ -70,11 +71,34 @@ static void
 validate_filename(void *filename)
 {
     if (filename == NULL) force_exit();
-    validate_vaddr(filename, -1, false);
+    validate_read_vaddr(filename, -1, false);
 }
 
 static void
-validate_vaddr(void *addr, int sz, int write)
+validate_read_vaddr(void *addr, int sz);
+{
+    
+    if ( !is_user_vaddr(addr) || (sz >= 0 && !is_user_vaddr(addr+sz)) ) force_exit();
+    
+    int count = 0;
+    int byte = 0;
+    if (sz >= 0){
+        while ( count < sz && (byte = get_user(addr) != -1)){
+            addr++; count++;
+        }
+    } else {
+        while ( is_user_vaddr(addr) && (byte = get_user(addr) != -1)){
+            addr++;
+        }
+    }
+
+    if ( !is_user_vaddr(addr) || byte == -1 ) force_exit();
+    
+}
+
+
+static void
+validate_write_vaddr(void *addr, int sz);
 {
     
     if ( !is_user_vaddr(addr) || (sz >= 0 && !is_user_vaddr(addr+sz)) ) force_exit();
@@ -83,16 +107,16 @@ validate_vaddr(void *addr, int sz, int write)
     int byte;
     bool success = true;
     if (sz >= 0){
-        while ( count < sz && get_user(addr) != -1){
-            if (write == 1) { success = put_user(addr,  0); printf("write");}
-//            if (write && !success) break;
+        while ( count < sz && (byte = get_user(addr) != -1)){
+            if (write == 1)  success = put_user(addr,  0);
+            if (write && !success) break;
             addr++; count++;
         }
     } else {
         while ( is_user_vaddr(addr) && (byte = get_user(addr) != -1)){
             if ( (char)byte == '\0') break;
-            if (write == 1) { success = put_user(addr,  0); printf("write");}
-//            if (write && !success) break;
+            if (write == 1) success = put_user(addr,  0);
+            if (write && !success) break;
             addr++;
         }
     }
@@ -103,10 +127,11 @@ validate_vaddr(void *addr, int sz, int write)
 }
 
 
+
 static void
 load_arguments(int argc, char* args, char** argv)
 {
-    validate_vaddr(args, sizeof(args)*argc, 0);
+    validate_read_vaddr(args, sizeof(args)*argc);
     for (int i = 0; i < argc; i++){
         *argv = args;
         args += sizeof(args);
@@ -126,7 +151,7 @@ syscall_handler (struct intr_frame *f)
 {
   char *args = (char*)f->esp;
   
-  validate_vaddr(args, sizeof(int), 0);
+  validate_read_vaddr(args, sizeof(int));
   int syscall_no = *((int*)args);
   args += sizeof(syscall_no);
       
@@ -214,7 +239,7 @@ static void sys_exec(uint32_t *eax, char** argv)
     int ret = -1;
     const char* cmd_line = *(char**)argv[0];
     
-    validate_vaddr(cmd_line, -1, false);
+    validate_read_vaddr(cmd_line, -1);
     
     tid_t child_tid = process_execute(cmd_line);
     
@@ -305,7 +330,7 @@ sys_read(uint32_t *eax, char** argv)
     const char* buffer = *(char**)argv[1];
     uint32_t size = *(int*)argv[2];
     
-    validate_vaddr(buffer, size, false);
+    validate_read_vaddr(buffer, size);
     
     int bytes_read = 0;
     if (fd_no != 0 ){
@@ -329,7 +354,7 @@ sys_write(uint32_t *eax, char** argv)
     const void* buffer = *(char**)argv[1];
     uint32_t size = *(int*)argv[2];
     
-    validate_vaddr(buffer, size, true);
+    validate_write_vaddr(buffer, size);
     
     int bytes_write = 0;
     if (fd_no == 1) { // write to stdout
