@@ -85,7 +85,7 @@ validate_vaddr(void *addr, int sz, bool write)
         while ( count < sz && get_user(addr) != -1){
             if (write && !put_user(addr,  0)) break;
             addr++; count++;
-        }s
+        }
     } else {
         while ( is_user_vaddr(addr) && (byte = get_user(addr) != -1){
             if ( (char)byte == '\0') break;
