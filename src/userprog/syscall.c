@@ -80,22 +80,24 @@ validate_vaddr(void *addr, int sz, bool write)
     if ( !is_user_vaddr(addr) || (sz >= 0 && !is_user_vaddr(addr+sz)) ) force_exit();
         
     int count = 0;
-    int byte;
+    int byte, success;
     if (sz >= 0){
         while ( count < sz && get_user(addr) != -1){
-            if (write) { if (!put_user(addr,  0)) break; }
+            if (write) success = put_user(addr,  0);
+            if (!success) break;
             addr++; count++;
         }
     } else {
         while ( is_user_vaddr(addr) && (byte = get_user(addr) != -1)){
             if ( (char)byte == '\0') break;
-            if (write) { if (!put_user(addr,  0)) break; }
+            if (write) success = put_user(addr,  0);
+            if (!success) break;
             addr++;
         }
     }
 
     if ( !is_user_vaddr(addr) || byte == -1 ) force_exit();
-    if (write) { if (!put_user(addr,  0)) break; }
+    if (write && !success) force_exit();
     
 }
 
