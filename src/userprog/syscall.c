@@ -59,6 +59,7 @@ static void sys_close(uint32_t *eax, char** argv);
 static void
 force_exit(void)
 {
+    printf("force exit");
     int status = -1;
     char *argv[argc_max];
     argv[0] = &status;
