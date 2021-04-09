@@ -42,7 +42,7 @@ process_execute (const char *file_name)
   strlcpy (fn_copy, file_name, PGSIZE);
 
     if (strcmp(file_name, "child-args childarg") == 0){
-        char  *new_filename;
+        char  *new_filename = palloc_get_page (0);
         strlcpy(new_filename, file_name, strlen(file_name)+1);
         printf("arg0: %s\n", new_filename);
         char *token, *saveptr;
