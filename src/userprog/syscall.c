@@ -404,7 +404,6 @@ sys_write(uint32_t *eax, char** argv)
         sema_down(&filesys_sema);
         bytes_write = fp == NULL ? 0 : file_write(fp, buffer, size);
         sema_up(&filesys_sema);
-        thread_exit();
     }
     memcpy(eax, &bytes_write, sizeof(bytes_write));
 };
