@@ -253,7 +253,10 @@ static void sys_create(uint32_t *eax, char** argv)
     
     validate_filename(filename);
     
+    sema_down(&filesys_sema);
     int ret = filesys_create(filename, initial_size) ? 1 : 0;
+    sema_up(&filesys_sema);
+    
     memcpy(eax, &ret, sizeof(ret));
 };
 
@@ -263,7 +266,10 @@ static void sys_remove(uint32_t *eax, char** argv)
     const char* filename = *(char**)argv[0];
     validate_filename(filename);
     
+    sema_down(&filesys_sema);
     int ret = filesys_remove(filename) ? 1 : 0;
+    sema_up(&filesys_sema);
+    
     memcpy(eax, &ret, sizeof(ret));
 };
 
@@ -290,7 +296,11 @@ sys_filesize(uint32_t *eax, char** argv)
     int fd = *(int*)argv[0];
     
     struct file* fp = fetch_file(fd);
+    
+    sema_down(&filesys_sema);
     int ret = fp == NULL ? 0 : file_length(fp);
+    sema_up(&filesys_sema);
+    
     memcpy(eax, &ret, sizeof(ret));
 };
 
@@ -306,7 +316,9 @@ sys_read(uint32_t *eax, char** argv)
     int bytes_read = 0;
     if (fd_no != 0 ){
         struct file* fp = fetch_file(fd_no);
+        sema_down(&filesys_sema);
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
+        sema_up(&filesys_sema);
     } else {
         while(bytes_read < size) {
             uint8_t key = input_getc();
@@ -333,7 +345,9 @@ sys_write(uint32_t *eax, char** argv)
       bytes_write = size;
     } else {
         struct file* fp = fetch_file(fd_no);
+        sema_down(&filesys_sema);
         bytes_write = fp == NULL ? 0 : file_write(fp, buffer, size);
+        sema_up(&filesys_sema);
     }
     memcpy(eax, &bytes_write, sizeof(bytes_write));
 };
