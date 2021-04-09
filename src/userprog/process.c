@@ -113,9 +113,7 @@ process_wait (tid_t child_tid)
 {
     struct thread* cur = thread_current();
     
-    if (list_empty(&cur->child_list)) {
-        return -1;
-    }
+    if (list_empty(&cur->child_list)) return -1;
 
     struct list_elem *e = list_front(&cur->child_list);
     struct thread_control_block *child_tcb;
@@ -380,6 +378,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
   /* Open executable file. */
   sema_down(&filesys_sema);
   file = filesys_open (file_name);
+  if (file != NULL) file_deny_write(file);
   sema_up(&filesys_sema);
     
   if (file == NULL) 
@@ -388,6 +387,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
       goto done; 
     }
 
+  
   /* Read and verify executable header. */
   if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr
       || memcmp (ehdr.e_ident, "\177ELF\1\1\1", 7)
@@ -472,6 +472,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
  done:
   /* We arrive here whether the load is successful or not. */
   sema_down(&filesys_sema);
+  if (file != NULL) file_allow_write(file);
   file_close (file);
   sema_up(&filesys_sema);
     
