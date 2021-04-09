@@ -93,7 +93,7 @@ validate_read_vaddr(void *addr, int sz)
     }
 
     if ( !is_user_vaddr(addr) || byte == -1 ) force_exit();
-    
+    printf("read");
 }
 
 
@@ -121,7 +121,7 @@ validate_write_vaddr(void *addr, int sz)
 
     if ( !is_user_vaddr(addr) || byte == -1 ) force_exit();
     if (!success) force_exit();
-    
+    printf("write");
 }
 
 
