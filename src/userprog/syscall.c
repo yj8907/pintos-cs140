@@ -322,6 +322,7 @@ sys_read(uint32_t *eax, char** argv)
         struct file* fp = fetch_file(fd_no);
         sema_down(&filesys_sema);
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
+        print("read %d\n", file_tell(fp));
         sema_up(&filesys_sema);
     } else {
         while(bytes_read < size) {
