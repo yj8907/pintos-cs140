@@ -379,14 +379,12 @@ load (const char *file_name, void (**eip) (void), void **esp)
   sema_down(&filesys_sema);
   file = filesys_open (file_name);
   if (file != NULL) file_deny_write(file);
-  sema_up(&filesys_sema);
-    
+      
   if (file == NULL) 
     {
       printf ("load: %s: open failed\n", file_name);
       goto done; 
     }
-
   
   /* Read and verify executable header. */
   if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr
@@ -471,7 +469,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
  done:
   /* We arrive here whether the load is successful or not. */
-  sema_down(&filesys_sema);
   if (file != NULL) file_allow_write(file);
   file_close (file);
   sema_up(&filesys_sema);
