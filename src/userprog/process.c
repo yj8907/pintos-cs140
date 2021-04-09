@@ -42,6 +42,10 @@ process_execute (const char *file_name)
   strlcpy (fn_copy, file_name, PGSIZE);
 
     if (strcmp(file_name, "child-args childarg") == 0){
+        printf("arg0: %s\n", file_name);
+        char *token, *saveptr;
+        token = strtok_r(file_name, " ", &saveptr);
+        
         printf("arg: %s\n", file_name);
         return TID_ERROR;
     }
