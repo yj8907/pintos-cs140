@@ -350,6 +350,7 @@ sys_write(uint32_t *eax, char** argv)
     } else {
         struct file* fp = fetch_file(fd_no);
         sema_down(&filesys_sema);
+        printf("write1 %d\n", file_tell(fp));
         bytes_write = fp == NULL ? 0 : file_write(fp, buffer, size);
         sema_up(&filesys_sema);
         printf("write %d\n", bytes_write);
