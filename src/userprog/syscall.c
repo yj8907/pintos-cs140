@@ -83,19 +83,19 @@ validate_vaddr(void *addr, int sz, bool write)
     int byte;
     if (sz >= 0){
         while ( count < sz && get_user(addr) != -1){
-            if (write && !put_user(addr,  0)) break;
+//            if (write && !put_user(addr,  0)) break;
             addr++; count++;
         }
     } else {
         while ( is_user_vaddr(addr) && (byte = get_user(addr) != -1)){
             if ( (char)byte == '\0') break;
-            if (write && !put_user(addr,  0)) break;
+//            if (write && !put_user(addr,  0)) break;
             addr++;
         }
     }
 
     if ( !is_user_vaddr(addr) || byte == -1 ) force_exit();
-    if (write && !put_user(addr,  0)) force_exit();
+//    if (write && !put_user(addr,  0)) force_exit();
     printf("validate");
 }
 
