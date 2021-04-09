@@ -372,6 +372,7 @@ sys_read(uint32_t *eax, char** argv)
     
     int bytes_read = 0;
     if (fd_no != 0 ){
+        thread_exit();
         struct file* fp = fetch_file(fd_no);
         sema_down(&filesys_sema);
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
