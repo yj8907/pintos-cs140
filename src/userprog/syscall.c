@@ -201,7 +201,7 @@ static void sys_exec(uint32_t *eax, char** argv)
     int ret = -1;
     const char* cmd_line = *(char**)argv[0];
     
-    validate_char_vaddr(cmd_line, false);
+    validate_vaddr(cmd_line, -1, false);
     
     tid_t child_tid = process_execute(cmd_line);
     
