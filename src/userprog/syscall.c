@@ -75,7 +75,7 @@ validate_filename(void *filename)
 }
 
 static void
-validate_read_vaddr(void *addr, int sz);
+validate_read_vaddr(void *addr, int sz)
 {
     
     if ( !is_user_vaddr(addr) || (sz >= 0 && !is_user_vaddr(addr+sz)) ) force_exit();
@@ -98,7 +98,7 @@ validate_read_vaddr(void *addr, int sz);
 
 
 static void
-validate_write_vaddr(void *addr, int sz);
+validate_write_vaddr(void *addr, int sz)
 {
     
     if ( !is_user_vaddr(addr) || (sz >= 0 && !is_user_vaddr(addr+sz)) ) force_exit();
