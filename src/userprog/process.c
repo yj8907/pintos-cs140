@@ -75,7 +75,7 @@ start_process (void *file_name_)
   
 //  printf("token %s", token);
   
-//  success = load (token, &if_.eip, &if_.esp);
+  success = load (token, &if_.eip, &if_.esp);
     success = true;
   /* push arguments */
 //  if_.esp = load_argument(if_.esp, token, saveptr);
