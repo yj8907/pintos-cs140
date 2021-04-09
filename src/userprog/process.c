@@ -131,13 +131,15 @@ process_wait (tid_t child_tid)
     int count = 0;
     while(!child_tcb->thread_exit) {
         thread_yield();
-//        if (count > 100 && strcmp(thread_name(), "exec-arg") == 0) {
-//            printf("child_tcb: %d\n", child_tcb->thread_exit);
-//            break;
-//        }
         count++;
     }
-    return child_tcb->exit_status;
+    
+    /* release the page */
+    int exit_status = child_tcb->exit_status;
+    list_remove(e);
+    palloc_free_page(child_tcb);
+    
+    return exit_status;
 }
 
 /* Free the current process's resources. */
