@@ -8,6 +8,44 @@
 
 static int argc_max = 3;
 
+/* Executable header.  See [ELF1] 1-4 to 1-8.
+   This appears at the very beginning of an ELF binary. */
+struct Elf32_Ehdr
+  {
+    unsigned char e_ident[16];
+    Elf32_Half    e_type;
+    Elf32_Half    e_machine;
+    Elf32_Word    e_version;
+    Elf32_Addr    e_entry;
+    Elf32_Off     e_phoff;
+    Elf32_Off     e_shoff;
+    Elf32_Word    e_flags;
+    Elf32_Half    e_ehsize;
+    Elf32_Half    e_phentsize;
+    Elf32_Half    e_phnum;
+    Elf32_Half    e_shentsize;
+    Elf32_Half    e_shnum;
+    Elf32_Half    e_shstrndx;
+  };
+
+static bool is_executable(file * fp)
+{
+    if (fp == NULL) return false;
+    
+    struct Elf32_Ehdr ehdr;
+    bool ret = true;
+    if (file_read (fp, &ehdr, sizeof ehdr) != sizeof ehdr
+        || memcmp (ehdr.e_ident, "\177ELF\1\1\1", 7)
+        || ehdr.e_type != 2
+        || ehdr.e_machine != 3
+        || ehdr.e_version != 1
+        || ehdr.e_phentsize != sizeof (struct Elf32_Phdr)
+        || ehdr.e_phnum > 1024) ret = false;
+    file_seek(fp, 0);
+    
+    return ret;
+}
+
 /* Reads a byte at user virtual address UADDR.
    UADDR must be below PHYS_BASE.
    Returns the byte value if successful, -1 if a segfault
@@ -285,6 +323,8 @@ sys_open(uint32_t *eax, char** argv)
     struct file *fp = filesys_open(filename);
     sema_up(&filesys_sema);
     
+    struct Elf32_Ehdr ehdr;
+    
     if (fp != NULL) ret = allocate_fd(fp);
     
     memcpy(eax, &ret, sizeof(ret));
@@ -299,6 +339,7 @@ sys_filesize(uint32_t *eax, char** argv)
     
     sema_down(&filesys_sema);
     int ret = fp == NULL ? 0 : file_length(fp);
+    if (is_executable(fp)) file_deny_write(fp);
     sema_up(&filesys_sema);
     
     memcpy(eax, &ret, sizeof(ret));
