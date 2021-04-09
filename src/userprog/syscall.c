@@ -339,7 +339,7 @@ sys_open(uint32_t *eax, char** argv)
     
     sema_down(&filesys_sema);
     struct file *fp = filesys_open(filename);
-    if (is_executable(fp)) file_deny_write(fp);
+//    if (is_executable(fp)) file_deny_write(fp);
     sema_up(&filesys_sema);
         
     if (fp != NULL) ret = allocate_fd(fp);
