@@ -71,7 +71,7 @@ static void
 validate_filename(void *filename)
 {
     if (filename == NULL) force_exit();
-    validate_read_vaddr(filename, -1, false);
+    validate_read_vaddr(filename, -1);
 }
 
 static void
