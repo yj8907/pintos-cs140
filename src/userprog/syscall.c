@@ -95,7 +95,7 @@ validate_vaddr(void *addr, int sz, bool write)
 
     if ( !is_user_vaddr(addr) || get_user(addr) == -1 ) force_exit();
     if (write && !put_user(addr,  0)) force_exit();
-    prinf("validate");
+    printf("validate");
 }
 
 
