@@ -372,7 +372,6 @@ sys_read(uint32_t *eax, char** argv)
     
     int bytes_read = 0;
     if (fd_no != 0 ){
-        thread_exit();
         struct file* fp = fetch_file(fd_no);
         sema_down(&filesys_sema);
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
@@ -396,8 +395,6 @@ sys_write(uint32_t *eax, char** argv)
     uint32_t size = *(int*)argv[2];
     
     validate_vaddr(buffer, size);
-    printf("write %d\n", fd_no);
-    if (fd_no != 1) thread_exit();
     int bytes_write = 0;
     if (fd_no == 1) { // write to stdout
       putbuf(buffer, size);
