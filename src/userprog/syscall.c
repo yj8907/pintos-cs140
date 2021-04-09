@@ -396,7 +396,8 @@ sys_write(uint32_t *eax, char** argv)
     uint32_t size = *(int*)argv[2];
     
     validate_vaddr(buffer, size);
-    
+    printf("write %d\n", fd_no);
+    thread_exit();
     int bytes_write = 0;
     if (fd_no == 1) { // write to stdout
       putbuf(buffer, size);
