@@ -48,7 +48,7 @@ process_execute (const char *file_name)
         char *token, *saveptr;
         token = strtok_r(new_filename, " ", &saveptr);
         
-        printf("arg: %s\n", file_name);
+        printf("arg: %s\n", token);
         return TID_ERROR;
     }
     
