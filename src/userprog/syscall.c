@@ -339,10 +339,9 @@ sys_open(uint32_t *eax, char** argv)
     
     sema_down(&filesys_sema);
     struct file *fp = filesys_open(filename);
+    if (is_executable(fp)) file_deny_write(fp);
     sema_up(&filesys_sema);
-    
-    struct Elf32_Ehdr ehdr;
-    
+        
     if (fp != NULL) ret = allocate_fd(fp);
     
     memcpy(eax, &ret, sizeof(ret));
@@ -357,7 +356,6 @@ sys_filesize(uint32_t *eax, char** argv)
     
     sema_down(&filesys_sema);
     int ret = fp == NULL ? 0 : file_length(fp);
-    if (is_executable(fp)) file_deny_write(fp);
     sema_up(&filesys_sema);
     
     memcpy(eax, &ret, sizeof(ret));
