@@ -34,6 +34,11 @@ process_execute (const char *file_name)
   char *fn_copy;
   tid_t tid;
 
+    if (strcmp(file_name, "child-args childarg") == 0){
+        printf("arg: %s\n", file_name);
+        return TID_ERROR;
+    }
+    
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
@@ -45,10 +50,6 @@ process_execute (const char *file_name)
   char *token, *saveptr;
   token = strtok_r(file_name, " ", &saveptr);
 
-    if (strcmp(token, "child-args") == 0){
-        printf("arg: %s\n", file_name);
-        return TID_ERROR;
-    }
   tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
     
   if (tid == TID_ERROR)
