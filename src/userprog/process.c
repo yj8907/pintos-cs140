@@ -42,19 +42,21 @@ process_execute (const char *file_name)
   strlcpy (fn_copy, file_name, PGSIZE);
 
     if (strcmp(file_name, "child-args childarg") == 0){
-        char  *new_filename = palloc_get_page (0);
-        strlcpy(new_filename, file_name, strlen(file_name)+1);
-        printf("arg0: %s\n", new_filename);
-        char *token, *saveptr;
-        token = strtok_r(new_filename, " ", &saveptr);
-        
-        printf("arg: %s\n", token);
-        return TID_ERROR;
+//        char  *new_filename = palloc_get_page (0);
+//        strlcpy(new_filename, file_name, strlen(file_name)+1);
+//        printf("arg0: %s\n", new_filename);
+//        char *token, *saveptr;
+//        token = strtok_r(new_filename, " ", &saveptr);
+//
+//        printf("arg: %s\n", token);
+//        return TID_ERROR;
     }
     
+  char *fn_copy_2 = fn_copy + strlen(file_name) + 1;
+  strlcpy (fn_copy_2, file_name, strlen(file_name)+1);
   /* Create a new thread to execute FILE_NAME. */
   char *token, *saveptr;
-  token = strtok_r(file_name, " ", &saveptr);
+  token = strtok_r(fn_copy_2, " ", &saveptr);
     
   tid = thread_create (token, PRI_DEFAULT, start_process, fn_copy);
     
