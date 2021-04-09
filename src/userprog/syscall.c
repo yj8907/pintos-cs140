@@ -11,6 +11,21 @@ static int argc_max = 3;
 typedef uint32_t Elf32_Word, Elf32_Addr, Elf32_Off;
 typedef uint16_t Elf32_Half;
 
+/* Program header.  See [ELF1] 2-2 to 2-4.
+   There are e_phnum of these, starting at file offset e_phoff
+   (see [ELF1] 1-6). */
+struct Elf32_Phdr
+  {
+    Elf32_Word p_type;
+    Elf32_Off  p_offset;
+    Elf32_Addr p_vaddr;
+    Elf32_Addr p_paddr;
+    Elf32_Word p_filesz;
+    Elf32_Word p_memsz;
+    Elf32_Word p_flags;
+    Elf32_Word p_align;
+  };
+
 /* Executable header.  See [ELF1] 1-4 to 1-8.
    This appears at the very beginning of an ELF binary. */
 struct Elf32_Ehdr
