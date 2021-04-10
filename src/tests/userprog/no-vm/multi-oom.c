@@ -53,9 +53,9 @@ consume_some_resources (void)
      the kernel, open() may fail if the kernel is low on memory.
      A low-memory condition in open() should not lead to the
      termination of the process.  */
+    char* filename = "multi-oom";
     for (fd = 0; fd < fdmax; fd++) {
-        if (open (test_name) == -1)
-          break;
+        if (open (filename) == -1) break;
     }
 }
 
