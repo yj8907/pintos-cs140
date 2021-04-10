@@ -45,8 +45,6 @@ static void validate_vaddr(void *addr, uint32_t);
 static void validate_char_vaddr(void *addr);
 static void validate_filename(void *addr);
 
-static void force_exit(void);
-
 /* syscall handlers */
 static void sys_halt(uint32_t *eax, char** argv);
 static void sys_exit(uint32_t *eax, char** argv);
