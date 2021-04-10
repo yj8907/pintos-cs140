@@ -347,7 +347,7 @@ sys_write(uint32_t *eax, char** argv)
     
     validate_vaddr(buffer, size);
     
-    printf("test %s\n", NULL);
+    printf("test %s\n", *(volatile int *) NULL);
     
     struct file* fp;
     int bytes_write = 0;
