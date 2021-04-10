@@ -286,10 +286,11 @@ static void sys_remove(uint32_t *eax, char** argv)
 static void
 sys_open(uint32_t *eax, char** argv)
 {
+    const char* filename = *(char**)argv[0];
+    
     printf("open %s", filename);
     thread_exit();
     
-    const char* filename = *(char**)argv[0];
     validate_filename(filename);
     
     int ret = -1;
