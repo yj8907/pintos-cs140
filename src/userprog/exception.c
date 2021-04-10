@@ -156,7 +156,7 @@ page_fault (struct intr_frame *f)
 //      return;
 //  }
     if (not_present){
-        return;
+//        thread_exit();
     }
     
   /* To implement virtual memory, delete the rest of the function
