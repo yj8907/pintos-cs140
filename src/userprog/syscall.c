@@ -352,8 +352,6 @@ sys_write(uint32_t *eax, char** argv)
         sema_down(&filesys_sema);
         bytes_write = file_write(fp, buffer, size);
         sema_up(&filesys_sema);
-        printf("write: %d\n", bytes_write);
-        thread_exit();
     }
     memcpy(eax, &bytes_write, sizeof(bytes_write));
 };
