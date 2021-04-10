@@ -157,7 +157,7 @@ page_fault (struct intr_frame *f)
       return;
   }
     if (user && not_present){
-        printf("not present");
+//        printf("not present");
         force_exit();
     }
 
