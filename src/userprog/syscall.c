@@ -343,7 +343,7 @@ sys_write(uint32_t *eax, char** argv)
     
     validate_vaddr(buffer, size);
     
-    struct file* fp
+    struct file* fp;
     int bytes_write = 0;
     if (fd_no == 1) { // write to stdout
       putbuf(buffer, size);
