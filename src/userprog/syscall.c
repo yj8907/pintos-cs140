@@ -350,7 +350,7 @@ sys_write(uint32_t *eax, char** argv)
     
     validate_vaddr(buffer, size);
     
-    printf("write");
+    printf("write 0x%08x", buffer);
 //    thread_exit();
     
     struct file* fp;
