@@ -125,14 +125,12 @@ process_wait (tid_t child_tid)
     }
     
     if (e == list_tail(&cur->child_list)) return -1;
-        
-    int count = 0;
+    
     while(!child_tcb->thread_exit) {
         thread_yield();
-        count++;
     }
     
-    /* release the page */
+    /* release t       count+he page */
     int exit_status = child_tcb->exit_status;
     list_remove(e);
     palloc_free_page(child_tcb);
