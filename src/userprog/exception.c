@@ -155,7 +155,8 @@ page_fault (struct intr_frame *f)
   if (!user) {
       f->eip = (void*)f->eax;
       f->eax = 0xffffffff;
-      force_exit();
+//      force_exit();
+      return;
   }
     if (user) {
         printf("user");
