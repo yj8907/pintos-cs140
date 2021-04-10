@@ -354,6 +354,7 @@ sys_write(uint32_t *eax, char** argv)
         size =  remaining_sz < size ? remaining_sz : size;
         bytes_write = file_write(fp, buffer, size);
         printf("bytes_write: %d\n", bytes_write);
+        thread_exit();
         sema_up(&filesys_sema);
     }
     memcpy(eax, &bytes_write, sizeof(bytes_write));
