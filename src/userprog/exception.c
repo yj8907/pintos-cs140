@@ -150,7 +150,7 @@ page_fault (struct intr_frame *f)
 
     /* Each of these functions assumes that the user address has already been verified to be below PHYS_BASE. They also assume that you've modified page_fault() so that a page fault in the kernel merely sets eax to 0xffffffff and copies its former value into eip.
      */
-  if (!user) {
+  if (!user && !not_present) {
       f->eip = (void*)f->eax;
       f->eax = 0xffffffff;
       return;
