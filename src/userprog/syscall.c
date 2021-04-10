@@ -73,6 +73,8 @@ force_exit(void)
 static void
 validate_vaddr(void *addr, uint32_t sz)
 {
+    if (addr == NULL) force_exit();
+    
     /* validate addr and addr+sz within user stack */
     if ( !(!is_user_vaddr(addr) || !is_user_vaddr(addr+sz)) ) {
         for (int i = 0; i < sz; i++) {
@@ -93,6 +95,8 @@ validate_filename(void *filename)
 static void
 validate_char_vaddr(void *addr)
 {
+    if (addr == NULL) force_exit();
+    
     int byte_val;
     while ( is_user_vaddr(addr) && (byte_val = get_user(addr)) != -1){
         if ( (char)byte_val == '\0') break;
