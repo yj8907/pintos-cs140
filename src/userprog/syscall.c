@@ -318,7 +318,7 @@ sys_read(uint32_t *eax, char** argv)
     validate_vaddr(buffer, size);
     
     printf("read");
-    thread_exit();
+//    thread_exit();
     
     int bytes_read = 0;
     if (fd_no != 0 ){
@@ -347,7 +347,7 @@ sys_write(uint32_t *eax, char** argv)
     validate_vaddr(buffer, size);
     
     printf("write");
-    thread_exit();
+//    thread_exit();
     
     struct file* fp;
     int bytes_write = 0;
