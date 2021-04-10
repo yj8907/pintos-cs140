@@ -63,7 +63,7 @@ consume_some_resources (void)
 static int NO_INLINE
 consume_some_resources_and_die (int seed)
 {
-  consume_some_resources ();
+//  consume_some_resources ();
   random_init (seed);
   volatile int *PHYS_BASE = (volatile int *)0xC0000000;
 
@@ -130,17 +130,17 @@ main (int argc, char *argv[])
       /* Spawn a child that will be abnormally terminated.
          To speed the test up, do this only for processes
          spawned at a certain depth. */
-//      if (n > EXPECTED_DEPTH_TO_PASS/2)
-//        {
-//          child_pid = spawn_child (n + 1, CRASH);
-//          if (child_pid != -1)
-//            {
-//              if (wait (child_pid) != -1)
-//                fail ("crashed child should return -1.");
-//            }
-//          /* If spawning this child failed, so should
-//             the next spawn_child below. */
-//        }
+      if (n > EXPECTED_DEPTH_TO_PASS/2)
+        {
+          child_pid = spawn_child (n + 1, CRASH);
+          if (child_pid != -1)
+            {
+              if (wait (child_pid) != -1)
+                fail ("crashed child should return -1.");
+            }
+          /* If spawning this child failed, so should
+             the next spawn_child below. */
+        }
 
       /* Now spawn the child that will recurse. */
       child_pid = spawn_child (n + 1, RECURSE);
