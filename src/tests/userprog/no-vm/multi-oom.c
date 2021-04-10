@@ -46,16 +46,17 @@ spawn_child (int c, enum child_termination_mode mode)
 static void
 consume_some_resources (void)
 {
-  int fd, fdmax = 126;
+  int fd, fdmax = 1;
 
   /* Open as many files as we can, up to fdmax.
      Depending on how file descriptors are allocated inside
      the kernel, open() may fail if the kernel is low on memory.
      A low-memory condition in open() should not lead to the
      termination of the process.  */
-  for (fd = 0; fd < fdmax; fd++)
-    if (open (test_name) == -1)
-      break;
+    for (fd = 0; fd < fdmax; fd++) {
+        if (open (test_name) == -1)
+          break;
+    }
 }
 
 /* Consume some resources, then terminate this process
