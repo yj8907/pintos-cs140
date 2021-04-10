@@ -349,12 +349,12 @@ sys_write(uint32_t *eax, char** argv)
       bytes_write = size;
     } else {
         struct file* fp = fetch_file(fd_no);
+        if (fp == NULL) break;
         sema_down(&filesys_sema);
-        printf("write1 %d\n", file_tell(fp));
-        bytes_write = fp == NULL ? 0 : file_write(fp, buffer, size);
+        int remaining_sz = file_length(file) - file_tell(file)
+        size =  remaining_sz < size ? remaining_sz : size;
+        bytes_write = file_write(fp, buffer, size);
         sema_up(&filesys_sema);
-        printf("write %d\n", bytes_write);
-        thread_exit();
     }
     memcpy(eax, &bytes_write, sizeof(bytes_write));
 };
