@@ -156,6 +156,7 @@ page_fault (struct intr_frame *f)
 //      return;
 //  }
     if (not_present){
+        printf("not present");
 //        thread_exit();
     }
     
