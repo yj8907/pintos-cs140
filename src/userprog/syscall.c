@@ -62,7 +62,7 @@ static void sys_seek(uint32_t *eax, char** argv);
 static void sys_tell(uint32_t *eax, char** argv);
 static void sys_close(uint32_t *eax, char** argv);
 
-static void
+void
 force_exit(void)
 {
     int status = -1;
