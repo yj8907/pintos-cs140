@@ -155,10 +155,10 @@ page_fault (struct intr_frame *f)
       f->eax = 0xffffffff;
       return;
   }
-//    if (not_present){
-//        printf("not present");
-////        thread_exit();
-//    }
+    if (not_present){
+        printf("not present");
+//        thread_exit();
+    }
     
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
