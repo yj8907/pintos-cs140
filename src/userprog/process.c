@@ -149,7 +149,7 @@ process_exit (void)
 
   /* Allow write to executable file. */
   sema_down(&filesys_sema);
-  file = filesys_open (thread_name());
+  struct file* file = filesys_open (thread_name());
   if (file != NULL) file_allow_write(file);
   sema_up(&filesys_sema);
     
