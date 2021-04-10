@@ -150,16 +150,16 @@ page_fault (struct intr_frame *f)
 
     /* Each of these functions assumes that the user address has already been verified to be below PHYS_BASE. They also assume that you've modified page_fault() so that a page fault in the kernel merely sets eax to 0xffffffff and copies its former value into eip.
      */
-  if (!user && !not_present) {
+  if (!user) {
       f->eip = (void*)f->eax;
       f->eax = 0xffffffff;
       return;
   }
-//    if (not_present){
-//        printf("not present");
-////        thread_exit();
-//    }
-//
+    if (user && not_present){
+        printf("not present");
+//        thread_exit();
+    }
+
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
      which fault_addr refers. */
