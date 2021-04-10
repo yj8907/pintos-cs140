@@ -54,7 +54,7 @@ consume_some_resources (void)
      A low-memory condition in open() should not lead to the
      termination of the process.  */
     for (fd = 0; fd < fdmax; fd++) {
-        if (open (filename) == -1) break;
+        if (open (test_name) == -1) break;
     }
 }
 
