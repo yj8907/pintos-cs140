@@ -147,6 +147,12 @@ process_exit (void)
     
   struct thread *cur = thread_current ();
 
+  /* Allow write to executable file. */
+  sema_down(&filesys_sema);
+  file = filesys_open (thread_name());
+  if (file != NULL) file_allow_write(file);
+  sema_up(&filesys_sema);
+    
   /* if parent thread already exists, free tcb page
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
@@ -469,7 +475,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
  done:
   /* We arrive here whether the load is successful or not. */
-  if (file != NULL) file_allow_write(file);
   file_close (file);
   sema_up(&filesys_sema);
     
