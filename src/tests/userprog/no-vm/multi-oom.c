@@ -63,7 +63,7 @@ consume_some_resources (void)
 static int NO_INLINE
 consume_some_resources_and_die (int seed)
 {
-//  consume_some_resources ();
+  consume_some_resources ();
   random_init (seed);
   volatile int *PHYS_BASE = (volatile int *)0xC0000000;
 
@@ -115,7 +115,7 @@ main (int argc, char *argv[])
   /* If -k is passed, crash this process. */
   if (argc > 2 && !strcmp(argv[2], "-k"))
     {
-      consume_some_resources_and_die (n);        
+      consume_some_resources_and_die (n);
       NOT_REACHED ();
     }
 
@@ -164,7 +164,7 @@ main (int argc, char *argv[])
       ASSERT (expected_depth == reached_depth);
     }
 
-//  consume_some_resources ();
+  consume_some_resources ();
 
   if (n == 0)
     {

@@ -987,6 +987,9 @@ allocate_fd (struct file* fp)
 {
   struct file_descriptor *fd;
   fd =  palloc_get_page(PAL_ZERO);
+  
+  if (fd == NULL) return -1;
+  
   struct thread *cur = thread_current();
     
   fd->fp = fp;
