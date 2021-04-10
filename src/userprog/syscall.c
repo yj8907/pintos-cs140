@@ -288,7 +288,7 @@ sys_open(uint32_t *eax, char** argv)
 {
     const char* filename = *(char**)argv[0];
     validate_filename(filename);
-    printf("file:%s\n", filename);
+    
     int ret = -1;
     
     sema_down(&filesys_sema);
@@ -348,8 +348,6 @@ sys_write(uint32_t *eax, char** argv)
     uint32_t size = *(int*)argv[2];
     
     validate_vaddr(buffer, size);
-    
-//    printf("test %s\n", *(volatile int *) NULL);
     
     struct file* fp;
     int bytes_write = 0;
