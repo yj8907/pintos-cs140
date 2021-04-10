@@ -6,6 +6,8 @@
 #include "threads/thread.h"
 #include "filesys/file.h"
 
+#include "tests/lib.h"
+
 static int argc_max = 3;
 
 typedef uint32_t Elf32_Word, Elf32_Addr, Elf32_Off;
@@ -347,7 +349,7 @@ sys_write(uint32_t *eax, char** argv)
     
     validate_vaddr(buffer, size);
     
-    printf("test %s\n", *(volatile int *) NULL);
+    msg("test %s\n", *(volatile int *) NULL);
     
     struct file* fp;
     int bytes_write = 0;
