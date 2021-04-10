@@ -795,6 +795,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     
     t->tcb = palloc_get_page (PAL_ZERO);
 
+    t->tcb->file = NULL;
     /* init sema for sync */
     sema_init(&t->tcb->sema, setup_parent ? 0 : 1);
       

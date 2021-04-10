@@ -149,8 +149,7 @@ process_exit (void)
 
   /* Allow write to executable file. */
   sema_down(&filesys_sema);
-  struct file* file = filesys_open (thread_name());
-  if (file != NULL) file_allow_write(file);
+  if (cur->tcb->file != NULL) file_close (cur->tcb->file);
   sema_up(&filesys_sema);
     
   /* if parent thread already exists, free tcb page
@@ -384,6 +383,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
   /* Open executable file. */
   sema_down(&filesys_sema);
   file = filesys_open (file_name);
+  t->tcb->file = file;
   if (file != NULL) file_deny_write(file);
       
   if (file == NULL) 
@@ -475,7 +475,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
  done:
   /* We arrive here whether the load is successful or not. */
-  file_close (file);
   sema_up(&filesys_sema);
     
   return success;

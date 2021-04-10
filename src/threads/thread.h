@@ -40,6 +40,8 @@ struct thread_control_block {
     tid_t tid;
     struct semaphore sema;
     
+    struct file* file;
+    
     struct thread* parent_td;
     struct list_elem elem;
     
