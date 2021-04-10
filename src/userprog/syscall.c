@@ -321,9 +321,6 @@ sys_read(uint32_t *eax, char** argv)
     
     validate_vaddr(buffer, size);
     
-    printf("read");
-//    thread_exit();
-    
     int bytes_read = 0;
     if (fd_no != 0 ){
         struct file* fp = fetch_file(fd_no);
@@ -349,10 +346,6 @@ sys_write(uint32_t *eax, char** argv)
     uint32_t size = *(int*)argv[2];
     
     validate_vaddr(buffer, size);
-    
-    printf("write 0x%08x", buffer);
-    printf("write %s", buffer);
-//    thread_exit();
     
     struct file* fp;
     int bytes_write = 0;
