@@ -6,7 +6,6 @@
 #include "threads/thread.h"
 #include "filesys/file.h"
 
-#include "tests/lib.h"
 
 static int argc_max = 3;
 
