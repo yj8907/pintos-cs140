@@ -214,10 +214,10 @@ sys_exit(uint32_t *eax, char** argv)
 
 static void sys_exec(uint32_t *eax, char** argv)
 {
-    static int exec_count = 0;
-    exec_count++;
-    if (exec_count > 20) force_exit();
-    
+//    static int exec_count = 0;
+//    exec_count++;
+//    if (exec_count > 20) force_exit();
+
     int ret = -1;
     const char* cmd_line = *(char**)argv[0];
     
