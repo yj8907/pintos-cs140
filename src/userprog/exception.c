@@ -4,6 +4,7 @@
 #include "userprog/gdt.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "userprog/syscall.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -157,7 +158,7 @@ page_fault (struct intr_frame *f)
   }
     if (user && not_present){
         printf("not present");
-//        thread_exit();
+        force_exit();
     }
 
   /* To implement virtual memory, delete the rest of the function
