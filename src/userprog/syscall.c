@@ -289,6 +289,9 @@ sys_open(uint32_t *eax, char** argv)
     const char* filename = *(char**)argv[0];
     validate_filename(filename);
     
+    printf("open %s", filename);
+    thread_exit();
+    
     int ret = -1;
     
     sema_down(&filesys_sema);
