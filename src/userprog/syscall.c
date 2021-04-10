@@ -342,13 +342,13 @@ sys_write(uint32_t *eax, char** argv)
     uint32_t size = *(int*)argv[2];
     
     validate_vaddr(buffer, size);
+    
+    struct file* fp
     int bytes_write = 0;
     if (fd_no == 1) { // write to stdout
       putbuf(buffer, size);
       bytes_write = size;
-    } else {
-        struct file* fp = fetch_file(fd_no);
-        if (fp == NULL) break;
+    } else if ( (fp = fetch_file(fd_no)) != NULL ) {
         sema_down(&filesys_sema);
         int remaining_sz = file_length(fp) - file_tell(fp)
         size =  remaining_sz < size ? remaining_sz : size;
