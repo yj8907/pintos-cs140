@@ -350,7 +350,7 @@ sys_write(uint32_t *eax, char** argv)
       bytes_write = size;
     } else if ( (fp = fetch_file(fd_no)) != NULL ) {
         sema_down(&filesys_sema);
-        int remaining_sz = file_length(fp) - file_tell(fp)
+        int remaining_sz = file_length(fp) - file_tell(fp);
         size =  remaining_sz < size ? remaining_sz : size;
         bytes_write = file_write(fp, buffer, size);
         sema_up(&filesys_sema);
