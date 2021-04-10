@@ -164,7 +164,7 @@ main (int argc, char *argv[])
       ASSERT (expected_depth == reached_depth);
     }
 
-  consume_some_resources ();
+//  consume_some_resources ();
 
   if (n == 0)
     {
