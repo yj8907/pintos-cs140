@@ -401,6 +401,6 @@ sys_close(uint32_t *eax, char** argv)
     sema_up(&filesys_sema);
     
     list_remove(&fd->elem);
-    palloc_free_page(fd);
+    free(fd);
 };
 
