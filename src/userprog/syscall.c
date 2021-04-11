@@ -5,7 +5,9 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "filesys/file.h"
+
 #include <string.h>
+#include "threads/palloc.h"
 
 static int argc_max = 3;
 
@@ -284,9 +286,9 @@ sys_open(uint32_t *eax, char** argv)
 {
     const char* filename = *(char**)argv[0];
     
-    char *fn_copy_2 = palloc_get_page (0);
-    strlcpy (fn_copy_2, filename, strlen(filename)+1);
-    filename = fn_copy_2;
+//    char *fn_copy_2 = palloc_get_page (0);
+//    strlcpy (fn_copy_2, filename, strlen(filename)+1);
+//    filename = fn_copy_2;
     
     validate_filename(filename);
     printf("open:%s\n", filename);
