@@ -815,6 +815,8 @@ init_thread_control_block(struct thread *t, bool setup_parent)
         t->tcb->parent_td = parent_thread;
         list_push_back(&parent_thread->child_list, &t->tcb->elem);
     }
+    
+    return 0;
 }
 
 /* Does basic initialization of T as a blocked thread named
@@ -846,7 +848,7 @@ init_thread (struct thread *t, const char *name, int priority)
   if (strcmp(name, "main") != 0) {
       if (init_thread_control_block(t, true) == -1) {
           palloc_free_page(t);
-          return;
+          return -1;
       }
   }
       
@@ -859,6 +861,8 @@ init_thread (struct thread *t, const char *name, int priority)
   list_push_back (&all_list, &t->allelem);
     
   intr_set_level (old_level);
+    
+  return 0;
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
