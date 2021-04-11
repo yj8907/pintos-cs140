@@ -46,7 +46,7 @@ spawn_child (int c, enum child_termination_mode mode)
 static void
 consume_some_resources (void)
 {
-  int fd, fdmax = 1;
+  int fd, fdmax = 126;
 
   /* Open as many files as we can, up to fdmax.
      Depending on how file descriptors are allocated inside
@@ -54,7 +54,7 @@ consume_some_resources (void)
      A low-memory condition in open() should not lead to the
      termination of the process.  */
     for (fd = 0; fd < fdmax; fd++) {
-        if (open ("multi-oom") == -1) break;
+        if (open (test_name) == -1) break;
     }
 }
 
@@ -109,7 +109,7 @@ main (int argc, char *argv[])
 
   n = argc > 1 ? atoi (argv[1]) : 0;
     
-  if (n > 1) return n;
+  if (n > 0) return n;
     
   bool is_at_root = (n == 0);
   if (is_at_root)
