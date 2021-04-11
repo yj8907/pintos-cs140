@@ -108,8 +108,8 @@ static void kernel_thread (thread_func *, void *aux);
 static void idle (void *aux UNUSED);
 static struct thread *running_thread (void);
 static struct thread *next_thread_to_run (void);
-static void init_thread (struct thread *, const char *name, int priority);
-static void init_thread_control_block (struct thread *, bool);
+static int init_thread (struct thread *, const char *name, int priority);
+static int init_thread_control_block (struct thread *, bool);
 static bool is_thread (struct thread *) UNUSED;
 static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
@@ -209,7 +209,7 @@ thread_start (void)
   sema_init (&idle_started, 0);
 
   #ifdef USERPROG
-  init_thread_control_block(thread_current(), false);
+  ASSERT (init_thread_control_block(thread_current(), false) != -1);
   #endif
     
   thread_create ("idle", PRI_MIN, idle, &idle_started);
@@ -407,7 +407,7 @@ thread_create (const char *name, int priority,
     return TID_ERROR;
 
   /* Initialize thread. */
-  init_thread (t, name, priority);
+  if (init_thread (t, name, priority) == -1) return TID_ERROR;
   tid = t->tid = allocate_tid ();
   t->tcb->tid = tid;
     
@@ -794,7 +794,10 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     t->fd_no = 2;
     
     t->tcb = palloc_get_page (PAL_ZERO);
-
+    
+    if (t->tcb == NULL)
+        return -1;
+    
     t->tcb->file = NULL;
     /* init sema for sync */
     sema_init(&t->tcb->sema, setup_parent ? 0 : 1);
@@ -815,7 +818,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
 
 /* Does basic initialization of T as a blocked thread named
    NAME. */
-static void
+static int
 init_thread (struct thread *t, const char *name, int priority)
 {
   enum intr_level old_level;
@@ -839,8 +842,13 @@ init_thread (struct thread *t, const char *name, int priority)
   }
     
   #ifdef USERPROG
-  if (strcmp(name, "main") != 0)
-      init_thread_control_block(t, true);
+  if (strcmp(name, "main") != 0) {
+      if (init_thread_control_block(t, true) == -1) {
+          palloc_free_page(t);
+          return;
+      }
+  }
+      
   #endif
     
   t->magic = THREAD_MAGIC;
