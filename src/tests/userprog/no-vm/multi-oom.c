@@ -109,7 +109,7 @@ main (int argc, char *argv[])
 
   n = argc > 1 ? atoi (argv[1]) : 0;
     
-  if (n > 0) return n;
+  if (n > 1) return n;
     
   bool is_at_root = (n == 0);
   if (is_at_root)
