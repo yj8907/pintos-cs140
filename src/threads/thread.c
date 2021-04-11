@@ -794,7 +794,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     /* initialize file descriptor number to 2 */
     t->fd_no = 2;
     
-    t->tcb = malloc (512);
+    t->tcb = malloc (128);
     
     if (t->tcb == NULL)
         return -1;
@@ -996,7 +996,7 @@ allocate_fd (struct file* fp)
 {
   struct file_descriptor *fd;
 //  fd = palloc_get_page(PAL_ZERO);
-  fd = malloc(512);
+  fd = malloc(128);
   
   if (fd == NULL) return -1;
   
