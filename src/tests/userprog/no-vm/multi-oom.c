@@ -108,6 +108,9 @@ main (int argc, char *argv[])
   test_name = "multi-oom";
 
   n = argc > 1 ? atoi (argv[1]) : 0;
+    
+  if (n > 5) return n;
+    
   bool is_at_root = (n == 0);
   if (is_at_root)
     msg ("begin");
