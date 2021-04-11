@@ -8,6 +8,7 @@
 
 #include <string.h>
 #include "threads/palloc.h"
+#include "threads/malloc.h"
 
 static int argc_max = 3;
 
@@ -293,8 +294,26 @@ sys_open(uint32_t *eax, char** argv)
     struct file *fp = filesys_open(filename);
     sema_up(&filesys_sema);
         
+    static int fd_no = 2;
+    
     if (fp != NULL) {
-        if ( (ret = allocate_fd(fp)) == -1) {
+        
+          struct file_descriptor *fd;
+        //  fd = palloc_get_page(PAL_ZERO);
+          fd = malloc(128);
+        
+        if (fd != NULL) {
+              struct thread *cur = thread_current();
+                
+            sema_down(&filesys_sema);
+              fd->fp = fp;
+              fd->fd_no = cur->fd_no++;
+              list_push_back(&cur->fildes, &fd->elem);
+            sema_up(&filesys_sema);
+            ret = fd->fd_no;
+        }
+   
+        if ( ret == -1) {
             sema_down(&filesys_sema);
             file_close(filename);
             sema_up(&filesys_sema);

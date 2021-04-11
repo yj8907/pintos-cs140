@@ -796,8 +796,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     
     t->tcb = malloc (128);
     
-    if (t->tcb == NULL)
-        return -1;
+    if (t->tcb == NULL) return -1;
     
     t->tcb->file = NULL;
     /* init sema for sync */
