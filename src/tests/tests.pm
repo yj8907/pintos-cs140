@@ -167,16 +167,16 @@ sub compare_output {
 	@output = grep (!/^[a-zA-Z0-9-_]+: exit\(\-?\d+\)$/, @output);
     }
     my $ignore_user_faults = exists $options{IGNORE_USER_FAULTS};
-#    if ($ignore_user_faults) {
-#	delete $options{IGNORE_USER_FAULTS};
-#	@output = grep (!/^Page fault at.*in user context\.$/
-#			&& !/: dying due to interrupt 0x0e \(.*\).$/
-#			&& !/^Interrupt 0x0e \(.*\) at eip=/
-#			&& !/^ cr2=.* error=.*/
-#			&& !/^ eax=.* ebx=.* ecx=.* edx=.*/
-#			&& !/^ esi=.* edi=.* esp=.* ebp=.*/
-#			&& !/^ cs=.* ds=.* es=.* ss=.*/, @output);
-#    }
+    if ($ignore_user_faults) {
+	delete $options{IGNORE_USER_FAULTS};
+	@output = grep (!/^Page fault at.*in user context\.$/
+			&& !/: dying due to interrupt 0x0e \(.*\).$/
+			&& !/^Interrupt 0x0e \(.*\) at eip=/
+			&& !/^ cr2=.* error=.*/
+			&& !/^ eax=.* ebx=.* ecx=.* edx=.*/
+			&& !/^ esi=.* edi=.* esp=.* ebp=.*/
+			&& !/^ cs=.* ds=.* es=.* ss=.*/, @output);
+    }
     die "unknown option " . (keys (%options))[0] . "\n" if %options;
 
     my ($msg);
