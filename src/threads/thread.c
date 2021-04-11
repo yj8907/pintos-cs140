@@ -784,7 +784,7 @@ is_thread (struct thread *t)
 
 /* Initialize thread control block. It's only available after
  paging has been initialized */
-static void
+static int
 init_thread_control_block(struct thread *t, bool setup_parent)
 {
     list_init(&t->child_list);
