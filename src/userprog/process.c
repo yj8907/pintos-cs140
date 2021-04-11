@@ -380,7 +380,8 @@ load (const char *file_name, void (**eip) (void), void **esp)
   file = filesys_open (file_name);
   t->tcb->file = file;
   if (file != NULL) file_deny_write(file);
-      
+  sema_up(&filesys_sema);
+    
   if (file == NULL) 
     {
       printf ("load: %s: open failed\n", file_name);
@@ -470,7 +471,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
  done:
   /* We arrive here whether the load is successful or not. */
-  sema_up(&filesys_sema);
     
   return success;
 }
