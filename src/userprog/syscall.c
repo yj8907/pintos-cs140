@@ -293,8 +293,13 @@ sys_open(uint32_t *eax, char** argv)
     struct file *fp = filesys_open(filename);
     sema_up(&filesys_sema);
         
-//    if (fp != NULL) ret = allocate_fd(fp);
-    
+    if (fp != NULL) {
+        if ( (ret = allocate_fd(fp)) == -1) {
+            sema_down(&filesys_sema);
+            file_close(filename);
+            sema_up(&filesys_sema);
+        }
+    }
     memcpy(eax, &ret, sizeof(ret));
 };
 

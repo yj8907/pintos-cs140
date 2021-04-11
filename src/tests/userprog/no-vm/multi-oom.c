@@ -56,7 +56,7 @@ consume_some_resources (void)
     for (fd = 0; fd < fdmax; fd++) {
         if (open (test_name) == -1) break;
     }
-//    return -1;
+
 }
 
 /* Consume some resources, then terminate this process
