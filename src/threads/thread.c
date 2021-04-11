@@ -1001,9 +1001,11 @@ allocate_fd (struct file* fp)
   struct thread *cur = thread_current();
     
   fd->fp = fp;
+  lock_acquire (&tid_lock);
   fd->fd_no = cur->fd_no++;
   list_push_back(&cur->fildes, &fd->elem);
-  
+  lock_release (&tid_lock);
+    
   return fd->fd_no;
         
 }
