@@ -46,7 +46,7 @@ spawn_child (int c, enum child_termination_mode mode)
 static void
 consume_some_resources (void)
 {
-  int fd, fdmax = 126;
+  int fd, fdmax = 1;
 
   /* Open as many files as we can, up to fdmax.
      Depending on how file descriptors are allocated inside
