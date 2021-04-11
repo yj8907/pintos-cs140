@@ -291,7 +291,7 @@ sys_open(uint32_t *eax, char** argv)
 //    filename = fn_copy_2;
     
     validate_filename(filename);
-    printf("open:%s\n", filename);
+//    printf("open:%s\n", filename);
     int ret = -1;
     
     sema_down(&filesys_sema);
