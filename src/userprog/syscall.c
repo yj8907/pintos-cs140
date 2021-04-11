@@ -5,7 +5,7 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "filesys/file.h"
-
+#include <string.h>
 
 static int argc_max = 3;
 
