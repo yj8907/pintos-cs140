@@ -131,7 +131,7 @@ process_wait (tid_t child_tid)
     /* release t       count+he page */
     int exit_status = child_tcb->exit_status;
     list_remove(e);
-    palloc_free_page(child_tcb);
+    free(child_tcb);
     
     return exit_status;
 }
@@ -140,7 +140,6 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
-    
   struct thread *cur = thread_current ();
 
   /* Allow write to executable file. */
@@ -152,7 +151,7 @@ process_exit (void)
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
   if (cur->tcb->parent_exit) {
-        palloc_free_page(cur->tcb);
+        free(cur->tcb);
     }
   else {
       cur->tcb->thread_exit = 1;
@@ -172,7 +171,7 @@ process_exit (void)
         tcb->parent_exit = true;
         if (tcb->thread_exit) {
             e = list_remove(e);
-            palloc_free_page(tcb);
+            free(tcb);
         }
         else {
             sema_up(&tcb->sema);

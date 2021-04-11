@@ -794,7 +794,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     /* initialize file descriptor number to 2 */
     t->fd_no = 2;
     
-    t->tcb = palloc_get_page (PAL_ZERO);
+    t->tcb = malloc (512);
     
     if (t->tcb == NULL)
         return -1;
