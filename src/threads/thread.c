@@ -8,6 +8,7 @@
 #include "threads/interrupt.h"
 #include "threads/intr-stubs.h"
 #include "threads/palloc.h"
+#include "threads/malloc.h"
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
@@ -994,7 +995,8 @@ int
 allocate_fd (struct file* fp)
 {
   struct file_descriptor *fd;
-  fd =  palloc_get_page(PAL_ZERO);
+//  fd = palloc_get_page(PAL_ZERO);
+  fd = malloc(512);
   
   if (fd == NULL) return -1;
   
