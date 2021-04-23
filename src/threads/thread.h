@@ -8,6 +8,10 @@
 #include "filesys/file.h"
 #include "userprog/syscall.h"
 
+#ifdef VM
+#include "vm/page.h"
+#endif
+
 /* States in a thread's life cycle. */
 enum thread_status
   {
@@ -148,6 +152,10 @@ struct thread
     int fd_no;
 #endif
 
+#ifdef VM
+    struct vm_mm_struct *vm_mm;
+#endif
+      
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };

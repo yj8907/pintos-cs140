@@ -850,7 +850,10 @@ init_thread (struct thread *t, const char *name, int priority)
           return -1;
       }
   }
-      
+  #endif
+   
+  #ifdef VM
+  t->vm_mm = vm_mm_init();
   #endif
     
   t->magic = THREAD_MAGIC;
