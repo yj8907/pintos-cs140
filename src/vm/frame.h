@@ -14,11 +14,11 @@
 #include "threads/thread.h"
 #include "vm/page.h"
 
-typeof struct frame_table_entry {
+struct frame_table_entry {
     struct thread *holder;
     int numRef;
     void *virtual_page;
-} fte;
+};
 
 void frame_table_init(void);
 

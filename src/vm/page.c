@@ -81,7 +81,7 @@ vm_alloc_page(struct vm_mm_struct* vm_mm, size_t page_cnt,
                
 
 void
-vm_update_page(thread* t, void *pg, enum page_state next_state, uint32_t swap_location)
+vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t swap_location)
 {
     ASSERT(pg_ofs(pg) == 0);
     
