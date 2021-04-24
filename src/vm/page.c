@@ -62,8 +62,8 @@ vm_alloc_page(struct vm_mm_struct* vm_mm, size_t page_cnt,
     else
        vm_mm->kernel_ptr += PGSIZE;
 
-    if (pg_ofs(vm_mm->mmap->end_ptr) + sizeof(struct vm_area) >= PGSIZE)
-        vm_mm->mmap->end_ptr = palloc_get_page(0);
+    if (pg_ofs(vm_mm->end_ptr) + sizeof(struct vm_area) >= PGSIZE)
+        vm_mm->end_ptr = palloc_get_page(0);
         
     struct vm_area* vm_area_entry = vm_mm->mmap->end_ptr;
     vm_area_entry->vm_start = (uint32_t)page;
@@ -81,6 +81,7 @@ vm_alloc_page(struct vm_mm_struct* vm_mm, size_t page_cnt,
 void
 vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t swap_location)
 {
+    
     ASSERT(pg_ofs(pg) == 0);
     
     struct vm_mm_struct *vm_mm = t->vm_mm;
