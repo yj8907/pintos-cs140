@@ -55,7 +55,7 @@ evict_frame(void *frame, size_t page_cnt)
     ASSERT(frame != NULL);
     ASSERT(pg_ofs(frame) == 0);
     
-    int frame_no = compute_frame_number(page);
+    int frame_no = compute_frame_number(frame);
     
     ASSERT((frame_table+frame_no)->holder != NULL);
     
