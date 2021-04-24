@@ -8,9 +8,9 @@
 #include "filesys/file.h"
 #include "userprog/syscall.h"
 
-#ifdef VM
+//#ifdef VM
 #include "vm/page.h"
-#endif
+//#endif
 
 /* States in a thread's life cycle. */
 enum thread_status
