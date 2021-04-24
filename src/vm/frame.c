@@ -34,7 +34,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags)
         evict_frame(1);
         void *page = palloc_get_page(palloc_flags);
     }
-    ASSERT(page != NULL);
+    if (page == NULL) thread_exit();
     ASSERT(pg_ofs(page) == 0);
     
     int frame_no = pg_no(vtop(page));
