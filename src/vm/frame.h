@@ -9,8 +9,8 @@
 #define VM_FRAME_H
 
 #include <list.h>
-#include "thraeds/palloc.h"
-#include "thraeds/vaddr.h"
+#include "threads/palloc.h"
+#include "threads/vaddr.h"
 #include "threads/thread.h"
 #include "vm/page.h"
 
