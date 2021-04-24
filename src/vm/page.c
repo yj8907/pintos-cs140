@@ -65,7 +65,7 @@ vm_alloc_page(struct vm_mm_struct* vm_mm, size_t page_cnt,
     if (pg_ofs(vm_mm->end_ptr) + sizeof(struct vm_area) >= PGSIZE)
         vm_mm->end_ptr = palloc_get_page(0);
         
-    struct vm_area* vm_area_entry = vm_mm->mmap->end_ptr;
+    struct vm_area* vm_area_entry = vm_mm->end_ptr;
     vm_area_entry->vm_start = (uint32_t)page;
     vm_area_entry->vm_end = (uint32_t)page + PGSIZE;
     vm_area_entry->data_type = pg_type;
