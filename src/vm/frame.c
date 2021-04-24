@@ -25,7 +25,7 @@ frame_table_init(void)
     frame_table = palloc_get_multiple(PAL_ASSERT | PAL_ZERO, frame_table_page_cnt);
 }
 
-
+/* frame is accessed through virtual addressing */
 void*
 falloc_get_frame(void* vm_pg, enum palloc_flags)
 {
@@ -37,12 +37,12 @@ falloc_get_frame(void* vm_pg, enum palloc_flags)
     if (page == NULL) thread_exit();
     ASSERT(pg_ofs(page) == 0);
     
-    int frame_no = pg_no(vtop(page));
+    int frame_no = compute_frame_number(page);
     
-    ASSERT(frame_table[frame_no]->holder == NULL);
-    frame_table[frame_no]->holder = thread_current();
-    frame_table[frame_no]->numRef = 1;
-    frame_table[frame_no]->virtual_page = vm_pg;
+    ASSERT((frame_table+frame_no)->holder == NULL);
+    (frame_table+frame_no)->holder = thread_current();
+    (frame_table+frame_no)->numRef = 1;
+    (frame_table+frame_no)->virtual_page = vm_pg;
     
     return page;
 }
@@ -55,16 +55,17 @@ evict_frame(void *frame, size_t page_cnt)
     ASSERT(frame != NULL);
     ASSERT(pg_ofs(frame) == 0);
     
-    int frame_no = pg_no(vtop(page));
+    int frame_no = compute_frame_number(page);
     
-    ASSERT(frame_table[frame_no]->holder != NULL);
+    ASSERT((frame_table+frame_no)->holder != NULL);
     
     uint32_t swap_location = NULL; /* need to implement swapping */
-    vm_update_page(frame_table[frame_no]->holder, frame_table[frame_no], SWAPPED, swap_location);
+    vm_update_page((frame_table+frame_no)->holder, (frame_table+frame_no)->virtual_page,
+                   SWAPPED, swap_location);
     
-    frame_table[frame_no]->holder = NULL;
-    frame_table[frame_no]->numRef = 0;
-    frame_table[frame_no]->virtual_page = NULL;
+    (frame_table+frame_no)->holder = NULL;
+    (frame_table+frame_no)->numRef = 0;
+    (frame_table+frame_no)->virtual_page = NULL;
     
 }
 
