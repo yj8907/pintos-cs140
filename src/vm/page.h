@@ -32,8 +32,8 @@ struct vm_area
     struct hash_elem h_elem;
     size_t vm_start;
     size_t vm_end;
-    struct page_data_type data_type;
-    struct page_state state;
+    enum page_data_type data_type;
+    enum page_state state;
     /* swap location */
     uint32_t swap_location;
 };
