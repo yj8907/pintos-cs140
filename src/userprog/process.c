@@ -21,6 +21,7 @@
 
 #ifdef VM
 #include "vm/page.h"
+#include "vm/frame.h"
 #endif
 
 static int max_argc = 128;
