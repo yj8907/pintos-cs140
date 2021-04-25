@@ -43,14 +43,14 @@ vm_mm_init(void)
 //        vm_mm = palloc_get_page (0);
 //    }
     
-    vm_mm->user_ptr = user_free_ptr;
-    vm_mm->kernel_ptr = kernel_free_ptr;
-    
-    /* initialiez mmap has table */
-    vm_mm->mmap = vm_mm + sizeof(struct vm_mm_struct);
-    hash_init(vm_mm->mmap, &vm_hash_hash_func, &vm_hash_less_func, NULL);
-    
-    vm_mm->end_ptr = vm_mm + sizeof(struct vm_mm_struct) + sizeof(struct hash);
+//    vm_mm->user_ptr = user_free_ptr;
+//    vm_mm->kernel_ptr = kernel_free_ptr;
+//
+//    /* initialiez mmap has table */
+//    vm_mm->mmap = vm_mm + sizeof(struct vm_mm_struct);
+//    hash_init(vm_mm->mmap, &vm_hash_hash_func, &vm_hash_less_func, NULL);
+//
+//    vm_mm->end_ptr = vm_mm + sizeof(struct vm_mm_struct) + sizeof(struct hash);
     
     return vm_mm;
 }
