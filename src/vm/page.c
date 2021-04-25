@@ -155,7 +155,7 @@ page_not_present_handler(void *addr)
     
     if (va == NULL) {
         printf("thread name: %s\n", thread_name());
-        printf("va not exist: 0x%08x\n", addr);
+        printf("va not exist: 0x%08x\n", page);
         force_exit();
     }
     if (va->state == ALLOCATED) {
