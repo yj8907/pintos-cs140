@@ -39,13 +39,13 @@ frame_init(void)
 
 /* frame is accessed through virtual addressing */
 void*
-falloc_get_frame(void* vm_pg, enum palloc_flags)
+falloc_get_frame(void* vm_pg, enum palloc_flags flags)
 {
-    void *page = palloc_get_page(palloc_flags);
+    void *page = palloc_get_page(flags);
     if (page == NULL) {
         void *new_frame = next_frame_to_evict(1);
         evict_frame(new_frame, 1);
-        void *page = palloc_get_page(palloc_flags);
+        void *page = palloc_get_page(flags);
     }
     
     if (page == NULL) thread_exit();
