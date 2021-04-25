@@ -159,6 +159,7 @@ page_fault (struct intr_frame *f)
      */
  
   if (not_present) {
+      printf("handler");
         page_not_present_handler(fault_addr);
         return;
     }
