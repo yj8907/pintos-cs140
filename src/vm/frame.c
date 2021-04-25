@@ -63,6 +63,22 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
     return page;
 }
 
+void falloc_free_frame(void *frame)
+{
+    if (frame == NULL) return;
+    
+    ASSERT(pg_ofs(frame) == 0);
+    
+    (frame_table+frame_no)->holder = NULL;
+    (frame_table+frame_no)->numRef = 0;
+    (frame_table+frame_no)->virtual_page = NULL;
+    
+    /* remvove frame from page replacement queue */
+    list_remove(&(frame_table+frame_no)->elem);
+    
+    palloc_free_page(frame);
+}
+
 void
 evict_frame(void *frame, size_t page_cnt)
 {
@@ -79,14 +95,7 @@ evict_frame(void *frame, size_t page_cnt)
     vm_update_page((frame_table+frame_no)->holder, (frame_table+frame_no)->virtual_page,
                    SWAPPED, swap_location);
     
-    (frame_table+frame_no)->holder = NULL;
-    (frame_table+frame_no)->numRef = 0;
-    (frame_table+frame_no)->virtual_page = NULL;
-    
-    /* remvove frame from page replacement queue */
-    list_remove(&(frame_table+frame_no)->elem);
-    
-    palloc_free_page(frame);
+    falloc_free_frame(frame);
 }
 
 /* implment page replacement policy */

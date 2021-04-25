@@ -7,7 +7,6 @@
 
 #include "page.h"
 
-
 unsigned
 vm_hash_hash_func(const struct hash_elem *e, void *aux)
 {
@@ -58,7 +57,7 @@ vm_mm_init(void)
 
 void*
 vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
-              enum palloc_flags flags, enum page_data_type pg_type)
+              enum palloc_flags flags, enum page_data_type pg_type, file* file, uint32_t nbytes)
 {
 //    void* page = flags & PAL_USER ? vm_mm->user_ptr : vm_mm->kernel_ptr;
 //
@@ -73,11 +72,13 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     struct vm_area* vm_area_entry = vm_mm->end_ptr;
     vm_mm->end_ptr += sizeof(struct vm_area);
     
-    vm_area_entry->vm_start = (uint32_t)page;
-    vm_area_entry->vm_end = (uint32_t)page + PGSIZE;
+    vm_area_entry->vm_start = page;
+    vm_area_entry->vm_end = page + PGSIZE;
     vm_area_entry->data_type = pg_type;
     vm_area_entry->state = VALID;
-               
+    vm_area_entry->file = file;
+    vm_area_entry->content_bytes = nbytes;
+    
     ASSERT(hash_insert(vm_mm->mmap, &vm_area_entry->h_elem) == NULL);
     
     return page;
@@ -92,7 +93,9 @@ vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t 
     ASSERT(pg_ofs(pg) == 0);
     
     struct vm_mm_struct *vm_mm = t->vm_mm;
-    struct vm_area *va = vm_area_find(vm_mm, pg);
+    struct vm_area *va = vm_area_lookup(vm_mm, pg);
+    
+    if (va == NULL) return;
     
     va->state = next_state;
     if (next_state == SWAPPED) {
@@ -103,20 +106,57 @@ vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t 
 }
                
 struct vm_area*
-vm_area_find(struct vm_mm_struct* vm_mm, void* pg)
+vm_area_lookup(struct vm_mm_struct* vm_mm, void* pg)
 {
     ASSERT(pg_ofs(pg) == 0);
     struct vm_area va;
     va.vm_start = (uint32_t)pg;
     struct hash_elem* elem = hash_find(vm_mm->mmap, &va.h_elem);
     
-    ASSERT(elem != NULL);
-    return hash_entry(elem, struct vm_area, h_elem);
+    if (elem != NULL)
+        return hash_entry(elem, struct vm_area, h_elem);
+    else
+        return NULL;
 }
 
 bool
 is_vm_addr_valid(struct vm_mm_struct* vm_mm, void* pg)
 {
-    struct vm_area *va = vm_area_find(vm_mm, pg_round_down(pg));
-    return va->vm_start <= pg && pg < va->vm_end;
+    struct vm_area *va = vm_area_lookup(vm_mm, pg_round_down(pg));
+    if (va == NULL)
+        return false;
+    else
+        return va->vm_start <= pg && pg < va->vm_end;
 }
+
+bool load_from_file(struct vm_area* va, void* kpage)
+{
+    if (kpage == NULL || va == NULL)
+      return false;
+
+    ASSERT(va->content_bytes <= PGSIZE);
+    /* Load this page. */
+    if (file_read (va->file, kpage, va->content_bytes) != (int) va->content_bytes) return false;
+    memset (kpage + va->content_bytes, 0, PGSIZE - va->content_bytes);
+    return true;
+}
+
+
+void
+page_not_present_handler(void *addr)
+{
+    void *page = pg_round_down(addr);
+    struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
+    
+    if (va == NULL) force_exit();
+    if (va->state == ALLOCATED) force_exit();
+    
+    if (va->state == VALID) {
+        void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
+        if (!load_from_file(va, kpage)) force_exit();
+        va->state = ALLOCATED;
+    }
+    
+}
+
+

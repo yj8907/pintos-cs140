@@ -8,6 +8,7 @@
 
 #ifdef VM
 #include "vm/page.h"
+#include "vm/frame.h"
 #endif
 
 /* Number of page faults processed. */
@@ -15,6 +16,7 @@ static long long page_fault_cnt;
 
 static void kill (struct intr_frame *);
 static void page_fault (struct intr_frame *);
+
 
 /* Registers handlers for interrupts that can be caused by user
    programs.
@@ -155,6 +157,11 @@ page_fault (struct intr_frame *f)
 
     /* Each of these functions assumes that the user address has already been verified to be below PHYS_BASE. They also assume that you've modified page_fault() so that a page fault in the kernel merely sets eax to 0xffffffff and copies its former value into eip.
      */
+ 
+  if (not_present) {
+        page_not_present_handler(fault_addr);
+        return;
+    }
     
   if (!user) {
       f->eip = (void*)f->eax;
