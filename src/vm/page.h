@@ -38,8 +38,8 @@ struct vm_area
     enum page_state state;
     /* swap location */
     uint32_t swap_location;
-    file* file;
-    unint32_t content_bytes;
+    struct file* file;
+    uint32_t content_bytes;
 };
 
 struct vm_mm_struct
