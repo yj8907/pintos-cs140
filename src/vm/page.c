@@ -105,6 +105,7 @@ vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t 
 struct vm_area*
 vm_area_find(struct vm_mm_struct* vm_mm, void* pg)
 {
+    ASSERT(pg_ofs(pg) == 0);
     struct vm_area va;
     va.vm_start = (uint32_t)pg;
     struct hash_elem* elem = hash_find(vm_mm->mmap, &va.h_elem);
@@ -114,7 +115,8 @@ vm_area_find(struct vm_mm_struct* vm_mm, void* pg)
 }
 
 bool
-is_vm_addr_valid(struct vm_mm_struct*, void* pg)
+is_vm_addr_valid(struct vm_mm_struct* vm_mm, void* pg)
 {
-    
+    struct vm_area *va = vm_area_find(vm_mm, pg_round_down(pg));
+    return va->vm_start <= pg && pg < va->vm_end;
 }
