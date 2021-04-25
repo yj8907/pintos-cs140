@@ -32,7 +32,7 @@ enum page_data_type
 enum page_prot
 {
     WRITE,
-    RDONLY
+    RDONLY,
     WRITE_ON_COPY
 };
 
