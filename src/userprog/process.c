@@ -19,7 +19,7 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
-#ifdef
+#ifdef VM
 #include "vm/page.h"
 #endif
 
