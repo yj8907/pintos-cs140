@@ -69,6 +69,8 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
 //    else
 //       vm_mm->kernel_ptr += PGSIZE;
 
+    ASSERT(vm_mm != NULL);
+    
     if (pg_ofs(vm_mm->end_ptr) + sizeof(struct vm_area) >= PGSIZE)
         vm_mm->end_ptr = palloc_get_page(0);
         
@@ -113,7 +115,7 @@ vm_area_lookup(struct vm_mm_struct* vm_mm, void* pg)
 {
     ASSERT(pg_ofs(pg) == 0);
     struct vm_area va;
-    va.vm_start = (uint32_t)pg;
+    va.vm_start = pg;
     struct hash_elem* elem = hash_find(vm_mm->mmap, &va.h_elem);
     
     if (elem != NULL)
@@ -153,7 +155,7 @@ page_not_present_handler(void *addr)
     
     if (va == NULL) {
         printf("thread name: %s\n", thread_name());
-        printf("va not exist\n");
+        printf("va not exist: 0x%08x\n", addr);
         force_exit();
     }
     if (va->state == ALLOCATED) {

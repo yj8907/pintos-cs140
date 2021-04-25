@@ -562,7 +562,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
       /* Get a page of memory. */
 #ifdef VM
-        printf("thread name load: %s\n", thread_name());
+        printf("upage: 0x%08x\n", upage);
         vm_alloc_page(upage, thread_current()->vm_mm, 1, PAL_USER, DISK_RDONLY, file, page_read_bytes);
 //        uint8_t *kpage = palloc_get_page (PAL_USER);
 //        uint8_t *kpage = falloc_get_frame(upage, PAL_USER);
