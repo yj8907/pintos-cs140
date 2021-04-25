@@ -11,6 +11,7 @@
 #include <bitmap.h>
 #include "threads/vaddr.h"
 #include "userprog/syscall.h"
+#include "userprog/process.h"
 #include "vm/frame.h"
 #include "lib/kernel/hash.h"
 #include "filesys/file.h"

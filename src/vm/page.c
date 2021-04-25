@@ -155,6 +155,7 @@ page_not_present_handler(void *addr)
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
         if (!load_from_file(va, kpage)) force_exit();
         va->state = ALLOCATED;
+        install_page(page, kpage, true);
     }
     
 }
