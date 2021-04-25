@@ -57,7 +57,7 @@ vm_mm_init(void)
 
 void*
 vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
-              enum palloc_flags flags, enum page_data_type pg_type, file* file, uint32_t nbytes)
+              enum palloc_flags flags, enum page_data_type pg_type, struct file* file, uint32_t nbytes)
 {
 //    void* page = flags & PAL_USER ? vm_mm->user_ptr : vm_mm->kernel_ptr;
 //

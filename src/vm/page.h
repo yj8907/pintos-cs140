@@ -55,7 +55,7 @@ hash_less_func vm_hash_less_func;
 hash_action_func vm_hash_clear_func;
 
 void *vm_alloc_page(void*, struct vm_mm_struct* vm_mm, size_t page_cnt, enum palloc_flags, enum page_data_type,
-                    file* file, uint32_t nbytes);
+                    struct file* file, uint32_t nbytes);
 
 void *vm_mm_init(void);
 void vm_update_page(struct thread* t, void* pg, enum page_state, uint32_t);
