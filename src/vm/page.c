@@ -151,12 +151,21 @@ page_not_present_handler(void *addr)
     void *page = pg_round_down(addr);
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
     
-    if (va == NULL) force_exit();
-    if (va->state == ALLOCATED) force_exit();
+    if (va == NULL) {
+        printf("va not exist");
+        force_exit();
+    }
+    if (va->state == ALLOCATED) {
+        printf("allocated");
+        force_exit();
+    }
     
     if (va->state == VALID) {
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
-        if (!load_from_file(va, kpage)) force_exit();
+        if (!load_from_file(va, kpage)) {
+            printf("reading from file failed");
+            force_exit();
+        }
         va->state = ALLOCATED;
         install_page(page, kpage, true);
     }
