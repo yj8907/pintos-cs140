@@ -56,4 +56,6 @@ void *vm_mm_init(void);
 void vm_update_page(struct thread* t, void* pg, enum page_state, uint32_t);
 struct vm_area *vm_area_find(struct vm_mm_struct*, void* pg);
 
+bool is_vm_addr_valid(struct vm_mm_struct*, void* pg);
+
 #endif /* page_h */

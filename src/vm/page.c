@@ -113,4 +113,8 @@ vm_area_find(struct vm_mm_struct* vm_mm, void* pg)
     return hash_entry(elem, struct vm_area, h_elem);
 }
 
-
+bool
+is_vm_addr_valid(struct vm_mm_struct*, void* pg)
+{
+    
+}
