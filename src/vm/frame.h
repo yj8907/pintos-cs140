@@ -18,12 +18,16 @@ struct frame_table_entry {
     struct thread *holder;
     int numRef;
     void *virtual_page;
+    
+    struct list_elem elem;
 };
 
-void frame_table_init(void);
+void frame_init(void);
 
 void *falloc_get_frame(enum palloc_flags);
 void falloc_free_frame (void *);
 
 void evict_frame(void*, size_t page_cnt);
+void* next_frame_to_evict(size_t page_cnt);
+
 #endif /* frame_h */
