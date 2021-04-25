@@ -24,7 +24,7 @@ enum page_data_type
 {
     ANONYMOUS,
     DISK_RDONLY,
-    DISK_WRITE
+    DISK_RW
 };
 
 struct vm_area
