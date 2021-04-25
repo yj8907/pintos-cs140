@@ -38,7 +38,7 @@ vm_mm_init(void)
     
     struct vm_mm_struct* vm_mm = palloc_get_page (0);
     if (vm_mm == NULL) {
-        evict_frame(1);
+        evict_frame(next_frame_to_evict(1), 1);
         vm_mm = palloc_get_page (0);
     }
     vm_mm->user_ptr = user_free_ptr;
