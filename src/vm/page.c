@@ -60,7 +60,7 @@ vm_mm_init(void)
 
 void*
 vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
-              enum palloc_flags flags, enum page_data_type pg_type, struct file* file, uint32_t nbytes)
+              enum palloc_flags flags, enum page_data_type pg_type, struct file* file, uint32_t nbytes, bool writable)
 {
 //    void* page = flags & PAL_USER ? vm_mm->user_ptr : vm_mm->kernel_ptr;
 //
@@ -81,6 +81,8 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     vm_area_entry->vm_end = page + PGSIZE;
     vm_area_entry->data_type = pg_type;
     vm_area_entry->state = VALID;
+    vm_area_entry->protection = writable ? WRITE : RDONLY;
+    
     vm_area_entry->file = file;
     vm_area_entry->content_bytes = nbytes;
     
@@ -170,7 +172,7 @@ page_not_present_handler(void *addr)
             force_exit();
         }
         va->state = ALLOCATED;
-        install_page(page, kpage, true);
+        install_page(page, kpage, va->protection == WRITE ? true : false);
     }
     
 }
