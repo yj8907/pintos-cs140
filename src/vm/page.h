@@ -23,7 +23,7 @@ enum page_state
 enum page_data_type
 {
     ANONYMOUS,
-    DISK_READ,
+    DISK_RDONLY,
     DISK_WRITE
 };
 

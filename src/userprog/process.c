@@ -19,6 +19,10 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+#ifdef
+#include "vm/page.h"
+#endif
+
 static int max_argc = 128;
 
 static thread_func start_process NO_RETURN;
@@ -556,7 +560,13 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       /* Get a page of memory. */
-      uint8_t *kpage = palloc_get_page (PAL_USER);
+      #ifdef VM
+//        vm_alloc_page(upage, thread_current()->vm_mm, 1, PAL_USER, DISK_RDONLY);
+        uint8_t *kpage = palloc_get_page (PAL_USER);
+      #else
+        uint8_t *kpage = palloc_get_page (PAL_USER);
+      #endif
+              
       if (kpage == NULL)
         return false;
 

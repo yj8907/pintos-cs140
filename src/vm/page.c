@@ -47,6 +47,7 @@ vm_mm_init(void)
     /* initialiez mmap has table */
     vm_mm->mmap = vm_mm + sizeof(struct vm_mm_struct);
     hash_init(vm_mm->mmap, &vm_hash_hash_func, &vm_hash_less_func, NULL);
+    
     vm_mm->end_ptr = vm_mm + sizeof(struct vm_mm_struct) + sizeof(struct hash);
     
     return vm_mm;
@@ -54,14 +55,15 @@ vm_mm_init(void)
 
 
 void*
-vm_alloc_page(struct vm_mm_struct* vm_mm, size_t page_cnt,
+vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
               enum palloc_flags flags, enum page_data_type pg_type)
 {
-    void* page = flags & PAL_USER ? vm_mm->user_ptr : vm_mm->kernel_ptr;
-    if (flags & PAL_USER)
-        vm_mm->user_ptr += PGSIZE;
-    else
-       vm_mm->kernel_ptr += PGSIZE;
+//    void* page = flags & PAL_USER ? vm_mm->user_ptr : vm_mm->kernel_ptr;
+//
+//    if (flags & PAL_USER)
+//        vm_mm->user_ptr += PGSIZE;
+//    else
+//       vm_mm->kernel_ptr += PGSIZE;
 
     if (pg_ofs(vm_mm->end_ptr) + sizeof(struct vm_area) >= PGSIZE)
         vm_mm->end_ptr = palloc_get_page(0);
