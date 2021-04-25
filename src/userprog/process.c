@@ -562,15 +562,15 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
       /* Get a page of memory. */
 #ifdef VM
-        printf("upage: 0x%08x\n", upage);
+//        printf("upage: 0x%08x\n", upage);
         vm_alloc_page(upage, thread_current()->vm_mm, 1, PAL_USER, DISK_RDONLY, file, page_read_bytes, writable);
-//        uint8_t *kpage = palloc_get_page (PAL_USER);
+        uint8_t *kpage = palloc_get_page (PAL_USER);
 //        uint8_t *kpage = falloc_get_frame(upage, PAL_USER);
 #else
         uint8_t *kpage = palloc_get_page (PAL_USER);
 #endif
 
-#ifndef VM
+//#ifndef VM
       if (kpage == NULL)
         return false;
 
@@ -588,7 +588,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
           palloc_free_page (kpage);
           return false; 
         }
-#endif
+//#endif
       /* Advance. */
       read_bytes -= page_read_bytes;
       zero_bytes -= page_zero_bytes;
