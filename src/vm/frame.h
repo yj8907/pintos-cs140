@@ -24,7 +24,7 @@ struct frame_table_entry {
 
 void frame_init(void);
 
-void *falloc_get_frame(enum palloc_flags);
+void *falloc_get_frame(void *, enum palloc_flags);
 void falloc_free_frame (void *);
 
 void evict_frame(void*, size_t page_cnt);
