@@ -152,7 +152,8 @@ page_not_present_handler(void *addr)
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
     
     if (va == NULL) {
-        printf("va not exist");
+        printf("thread name: %s\n", thread_name());
+        printf("va not exist\n");
         force_exit();
     }
     if (va->state == ALLOCATED) {
