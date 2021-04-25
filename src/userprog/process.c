@@ -561,7 +561,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
       /* Get a page of memory. */
       #ifdef VM
-//        vm_alloc_page(upage, thread_current()->vm_mm, 1, PAL_USER, DISK_RDONLY);
+        vm_alloc_page(upage, thread_current()->vm_mm, 1, PAL_USER, DISK_RDONLY);
         uint8_t *kpage = palloc_get_page (PAL_USER);
       #else
         uint8_t *kpage = palloc_get_page (PAL_USER);
