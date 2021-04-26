@@ -153,9 +153,10 @@ void
 page_not_present_handler(void *addr)
 {
     void *page = pg_round_down(addr);
-    if (page == 0x08048000) printf("va accessed: 0x%08x\n", page);
     
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
+    
+    if (va != NULL) printf("va accessed: 0x%08x\n", page);
     
     if (va == NULL) {
         printf("thread name: %s\n", thread_name());
