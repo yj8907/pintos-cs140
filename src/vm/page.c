@@ -7,6 +7,7 @@
 
 #include "page.h"
 #include <string.h>
+#include "threads/pte.h"
 
 static bool install_page (void *upage, void *kpage, bool writable);
 
