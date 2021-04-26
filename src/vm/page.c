@@ -169,6 +169,7 @@ page_not_present_handler(void *addr)
     
     if (va->state == VALID) {
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
+        if (page == 0x08048000) printf("kpage accessed: 0x%08x\n", kpage);
         if (!load_from_file(va, kpage)) {
             printf("reading from file failed");
             force_exit();
