@@ -178,8 +178,8 @@ page_not_present_handler(void *addr)
         va->state = ALLOCATED;
         if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
         
-        uint32_t *pd = thread_current()->pagedir
-        uint32_t *pde = pd + pd_no (vaddr);
+        uint32_t *pd = thread_current()->pagedir;
+        uint32_t *pde = pd + pd_no (page);
         printf("pde: 0x%08x\n", *pde);
         if (*pde != 0) {
             uint32_t *pt = pde_get_pt (*pde);
