@@ -165,7 +165,16 @@ page_not_present_handler(void *addr)
         force_exit();
     }
     if (va->state == ALLOCATED) {
-        printf("allocated");
+        printf("allocated\n");
+        
+        uint32_t *pd = thread_current()->pagedir;
+        uint32_t *pde = pd + pd_no (page);
+        printf("pde: 0x%08x\n", *pde);
+        if (*pde != 0) {
+            uint32_t *pt = pde_get_pt (*pde);
+            printf("pte: 0x%08x\n", pt[pt_no (page)]);
+        }
+        
         force_exit();
     }
     
