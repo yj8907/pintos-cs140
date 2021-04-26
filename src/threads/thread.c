@@ -976,9 +976,13 @@ schedule (void)
         list_push_back(&last_tslice_list, &next->lastrun_elem);
    }
     
-  if (cur != next) 
-    prev = switch_threads (cur, next);
-
+   if (cur != next) {
+       prev = switch_threads (cur, next);
+#ifdef VM
+       pagedir_activate(next->pagedir);
+#endif
+    }
+    
   thread_schedule_tail (prev);
 }
 
