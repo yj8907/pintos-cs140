@@ -161,6 +161,7 @@ page_fault (struct intr_frame *f)
  
   if (not_present) {
         printf("f->eip: 0x%08x\n", f->eip);
+      printf("fault_addr: 0x%08x\n", fault_addr);
         page_not_present_handler(fault_addr);
         return;
   }
