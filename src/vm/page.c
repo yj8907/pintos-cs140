@@ -145,6 +145,7 @@ bool load_from_file(struct vm_area* va, void* kpage)
     ASSERT(va->content_bytes <= PGSIZE);
     /* Load this page. */
     if (file_read (va->file, kpage, va->content_bytes) != (int) va->content_bytes) return false;
+    printf("bytesread: %d", va->content_bytes);
     memset (kpage + va->content_bytes, 0, PGSIZE - va->content_bytes);
     return true;
 }
