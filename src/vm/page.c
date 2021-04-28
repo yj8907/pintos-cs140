@@ -85,7 +85,7 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     vm_area_entry->protection = writable ? WRITE : RDONLY;
         
     vm_area_entry->file = file;
-    vm_area_entry->file_pos = file_tell(file);
+    if (file != NULL) vm_area_entry->file_pos = file_tell(file);
     vm_area_entry->content_bytes = nbytes;
     
     ASSERT(hash_insert(vm_mm->mmap, &vm_area_entry->h_elem) == NULL);
