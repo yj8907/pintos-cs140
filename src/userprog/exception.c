@@ -162,6 +162,9 @@ page_fault (struct intr_frame *f)
   if (not_present) {
 //      void *esp = user ? f->esp : thread_current()->vm_mm->esp;
       
+      printf("addr1: 0x%08x\n", f->esp);
+      printf("addr1: 0x%08x\n", fault_addr);
+      
       void *esp =  f->esp;
       if (esp != NULL) {
           if ( (fault_addr >= esp && fault_addr <= PHYS_BASE) ||
@@ -170,6 +173,7 @@ page_fault (struct intr_frame *f)
               return;
           }
       }
+      
       page_not_present_handler(fault_addr);
       return;
   }
