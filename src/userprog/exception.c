@@ -160,8 +160,8 @@ page_fault (struct intr_frame *f)
      */
  
   if (not_present) {
-      void *esp = user ? f->esp : thread_current()->vm_mm->esp;
-      
+//      void *esp = user ? f->esp : thread_current()->vm_mm->esp;
+      void *esp = f->esp;
       if (esp != NULL) {
           if ( (fault_addr >= f->esp && fault_addr <= PHYS_BASE) ||
               fault_addr == f->esp - 4 || fault_addr == f->esp - 32) {
