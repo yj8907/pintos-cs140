@@ -84,7 +84,7 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     vm_area_entry->state = VALID;
     vm_area_entry->protection = writable ? WRITE : RDONLY;
         
-    vm_area_entry->fn = file;
+    vm_area_entry->file = file;
     vm_area_entry->file_pos = file_tell(file);
     vm_area_entry->content_bytes = nbytes;
     
