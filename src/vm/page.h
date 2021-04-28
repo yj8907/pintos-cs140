@@ -57,6 +57,7 @@ struct vm_mm_struct
     uint32_t *user_ptr;
     uint32_t *kernel_ptr;
     uint32_t *end_ptr;
+    void *esp;
 };
 
 hash_hash_func vm_hash_hash_func;

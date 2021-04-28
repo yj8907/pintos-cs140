@@ -130,6 +130,9 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f)
 {
+  /* assign intr_frame to esp to thread esp to allow for userspace page fault in kernel */
+  thread_current()->vm_mm->esp = f->esp;
+    
   char *args = (char*)f->esp;
   
   validate_vaddr(args, sizeof(int));
@@ -195,6 +198,7 @@ syscall_handler (struct intr_frame *f)
         break;
     }
   
+    thread_current()->vm_mm->esp = NULL;
 }
 
 static void
