@@ -161,7 +161,7 @@ page_fault (struct intr_frame *f)
  
   if (not_present) {
       if (f->esp == fault_addr - 4 || f->esp == fault_addr - 32)
-          vm_grow_stack(fault_addr)
+          vm_grow_stack(fault_addr);
       else
         page_not_present_handler(fault_addr);
       return;
