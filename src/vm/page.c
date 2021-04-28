@@ -180,6 +180,15 @@ page_not_present_handler(void *addr)
     
 }
 
+void
+vm_grow_stack(void *addr)
+{
+    void *stack_pg = pg_round_down(addr);
+    stack_pg = vm_alloc_page(stack_pg, thread_current()->vm_mm, 1, PAL_USER, ANONYMOUS, NULL, 0, true);
+    page_not_present_handler(stack_pg);
+
+}
+
 
 static bool
 install_page (void *upage, void *kpage, bool writable)

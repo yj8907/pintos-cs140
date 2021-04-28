@@ -73,6 +73,7 @@ struct vm_area *vm_area_lookup(struct vm_mm_struct*, void* pg);
 bool is_vm_addr_valid(struct vm_mm_struct*, void* pg);
 
 void page_not_present_handler(void *);
+void vm_grow_stack(void *);
 
 bool load_from_file(struct vm_area* va, void*);
 
