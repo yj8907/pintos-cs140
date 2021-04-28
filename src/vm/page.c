@@ -179,8 +179,6 @@ page_not_present_handler(void *addr)
         
     }
     
-    for(;;);
-    
 }
 
 void

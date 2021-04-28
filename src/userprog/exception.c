@@ -174,7 +174,7 @@ page_fault (struct intr_frame *f)
       page_not_present_handler(fault_addr);
       return;
   }
-    
+    for(;;);
   if (!user) {
       f->eip = (void*)f->eax;
       f->eax = 0xffffffff;
