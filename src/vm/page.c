@@ -158,6 +158,8 @@ page_not_present_handler(void *addr)
     
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
             
+    for(;;);
+    
     if (va == NULL) {
         force_exit();
     }
