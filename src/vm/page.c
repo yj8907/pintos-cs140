@@ -145,9 +145,7 @@ bool load_from_file(struct vm_area* va, void* kpage)
 
     ASSERT(va->content_bytes <= PGSIZE);
     /* Load this page. */
-    printf("filepos: %d\n", va->file_pos);
     if (file_read_at (va->file, kpage, va->content_bytes, va->file_pos) != (int) va->content_bytes) return false;
-    printf("bytesread: %d", va->content_bytes);
     memset (kpage + va->content_bytes, 0, PGSIZE - va->content_bytes);
     return true;
 }
@@ -159,23 +157,16 @@ page_not_present_handler(void *addr)
     void *page = pg_round_down(addr);
     
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
-    
-    if (va != NULL) printf("va accessed: 0x%08x\n", page);
-    
+            
     if (va == NULL) {
-        printf("thread name: %s\n", thread_name());
-        printf("va not exist: 0x%08x\n", page);
         force_exit();
     }
     if (va->state == ALLOCATED) {
-        printf("allocated\n");
         
         uint32_t *pd = thread_current()->pagedir;
         uint32_t *pde = pd + pd_no (page);
-        printf("pde: 0x%08x\n", *pde);
         if (*pde != 0) {
             uint32_t *pt = pde_get_pt (*pde);
-            printf("pte: 0x%08x\n", pt[pt_no (page)]);
         }
         
         force_exit();
@@ -183,9 +174,7 @@ page_not_present_handler(void *addr)
     
     if (va->state == VALID) {
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
-        if (page == 0x08048000) printf("kpage accessed: 0x%08x\n", kpage);
         if (!load_from_file(va, kpage)) {
-            printf("reading from file failed");
             force_exit();
         }
         va->state = ALLOCATED;
@@ -193,10 +182,9 @@ page_not_present_handler(void *addr)
         
         uint32_t *pd = thread_current()->pagedir;
         uint32_t *pde = pd + pd_no (page);
-        printf("pde: 0x%08x\n", *pde);
+        
         if (*pde != 0) {
-            uint32_t *pt = pde_get_pt (*pde);
-            printf("pte: 0x%08x\n", pt[pt_no (page)]);
+            uint32_t *pt = pde_get_pt (*pde);            
         }
     }
     
