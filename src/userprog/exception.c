@@ -170,9 +170,9 @@ page_fault (struct intr_frame *f)
 //              return;
 //          }
 //      }
-      force_exit();
+//      force_exit();
 //      page_not_present_handler(fault_addr);
-      return;
+//      return;
   }
     
   if (!user) {
