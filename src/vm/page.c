@@ -161,7 +161,7 @@ page_not_present_handler(void *addr)
     if (va == NULL) {
         force_exit();
     }
-        for(;;);
+        
     if (va->state == ALLOCATED) force_exit();
     
     if (va->state == VALID) {
@@ -178,6 +178,8 @@ page_not_present_handler(void *addr)
     else if (va->state == SWAPPED) {
         
     }
+    
+    for(;;);
     
 }
 
