@@ -159,21 +159,22 @@ page_fault (struct intr_frame *f)
     /* Each of these functions assumes that the user address has already been verified to be below PHYS_BASE. They also assume that you've modified page_fault() so that a page fault in the kernel merely sets eax to 0xffffffff and copies its former value into eip.
      */
  
+    for(;;);
   if (not_present) {
 //      void *esp = user ? f->esp : thread_current()->vm_mm->esp;
       
-//      printf("addr1: 0x%08x\n", f->esp);
-//      printf("addr1: 0x%08x\n", fault_addr);
-//      force_exit();
-//
-//      void *esp =  f->esp;
-//      if (esp != NULL) {
-//          if ( (fault_addr >= esp && fault_addr <= PHYS_BASE) ||
-//              fault_addr == esp - 4 || fault_addr == esp - 32) {
-//              vm_grow_stack(fault_addr);
-//              return;
-//          }
-//      }
+      printf("addr1: 0x%08x\n", f->esp);
+      printf("addr1: 0x%08x\n", fault_addr);
+      force_exit();
+
+      void *esp =  f->esp;
+      if (esp != NULL) {
+          if ( (fault_addr >= esp && fault_addr <= PHYS_BASE) ||
+              fault_addr == esp - 4 || fault_addr == esp - 32) {
+              vm_grow_stack(fault_addr);
+              return;
+          }
+      }
       
       page_not_present_handler(fault_addr);
       return;
