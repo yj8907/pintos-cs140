@@ -171,8 +171,8 @@ page_fault (struct intr_frame *f)
 //          }
 //      }
 //      force_exit();
-//      page_not_present_handler(fault_addr);
-      kill (f);
+      if (strcmp(thread_name(), "child-simple") == 0) kill (f);
+      page_not_present_handler(fault_addr);
 //      for(;;);
       return;
   }
