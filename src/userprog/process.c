@@ -602,8 +602,10 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 static bool
 setup_stack (void **esp) 
 {
-  uint8_t *kpage;
+    
   bool success = false;
+#ifndef VM
+  uint8_t *kpage;
 
   kpage = palloc_get_page (PAL_USER | PAL_ZERO);
   if (kpage != NULL) 
@@ -614,6 +616,11 @@ setup_stack (void **esp)
       else
         palloc_free_page (kpage);
     }
+#else
+  uint8_t *upage = ((uint8_t *) PHYS_BASE) - PGSIZE;
+  uint8_t *page = vm_alloc_page(upage, thread_current()->vm_mm, 1, PAL_USER, ANONYMOUS, NULL, 0, true);
+  if (page != NULL) success = true;
+#endif
   return success;
 }
 

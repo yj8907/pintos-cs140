@@ -74,7 +74,7 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     
     if (pg_ofs(vm_mm->end_ptr) + sizeof(struct vm_area) >= PGSIZE)
         vm_mm->end_ptr = palloc_get_page(0);
-        
+    
     struct vm_area* vm_area_entry = vm_mm->end_ptr;
     vm_mm->end_ptr += sizeof(struct vm_area);
     
@@ -161,31 +161,21 @@ page_not_present_handler(void *addr)
     if (va == NULL) {
         force_exit();
     }
-    if (va->state == ALLOCATED) {
-        
-        uint32_t *pd = thread_current()->pagedir;
-        uint32_t *pde = pd + pd_no (page);
-        if (*pde != 0) {
-            uint32_t *pt = pde_get_pt (*pde);
-        }
-        
-        force_exit();
-    }
+    if (va->state == ALLOCATED) force_exit();
     
     if (va->state == VALID) {
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
-        if (!load_from_file(va, kpage)) {
-            force_exit();
+        
+        if (va->data_type != ANONYMOUS) {
+            if (!load_from_file(va, kpage)) {
+                force_exit();
+            }
         }
         va->state = ALLOCATED;
         if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
+    }
+    else if (va->state == SWAPPED) {
         
-        uint32_t *pd = thread_current()->pagedir;
-        uint32_t *pde = pd + pd_no (page);
-        
-        if (*pde != 0) {
-            uint32_t *pt = pde_get_pt (*pde);            
-        }
     }
     
 }
