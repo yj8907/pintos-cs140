@@ -164,7 +164,7 @@ page_fault (struct intr_frame *f)
       
       printf("addr1: 0x%08x\n", f->esp);
       printf("addr1: 0x%08x\n", fault_addr);
-      
+      thread_exit();
       void *esp =  f->esp;
       if (esp != NULL) {
           if ( (fault_addr >= esp && fault_addr <= PHYS_BASE) ||
