@@ -619,7 +619,10 @@ setup_stack (void **esp)
 #else
   uint8_t *upage = ((uint8_t *) PHYS_BASE) - PGSIZE;
   uint8_t *page = vm_alloc_page(upage, thread_current()->vm_mm, 1, PAL_USER, ANONYMOUS, NULL, 0, true);
-  if (page != NULL) success = true;
+  if (page != NULL) {
+      success = true;
+      *esp = PHYS_BASE;
+    }
 #endif
   return success;
 }
