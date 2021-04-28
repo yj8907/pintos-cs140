@@ -84,7 +84,8 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     vm_area_entry->state = VALID;
     vm_area_entry->protection = writable ? WRITE : RDONLY;
         
-    memcpy(&vm_area_entry->fn, file, sizeof(file));
+    vm_area_entry->fn = file;
+    vm_area_entry->file_pos = file_tell(file);
     vm_area_entry->content_bytes = nbytes;
     
     ASSERT(hash_insert(vm_mm->mmap, &vm_area_entry->h_elem) == NULL);
@@ -144,8 +145,8 @@ bool load_from_file(struct vm_area* va, void* kpage)
 
     ASSERT(va->content_bytes <= PGSIZE);
     /* Load this page. */
-    printf("filepos: %d\n", file_tell(va->file));
-    if (file_read (va->file, kpage, va->content_bytes) != (int) va->content_bytes) return false;
+    printf("filepos: %d\n", va->file_pos);
+    if (file_read_at (va->file, kpage, va->content_bytes, va->file_pos) != (int) va->content_bytes) return false;
     printf("bytesread: %d", va->content_bytes);
     memset (kpage + va->content_bytes, 0, PGSIZE - va->content_bytes);
     return true;

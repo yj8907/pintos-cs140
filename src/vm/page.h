@@ -46,7 +46,8 @@ struct vm_area
     enum page_prot protection;
     /* swap location */
     uint32_t swap_location;
-    struct file fn;
+    struct file* file;
+    off_t file_pos;
     uint32_t content_bytes;
 };
 
