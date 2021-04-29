@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #include "threads/loader.h"
+#include "threads/thread.h"
 
 /* Functions and macros for working with virtual addresses.
 
@@ -71,6 +72,7 @@ is_kernel_vaddr (const void *vaddr)
 static inline void *
 ptov (uintptr_t paddr)
 {
+  if ((void *) paddr >= PHYS_BASE) PANIC("thread name: %s\n", thread_name());
   ASSERT ((void *) paddr < PHYS_BASE);
 
   return (void *) (paddr + PHYS_BASE);
