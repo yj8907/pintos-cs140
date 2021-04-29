@@ -111,6 +111,7 @@ next_frame_to_evict(size_t page_cnt)
     ASSERT(page_cnt == 1);
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     
-    return ptov(compute_frame_entry_no(fte)*PGSIZE);
+//    return ptov(compute_frame_entry_no(fte)*PGSIZE);
+    return NULL;
 }
 

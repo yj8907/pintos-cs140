@@ -36,7 +36,8 @@ vm_hash_clear_func(struct hash_elem *e, void *aux)
 void*
 vm_mm_init(void)
 {
-    uint32_t *kernel_free_ptr = ptov (init_ram_pages * PGSIZE);
+//    uint32_t *kernel_free_ptr = ptov (init_ram_pages * PGSIZE);
+    uint32_t *kernel_free_ptr = 0;
     uint32_t *user_free_ptr = 0;
     
     struct vm_mm_struct* vm_mm = palloc_get_page (0);
