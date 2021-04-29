@@ -64,10 +64,12 @@ hash_hash_func vm_hash_hash_func;
 hash_less_func vm_hash_less_func;
 hash_action_func vm_hash_clear_func;
 
+void *vm_mm_init(void);
+void *vm_mm_free(void);
+
 void *vm_alloc_page(void*, struct vm_mm_struct* vm_mm, size_t page_cnt, enum palloc_flags, enum page_data_type,
                     struct file* file, uint32_t nbytes, bool);
 
-void *vm_mm_init(void);
 void vm_update_page(struct thread* t, void* pg, enum page_state, uint32_t);
 
 struct vm_area *vm_area_lookup(struct vm_mm_struct*, void* pg);
