@@ -160,30 +160,17 @@ page_fault (struct intr_frame *f)
      */
     
   if (not_present) {
-//      void *esp = user ? f->esp : thread_current()->vm_mm->esp;
+      void *esp = user ? f->esp : thread_current()->vm_mm->esp;
       
-//      void *esp =  f->esp;
-//      if (esp != NULL) {
-//          if ( (fault_addr >= esp && fault_addr <= PHYS_BASE) ||
-//              fault_addr == esp - 4 || fault_addr == esp - 32) {
-//              vm_grow_stack(fault_addr);
-//              return;
-//          }
-//      }
-//      force_exit();
-      
-//      if (strcmp(thread_name(), "child-simple") == 0 && fault_addr > 0x804cc04) {
-//          printf("PANIC");
-//          PANIC ("Page fault at %p: %s error %s page in %s context.\n",
-//                  fault_addr,
-//                  not_present ? "not present" : "rights violation",
-//                  write ? "writing" : "reading",
-//                  user ? "user" : "kernel");
-//          kill (f);
-//      }
+      if (esp != NULL) {
+          if ( (fault_addr >= esp && fault_addr <= PHYS_BASE) ||
+              fault_addr == esp - 4 || fault_addr == esp - 32) {
+              vm_grow_stack(fault_addr);
+              return;
+          }
+      }
       
       page_not_present_handler(fault_addr);
-//      for(;;);
       return;
   }
     
