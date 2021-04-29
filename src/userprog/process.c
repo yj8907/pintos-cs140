@@ -604,7 +604,7 @@ setup_stack (void **esp)
 {
     
   bool success = false;
-#ifdef VM
+#ifndef VM
   uint8_t *kpage;
 
   kpage = palloc_get_page (PAL_USER | PAL_ZERO);
