@@ -28,7 +28,7 @@ debug_panic (const char *file, int line, const char *function,
   level++;
   if (level == 1) 
     {
-      printf ("Kernel PANIC at %s:%d in %s(): ", file, line, function);
+      printf ("Kernel PANIC at %s:%d in %s() for thread %s: ", file, line, function, thread_name());
 
       va_start (args, message);
       vprintf (message, args);
