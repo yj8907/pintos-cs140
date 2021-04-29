@@ -167,7 +167,7 @@ page_not_present_handler(void *addr)
     if (va->state == VALID) {
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
         
-//        PANIC ("Page fault at 0x%08x\n", addr);
+        PANIC ("Page fault at 0x%08x\n", addr);
         
         
         if (va->data_type != ANONYMOUS) {
