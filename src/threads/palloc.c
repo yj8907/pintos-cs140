@@ -119,8 +119,6 @@ palloc_free_multiple (void *pages, size_t page_cnt)
 {
   struct pool *pool;
   size_t page_idx;
-    
-  if (pages == 0xc0277000) printf("free 0x%08x", pages);
 
   ASSERT (pg_ofs (pages) == 0);
   if (pages == NULL || page_cnt == 0)
