@@ -171,7 +171,8 @@ page_fault (struct intr_frame *f)
 //          }
 //      }
 //      force_exit();
-      if (strcmp(thread_name(), "child-simple") == 0 && fault_addr > 0x804cc04) {
+      if (strcmp(thread_name(), "child-simple") == 0 && fault_addr > 0x804cc01) {
+          printf("PANIC");
           PANIC ("Page fault at %p: %s error %s page in %s context.\n",
                   fault_addr,
                   not_present ? "not present" : "rights violation",
