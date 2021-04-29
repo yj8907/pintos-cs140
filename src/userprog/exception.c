@@ -159,7 +159,7 @@ page_fault (struct intr_frame *f)
     /* Each of these functions assumes that the user address has already been verified to be below PHYS_BASE. They also assume that you've modified page_fault() so that a page fault in the kernel merely sets eax to 0xffffffff and copies its former value into eip.
      */
 
-  uint32_t stack_sz_limit = 0x04000000;
+  uint32_t stack_sz_limit = 0x01000000;
     
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
