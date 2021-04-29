@@ -163,9 +163,10 @@ page_fault (struct intr_frame *f)
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
       
       if (esp != NULL) {
+          if (esp < PHYS_BASE - 0x04000000) force_exit();
           if ( (fault_addr >= esp && fault_addr <= PHYS_BASE) ||
               fault_addr == esp - 4 || fault_addr == esp - 32) {
-             PANIC("fault addr: 0x%08x\n", fault_addr);
+//             PANIC("fault addr: 0x%08x\n", fault_addr);
               vm_grow_stack(fault_addr);
               return;
           }
