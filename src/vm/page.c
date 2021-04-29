@@ -187,9 +187,8 @@ vm_grow_stack(void *addr)
     void *stack_pg = pg_round_down(addr);
     ASSERT (stack_pg  < PHYS_BASE);
     stack_pg = vm_alloc_page(stack_pg, thread_current()->vm_mm, 1, PAL_USER, ANONYMOUS, NULL, 0, true);
-    PANIC("step1");
     page_not_present_handler(stack_pg);
-
+PANIC("step1");
 }
 
 
