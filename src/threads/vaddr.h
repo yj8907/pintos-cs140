@@ -72,7 +72,7 @@ is_kernel_vaddr (const void *vaddr)
 static inline void *
 ptov (uintptr_t paddr)
 {
-  if ((void *) paddr >= PHYS_BASE) PANIC("thread name: %s\n", thread_current()->name);
+  if ((void *) paddr >= PHYS_BASE) PANIC("addr: 0x%08x\n", paddr);
   ASSERT ((void *) paddr < PHYS_BASE);
 
   return (void *) (paddr + PHYS_BASE);
