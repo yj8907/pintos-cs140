@@ -53,7 +53,10 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
     
     int frame_no = compute_frame_number(page);
     
-    ASSERT((frame_table+frame_no)->holder == NULL);
+//    ASSERT((frame_table+frame_no)->holder == NULL);
+    if ((frame_table+frame_no)->holder != NULL) {
+        printf("thread name: %s\n", (frame_table+frame_no)->holder->name);
+    }
     (frame_table+frame_no)->holder = thread_current();
     (frame_table+frame_no)->numRef = 1;
     (frame_table+frame_no)->virtual_page = vm_pg;
