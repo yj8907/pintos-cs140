@@ -43,7 +43,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
 {
     void *page = palloc_get_page(flags);
     if (page == NULL) {
-        printf("null page: 0x%08x\n", vm_pg);
+        PANIC("null page: 0x%08x\n", vm_pg);
         void *new_frame = next_frame_to_evict(1);
         evict_frame(new_frame, 1);
         void *page = palloc_get_page(flags);
