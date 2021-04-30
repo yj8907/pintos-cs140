@@ -182,8 +182,8 @@ page_not_present_handler(void *addr)
         
             if (counter == 20) {
                                 PANIC("bad addr from page_not_present_handler: 0x%08x,\
-                                                     called %d times, this time addr: 0x%08x, is_user: %d, test: 0x%08x, %d pages \n",
-                                                 *test, counter, addr, is_user_vaddr(addr), *test, init_ram_pages);
+                                                     called %d times, this time addr: 0x%08x, is_user: %d, test: 0x%08x, %d pages, 0x%08x \n",
+                                                 *test, counter, addr, is_user_vaddr(addr), *test, init_ram_pages, &va->data_type);
             }
             
             if (!load_from_file(va, kpage)) {
