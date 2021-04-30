@@ -194,11 +194,12 @@ page_not_present_handler(void *addr)
         
         void *pd = thread_current()->pagedir;
         asm volatile ("movl %0, %%cr3" : : "r" (vtop (pd)) : "memory");
-        
-//        PANIC("bad addr from page_not_present_handler: 0x%08x,\
-//                             called %d times, this time addr: 0x%08x, is_user: %d, kpage: 0x%08x, %d pages \n",
-//                         *test, counter, addr, is_user_vaddr(addr), thread_current()->pagedir, init_ram_pages);
+    
+                PANIC("bad addr from page_not_present_handler: 0x%08x,\
+                                     called %d times, this time addr: 0x%08x, is_user: %d, kpage: 0x%08x, %d pages \n",
+                                 *test, counter, addr, is_user_vaddr(addr), thread_current()->pagedir, init_ram_pages);
     }
+    
 }
 
 void
