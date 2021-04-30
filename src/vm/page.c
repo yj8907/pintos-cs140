@@ -180,8 +180,6 @@ page_not_present_handler(void *addr)
                 force_exit();
             }
         }
-        if (counter == 20) PANIC("bad addr from page_not_present_handler: 0x%08x, called %d times, this time addr: 0x%08x\n",
-                             *test, counter, kpage);
         
         va->state = ALLOCATED;
         if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
@@ -196,6 +194,15 @@ page_not_present_handler(void *addr)
 void
 vm_grow_stack(void *addr)
 {
+    static vm_grow_counter = 0;
+    vm_grow_counter += 1;
+    
+    uint32_t *test = 0xc0113094;
+    
+    if (*test > 0) PANIC("bad addr from vm_grow_stack: 0x%08x, called %d times, this time addr: 0x%08x\n",
+                         *test, counter, addr);
+    
+    
     void *stack_pg = pg_round_down(addr);
     ASSERT (stack_pg  < PHYS_BASE);
     stack_pg = vm_alloc_page(stack_pg, thread_current()->vm_mm, 1, PAL_USER, ANONYMOUS, NULL, 0, true);
