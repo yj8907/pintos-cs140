@@ -155,9 +155,12 @@ bool load_from_file(struct vm_area* va, void* kpage)
 void
 page_not_present_handler(void *addr)
 {
+    static counter = 0;
+    counter += 1;
     
     uint32_t *test = 0xc0113094;
-    if (*test > 0) PANIC("bad addr from page_not_present_handler: 0x%08x", *test);
+    if (*test > 0) PANIC("bad addr from page_not_present_handler: 0x%08x, called %d times, this time addr: 0x%08x\n",
+                         *test, counter, addr);
     
     void *page = pg_round_down(addr);
     
