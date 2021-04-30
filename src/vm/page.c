@@ -177,13 +177,14 @@ page_not_present_handler(void *addr)
         
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
         
+        
+        if (va->data_type != ANONYMOUS) {
+        
             if (counter == 20) {
                                 PANIC("bad addr from page_not_present_handler: 0x%08x,\
                                                      called %d times, this time addr: 0x%08x, is_user: %d, test: 0x%08x, %d pages \n",
                                                  *test, counter, addr, is_user_vaddr(addr), *test, init_ram_pages);
             }
-        
-        if (va->data_type != ANONYMOUS) {
             
             if (!load_from_file(va, kpage)) {
                 force_exit();
