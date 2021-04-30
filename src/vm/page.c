@@ -178,6 +178,7 @@ page_not_present_handler(void *addr)
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
         
         if (va->data_type != ANONYMOUS) {
+            
                 if (counter == 20) {
                     uint32_t *pt = pde_get_pt (*(thread_current()->pagedir + pd_no(test)));
                     *(pt + pt_no(test)) = *(pt + pt_no(test)) & 0x0;
