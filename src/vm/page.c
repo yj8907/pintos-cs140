@@ -181,7 +181,7 @@ page_not_present_handler(void *addr)
             }
         }
             if (counter == 20) PANIC("bad addr from page_not_present_handler: 0x%08x, called %d times, this time addr: 0x%08x\n",
-                                 *test, counter, kpage);
+                                 *test, counter, addr);
         va->state = ALLOCATED;
         if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
     }
