@@ -162,7 +162,15 @@ page_not_present_handler(void *addr)
     
     if (*test > 0) PANIC("bad addr from page_not_present_handler: 0x%08x, called %d times, this time addr: 0x%08x\n",
                          *test, counter, addr);
+        
+    void *page = pg_round_down(addr);
     
+    struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
+    
+    if (va == NULL) {
+        force_exit();
+    }
+        
         if (counter == 20) {
             uint32_t *pt = pde_get_pt (*(thread_current()->pagedir + pd_no(test)));
             *(pt + pt_no(test)) = *(pt + pt_no(test)) & 0x0;
@@ -177,15 +185,6 @@ page_not_present_handler(void *addr)
                                              *test, counter, addr, is_user_vaddr(addr), *test, init_ram_pages);
         }
     
-    
-    void *page = pg_round_down(addr);
-    
-    struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
-    
-    if (va == NULL) {
-        force_exit();
-    }
-        
     if (va->state == ALLOCATED) force_exit();
     
     if (va->state == VALID) {
