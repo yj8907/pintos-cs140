@@ -159,6 +159,9 @@ page_not_present_handler(void *addr)
     counter += 1;
     
     uint32_t *test = 0xc0113094;
+    if (counter == 20) PANIC("bad addr from page_not_present_handler: 0x%08x, called %d times, this time addr: 0x%08x\n",
+                         *test, counter, addr);
+    
     if (*test > 0) PANIC("bad addr from page_not_present_handler: 0x%08x, called %d times, this time addr: 0x%08x\n",
                          *test, counter, addr);
     
