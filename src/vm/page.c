@@ -155,6 +155,10 @@ bool load_from_file(struct vm_area* va, void* kpage)
 void
 page_not_present_handler(void *addr)
 {
+    
+    uint32_t *addr = 0xc0113094;
+    if (*addr > 0) PANIC("bad addr from page_not_present_handler");
+    
     void *page = pg_round_down(addr);
     
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
@@ -178,6 +182,8 @@ page_not_present_handler(void *addr)
     else if (va->state == SWAPPED) {
         
     }
+    
+    
     
 }
 
