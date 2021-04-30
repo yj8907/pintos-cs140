@@ -157,7 +157,7 @@ page_not_present_handler(void *addr)
 {
     
     uint32_t *test = 0xc0113094;
-    if (*test > 0) PANIC("bad addr from page_not_present_handler");
+    if (*test > 0) PANIC("bad addr from page_not_present_handler: 0x%08x", *test);
     
     void *page = pg_round_down(addr);
     
