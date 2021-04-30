@@ -174,7 +174,9 @@ page_not_present_handler(void *addr)
     if (va->state == ALLOCATED) force_exit();
     
     if (va->state == VALID) {
-        void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
+        
+//        void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
+        void *kpage = falloc_get_frame(page, PAL_USER | PAL_ZERO);
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
                 force_exit();
