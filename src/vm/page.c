@@ -200,7 +200,7 @@ vm_grow_stack(void *addr)
     uint32_t *test = 0xc0113094;
     
     if (*test > 0) PANIC("bad addr from vm_grow_stack: 0x%08x, called %d times, this time addr: 0x%08x\n",
-                         *test, counter, addr);
+                         *test, vm_grow_counter, addr);
     
     
     void *stack_pg = pg_round_down(addr);
