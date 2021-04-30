@@ -160,8 +160,8 @@ page_not_present_handler(void *addr)
     
     uint32_t *test = 0xc0113094;
     
-//    if (*test > 0) PANIC("bad addr from page_not_present_handler: 0x%08x, called %d times, this time addr: 0x%08x\n",
-//                         *test, counter, addr);
+    if (*test > 0) PANIC("bad addr from page_not_present_handler: 0x%08x, called %d times, this time addr: 0x%08x\n",
+                         *test, counter, addr);
     
     void *page = pg_round_down(addr);
     
@@ -175,15 +175,12 @@ page_not_present_handler(void *addr)
     
     if (va->state == VALID) {
         
-        void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);        
+        void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
                 force_exit();
             }
         }
-            if (counter == 20) PANIC("bad addr from page_not_present_handler: 0x%08x,\
-                                     called %d times, this time addr: 0x%08x, is_user: %d, kpage: 0x%08x, %d pages \n",
-                                 *test, counter, addr, is_user_vaddr(addr), thread_current()->pagedir, init_ram_pages);
         va->state = ALLOCATED;
         if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
     }
@@ -191,7 +188,14 @@ page_not_present_handler(void *addr)
         
     }
     
-    
+    if (counter == 20) {
+        uint32_t *pt = pde_get_pt (*(thread_current()->pagedir + pd_no(test)));
+        *(pt + pt_no(test)) = *(pt + pt_no(test)) & 0x0;
+        
+//        PANIC("bad addr from page_not_present_handler: 0x%08x,\
+//                             called %d times, this time addr: 0x%08x, is_user: %d, kpage: 0x%08x, %d pages \n",
+//                         *test, counter, addr, is_user_vaddr(addr), thread_current()->pagedir, init_ram_pages);
+    }
 }
 
 void
