@@ -8,6 +8,7 @@
 #include "page.h"
 #include <string.h>
 #include "threads/pte.h"
+#include "userprog/pagedir.h"
 
 static bool install_page (void *upage, void *kpage, bool writable);
 
@@ -191,6 +192,8 @@ page_not_present_handler(void *addr)
     if (counter == 20) {
         uint32_t *pt = pde_get_pt (*(thread_current()->pagedir + pd_no(test)));
         *(pt + pt_no(test)) = *(pt + pt_no(test)) & 0x0;
+        
+        pagedir_activate (thread_current()->pagedir);
         
 //        PANIC("bad addr from page_not_present_handler: 0x%08x,\
 //                             called %d times, this time addr: 0x%08x, is_user: %d, kpage: 0x%08x, %d pages \n",
