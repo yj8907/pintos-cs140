@@ -54,9 +54,9 @@ struct vm_area
 struct vm_mm_struct
 {
     struct hash *mmap;
-    uint32_t *user_ptr;
-    uint32_t *kernel_ptr;
-    uint32_t *end_ptr;
+    void *user_ptr;
+    void *kernel_ptr;
+    void *end_ptr;
     void *esp;
 };
 
