@@ -56,6 +56,9 @@ vm_mm_init(void)
 
     vm_mm->end_ptr = vm_mm + sizeof(struct vm_mm_struct) + sizeof(struct hash);
     
+    if (pg_round_down(vm_mm->end_ptr) == 0xc0113000) PANIC("bad addr from vm_mm_init: vm_mm->end_ptr addr: 0x%08x, vm_mm addr: 0x%08x\n",
+                                               vm_mm->end_ptr, vm_mm);
+    
     return vm_mm;
 }
 
