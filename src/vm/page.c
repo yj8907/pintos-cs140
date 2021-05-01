@@ -77,6 +77,10 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
         vm_mm->end_ptr = palloc_get_page(0);
     
     struct vm_area* vm_area_entry = vm_mm->end_ptr;
+    
+    if (pg_round_down(vm_area_entry) == 0xc0113000) PANIC("bad addr from vm_alloc_page: vm_mm->end_ptr addr: 0x%08x, vm_mm addr: 0x%08x\n"
+                                               vm_mm->end_ptr, vm_mm);
+    
     vm_mm->end_ptr += sizeof(struct vm_area);
     
     vm_area_entry->vm_start = page;
