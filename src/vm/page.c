@@ -77,21 +77,11 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     
     ASSERT(vm_mm != NULL);
     
-    if (pg_ofs(vm_mm->end_ptr) + sizeof(struct vm_area) >= PGSIZE) {
+    if (pg_ofs(vm_mm->end_ptr) + sizeof(struct vm_area) >= PGSIZE)
         vm_mm->end_ptr = palloc_get_page(0);
-//        PANIC("bad addr from vm_alloc_page palloc_get_page: vm_mm->end_ptr addr: 0x%08x, vm_mm addr: 0x%08x\n",
-//        vm_mm->end_ptr, vm_mm);
-    }
-        
-    
+            
     struct vm_area* vm_area_entry = vm_mm->end_ptr;
-    
-//    if (vm_alloc_counter == 19) PANIC("bad addr from vm_alloc_page: vm_mm->end_ptr addr: 0x%08x, vm_mm addr: 0x%08x, pg_ofs: %d, vm_area size: %d, counter:%d\n",
-//                                               vm_mm->end_ptr, vm_mm, pg_ofs(vm_mm->end_ptr), sizeof(struct vm_area), vm_alloc_counter);
-//
-//    if (pg_round_down(vm_area_entry) == 0xc0113000) PANIC("bad addr from vm_alloc_page: vm_mm->end_ptr addr: 0x%08x, vm_mm addr: 0x%08x, pg_ofs: %d, vm_area size: %d, counter:%d\n",
-//                                               vm_mm->end_ptr, vm_mm, pg_ofs(vm_mm->end_ptr), sizeof(struct vm_area), vm_alloc_counter);
-    
+        
     vm_mm->end_ptr += sizeof(struct vm_area);
     
     vm_area_entry->vm_start = page;
@@ -174,9 +164,6 @@ page_not_present_handler(void *addr)
     counter += 1;
     
     uint32_t *test = 0xc0113094;
-    
-//    if (*test > 0) PANIC("bad addr from page_not_present_handler: 0x%08x, called %d times, this time addr: 0x%08x\n",
-//                         *test, counter, addr);
         
     void *page = pg_round_down(addr);
     
@@ -194,48 +181,22 @@ page_not_present_handler(void *addr)
         
         
         if (va->data_type != ANONYMOUS) {
-                    
             if (!load_from_file(va, kpage)) {
                 force_exit();
             }
         }
-//                if (counter == 20) {
-//                                    PANIC("bad addr from page_not_present_handler: 0x%08x,\
-//                                                         called %d times, this time addr: 0x%08x, is_user: %d, test: 0x%08x, %d pages, 0x%08x \n",
-//                                                     *test, counter, addr, is_user_vaddr(addr), *test, init_ram_pages, &va->state);
-//                }
         va->state = ALLOCATED;
-        
         if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
     }
     else if (va->state == SWAPPED) {
         
     }
-    
-    if (counter == 20) {
-        uint32_t *pt = pde_get_pt (*(thread_current()->pagedir + pd_no(test)));
-        *(pt + pt_no(test)) = *(pt + pt_no(test)) & 0x0;
         
-        void *pd = thread_current()->pagedir;
-    
-//                PANIC("bad addr from page_not_present_handler: 0x%08x,\
-//                                     called %d times, this time addr: 0x%08x, is_user: %d, kpage: 0x%08x, %d pages \n",
-//                                 *test, counter, addr, is_user_vaddr(addr), thread_current()->pagedir, init_ram_pages);
-//                        PANIC("bad addr from page_not_present_handler: 0x%08x,\
-//                                             called %d times, this time addr: 0x%08x, is_user: %d, test: 0x%08x, %d pages \n",
-//                                         *test, counter, addr, is_user_vaddr(addr), *test, init_ram_pages);
-    }
-    
 }
 
 void
 vm_grow_stack(void *addr)
 {
-    static vm_grow_counter = 0;
-    vm_grow_counter += 1;
-    
-    uint32_t *test = 0xc0113094;
-    
     void *stack_pg = pg_round_down(addr);
     ASSERT (stack_pg  < PHYS_BASE);
     stack_pg = vm_alloc_page(stack_pg, thread_current()->vm_mm, 1, PAL_USER, ANONYMOUS, NULL, 0, true);
