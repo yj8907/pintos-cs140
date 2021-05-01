@@ -87,7 +87,7 @@ void falloc_free_frame(void *frame)
     list_remove(&(frame_table+frame_no)->elem);
     
 //    if (frame > 0xc027c000 || frame < 0xc0277000) PANIC("frame: 0x%08x\n", frame);
-    palloc_free_page(frame);
+    if (is_kernel_vaddr(frame)) palloc_free_page(frame);
 }
 
 void
