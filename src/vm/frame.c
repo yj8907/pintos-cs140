@@ -86,7 +86,7 @@ void falloc_free_frame(void *frame)
     fte->virtual_page = NULL;
     
     /* remvove frame from page replacement queue */
-    list_remove(&fte->elem);
+//    list_remove(&fte->elem);
 }
 
 void
