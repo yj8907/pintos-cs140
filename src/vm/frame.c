@@ -78,7 +78,7 @@ void falloc_free_frame(void *frame)
     
     struct frame_table_entry* fte = frame_table + compute_frame_number(frame);
 //    ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
-    if (fte->holder == NULL || fte->virtual_page == NULL) printf("frame: 0x%08x\n", frame);
+    if (fte->holder == NULL || fte->virtual_page == NULL) printf("frame: 0x%08x, page: 0x%08x \n", frame, fte->virtual_page);
 //    if (is_kernel_vaddr(fte->virtual_page)) palloc_free_page(frame);
     
     fte->holder = NULL;
