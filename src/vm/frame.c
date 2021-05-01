@@ -76,20 +76,20 @@ void falloc_free_frame(void *frame)
     
     ASSERT(pg_ofs(frame) == 0);
     
-    size_t frame_no = compute_frame_number(frame);
-    ASSERT((frame_table+frame_no)->holder != NULL);
+    struct frame_table_entry* fte = frame_table + compute_frame_number(frame);
+    ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
     
-    (frame_table+frame_no)->holder = NULL;
-    (frame_table+frame_no)->numRef = 0;
-    (frame_table+frame_no)->virtual_page = NULL;
+    if (is_kernel_vaddr(fte->virtual_page)) PANIC("frame: 0x%08x\n", frame);
+    if (is_kernel_vaddr(fte->virtual_page)) palloc_free_page(frame);
+    
+    fte->holder = NULL;
+    fte->numRef = 0;
+    fte->virtual_page = NULL;
     
     /* remvove frame from page replacement queue */
-    list_remove(&(frame_table+frame_no)->elem);
+    list_remove(&fte->elem);
     
 //    if (frame > 0xc027c000 || frame < 0xc0277000) PANIC("frame: 0x%08x\n", frame);
-    
-    if (is_kernel_vaddr(frame)) PANIC("frame: 0x%08x\n", frame);
-    if (is_kernel_vaddr(frame)) palloc_free_page(frame);
 }
 
 void
