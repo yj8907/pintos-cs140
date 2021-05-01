@@ -69,7 +69,8 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
     {
         struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
-        printf("frame: 0x%08x\n", frame);
+        printf("frame: 0x%08x, threadname: %s \n", frame, thread_current()->name);
+        if (frame == 0xc0274000) printf("thread name : %s\n", thread_current()->name);
         falloc_free_frame(frame);
     }
     
