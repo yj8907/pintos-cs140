@@ -69,10 +69,10 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
     {
         struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
+        print("frame: 0x%08x\n", frame);
         falloc_free_frame(frame);
     }
     
-//    PANIC("vm_mm_destroy");
     palloc_free_page(vm_mm);
     
 };
@@ -120,6 +120,8 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     vm_area_entry->file = file;
     if (file != NULL) vm_area_entry->file_pos = file_tell(file);
     vm_area_entry->content_bytes = nbytes;
+    
+    printf("allocate page: 0x%08x\n", page);
     
     ASSERT(hash_insert(vm_mm->mmap, &vm_area_entry->h_elem) == NULL);
     
