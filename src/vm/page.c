@@ -69,8 +69,6 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
     {
         struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
-        printf("frame: 0x%08x, threadname: %s \n", frame, thread_current()->name);
-        if (frame == 0xc0274000) printf("thread name : %s\n", thread_current()->name);
         falloc_free_frame(frame);
     }
     
@@ -198,7 +196,7 @@ page_not_present_handler(void *addr)
     if (va->state == VALID) {
         
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
-        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
+//        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
                 force_exit();
