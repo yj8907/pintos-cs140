@@ -77,6 +77,8 @@ void falloc_free_frame(void *frame)
     ASSERT(pg_ofs(frame) == 0);
     
     size_t frame_no = compute_frame_number(frame);
+    ASSERT((frame_table+frame_no)->holder != NULL);
+    
     (frame_table+frame_no)->holder = NULL;
     (frame_table+frame_no)->numRef = 0;
     (frame_table+frame_no)->virtual_page = NULL;
