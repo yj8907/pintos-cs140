@@ -9,10 +9,11 @@
 #define VM_PAGE_H
 
 #include <bitmap.h>
+#include "lib/kernel/hash.h"
+
 #include "threads/vaddr.h"
 #include "userprog/syscall.h"
 #include "vm/frame.h"
-#include "lib/kernel/hash.h"
 #include "filesys/file.h"
 
 enum page_state
@@ -65,7 +66,9 @@ hash_less_func vm_hash_less_func;
 hash_action_func vm_hash_clear_func;
 
 void *vm_mm_init(void);
-void *vm_mm_free(void);
+void *vm_mm_free(struct vm_mm_struct *);
+
+void *vm_page_to_frame(uint32_t*, void*);
 
 void *vm_alloc_page(void*, struct vm_mm_struct* vm_mm, size_t page_cnt, enum palloc_flags, enum page_data_type,
                     struct file* file, uint32_t nbytes, bool);

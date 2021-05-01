@@ -59,6 +59,32 @@ vm_mm_init(void)
     return vm_mm;
 }
 
+void*
+vm_mm_free(struct vm_mm_struct *vm_mm)
+{
+    /* iterate through mmap and clear frame table */
+    struct hash_iterator i;
+    hash_first (&i, vm_mm->mmap);
+    while (hash_next (&i))
+    {
+        struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
+        void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
+        falloc_free_frame(frame);
+    }
+    
+    palloc_free_page(vm_mm);
+    
+};
+
+void*
+vm_page_to_frame(uint32_t* pagedir, void* page)
+{
+    uint32_t *pde = pagedir + pd_no(vm_page);
+    uint32_t *pte = pde_get_pt (*pde) + pt_no(vm_page);
+    void *frame = pte_get_page (*pte);
+    return frame;
+};
+
 
 void*
 vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
@@ -160,26 +186,16 @@ bool load_from_file(struct vm_area* va, void* kpage)
 void
 page_not_present_handler(void *addr)
 {
-    static counter = 0;
-    counter += 1;
-    
-    uint32_t *test = 0xc0113094;
-        
     void *page = pg_round_down(addr);
-    
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
     
-    if (va == NULL) {
-        force_exit();
-    }
-    
+    if (va == NULL) force_exit();
     if (va->state == ALLOCATED) force_exit();
     
     if (va->state == VALID) {
         
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
-        
-        
+
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
                 force_exit();
