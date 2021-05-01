@@ -74,7 +74,7 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
     }
     
 //    PANIC("vm_mm_destroy");
-    palloc_free_page(vm_mm);
+//    palloc_free_page(vm_mm);
     
 };
 
