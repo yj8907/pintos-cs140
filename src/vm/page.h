@@ -66,7 +66,7 @@ hash_less_func vm_hash_less_func;
 hash_action_func vm_hash_clear_func;
 
 void *vm_mm_init(void);
-void *vm_mm_free(struct vm_mm_struct *);
+void *vm_mm_destroy(struct vm_mm_struct *);
 
 void *vm_page_to_frame(uint32_t*, void*);
 

@@ -60,7 +60,7 @@ vm_mm_init(void)
 }
 
 void*
-vm_mm_free(struct vm_mm_struct *vm_mm)
+vm_mm_destroy(struct vm_mm_struct *vm_mm)
 {
     /* iterate through mmap and clear frame table */
     struct hash_iterator i;
@@ -77,7 +77,7 @@ vm_mm_free(struct vm_mm_struct *vm_mm)
 };
 
 void*
-vm_page_to_frame(uint32_t* pagedir, void* page)
+vm_page_to_frame(uint32_t* pagedir, void* vm_page)
 {
     uint32_t *pde = pagedir + pd_no(vm_page);
     uint32_t *pte = pde_get_pt (*pde) + pt_no(vm_page);
