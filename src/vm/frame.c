@@ -72,6 +72,8 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
 
 void falloc_free_frame(void *frame)
 {
+    printf("frame: 0x%08x, page: 0x%08x \n", frame, fte->virtual_page);
+    
     if (frame == NULL) return;
     
     ASSERT(pg_ofs(frame) == 0);
