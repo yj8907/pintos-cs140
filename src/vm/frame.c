@@ -73,22 +73,22 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
 void falloc_free_frame(void *frame)
 {
 
-//    if (frame == NULL) return;
+    if (frame == NULL) return;
     
     ASSERT(pg_ofs(frame) == 0);
     
     struct frame_table_entry* fte = frame_table + compute_frame_number(frame);
-//    ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
-    if (fte->holder == NULL || fte->virtual_page == NULL)
-        PANIC("frame: 0x%08x, page: 0x%08x \n", frame, fte->virtual_page);
-//    if (is_kernel_vaddr(fte->virtual_page)) palloc_free_page(frame);
+    ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
+//    if (fte->holder == NULL || fte->virtual_page == NULL)
+//        PANIC("frame: 0x%08x, page: 0x%08x \n", frame, fte->virtual_page);
+    if (is_kernel_vaddr(fte->virtual_page)) palloc_free_page(frame);
     
     fte->holder = NULL;
     fte->numRef = 0;
     fte->virtual_page = NULL;
     
     /* remvove frame from page replacement queue */
-//    list_remove(&fte->elem);
+    list_remove(&fte->elem);
 }
 
 void

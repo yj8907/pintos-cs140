@@ -127,7 +127,7 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     if (file != NULL) vm_area_entry->file_pos = file_tell(file);
     vm_area_entry->content_bytes = nbytes;
     
-    printf("allocate page: 0x%08x\n", page);
+//    printf("allocate page: 0x%08x\n", page);
     
     ASSERT(hash_insert(vm_mm->mmap, &vm_area_entry->h_elem) == NULL);
     
@@ -204,7 +204,7 @@ page_not_present_handler(void *addr)
     if (va->state == VALID) {
         
         void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
-        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
+//        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
                 force_exit();
