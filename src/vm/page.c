@@ -72,8 +72,8 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
 //        if (frame == 0xc0000000)
 //        PANIC("falloc_free_frame: 0x%08x, threadname: %s, vpage: 0x%08x, va: 0x%08x, vm_mm: 0x%08x \n",
 //              frame, thread_name(), va->vm_start, va, vm_mm);
-        printf("falloc_free_frame: 0x%08x, threadname: %s, vpage: 0x%08x, va: 0x%08x, vm_mm: 0x%08x \n",
-                      frame, thread_name(), va->vm_start, va, vm_mm);
+//        printf("falloc_free_frame: 0x%08x, threadname: %s, vpage: 0x%08x, va: 0x%08x, vm_mm: 0x%08x \n",
+//                      frame, thread_name(), va->vm_start, va, vm_mm);
         if (frame != NULL) falloc_free_frame(frame);
     }
     
@@ -129,8 +129,8 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     if (file != NULL) vm_area_entry->file_pos = file_tell(file);
     vm_area_entry->content_bytes = nbytes;
     
-    if (strcmp(thread_name(), "exec-multiple")==0)
-    printf("allocate page: 0x%08x\n", page);
+//    if (strcmp(thread_name(), "exec-multiple")==0)
+//    printf("allocate page: 0x%08x\n", page);
     
     ASSERT(hash_insert(vm_mm->mmap, &vm_area_entry->h_elem) == NULL);
     
