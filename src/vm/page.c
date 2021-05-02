@@ -201,7 +201,7 @@ page_not_present_handler(void *addr)
     void *page = pg_round_down(addr);
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
     
-    if (addr == 0x08048892) PANIC("vm_area: 0x%08x \n", va);
+//    if (addr == 0x08048892) PANIC("vm_area: 0x%08x \n", va);
     
     if (va == NULL) force_exit();
     if (va->state == ALLOCATED) force_exit();
