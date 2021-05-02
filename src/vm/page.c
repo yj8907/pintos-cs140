@@ -105,8 +105,6 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
 //        vm_mm->user_ptr += PGSIZE;
 //    else
 //       vm_mm->kernel_ptr += PGSIZE;
-
-    if (page == 0x08048000) PANIC("writable: %d \n", writable);
     
     static int vm_alloc_counter = 0;
     vm_alloc_counter += 1;
