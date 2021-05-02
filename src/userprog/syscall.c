@@ -98,7 +98,10 @@ validate_vaddr_write(void *addr, uint32_t sz)
         int byte;
         for (int i = 0; i < sz; i++) {
             if ( (byte=get_user(addr+i)) == -1 ) force_exit();
-            if (!put_user(addr+i, byte)) force_exit();
+            if (!put_user(addr+i, byte)) {
+                PANIC("test");
+                force_exit();
+            }
         }
     } else {
         force_exit();
