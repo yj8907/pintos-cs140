@@ -69,10 +69,10 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
     {
         struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
-        if (frame == 0xc0000000)
-        PANIC("falloc_free_frame: 0x%08x, threadname: %s, vpage: 0x%08x, va: 0x%08x, vm_mm: 0x%08x \n",
-              frame, thread_name(), va->vm_start, va, vm_mm);
-        falloc_free_frame(frame);
+//        if (frame == 0xc0000000)
+//        PANIC("falloc_free_frame: 0x%08x, threadname: %s, vpage: 0x%08x, va: 0x%08x, vm_mm: 0x%08x \n",
+//              frame, thread_name(), va->vm_start, va, vm_mm);
+        if (frame != NULL) falloc_free_frame(frame);
     }
     
     palloc_free_page(vm_mm);
@@ -83,7 +83,11 @@ void*
 vm_page_to_frame(uint32_t* pagedir, void* vm_page)
 {
     uint32_t *pde = pagedir + pd_no(vm_page);
+    if (!(*pde & PTE_P)) return NULL;
+    
     uint32_t *pte = pde_get_pt (*pde) + pt_no(vm_page);
+    if (!(*pte & PTE_P)) return NULL;
+    
     void *frame = pte_get_page (*pte);
     return frame;
 };
