@@ -99,7 +99,6 @@ validate_vaddr_write(void *addr, uint32_t sz)
         for (int i = 0; i < sz; i++) {
             if ( (byte=get_user(addr+i)) == -1 ) force_exit();
             if (!put_user(addr+i, byte)) {
-                PANIC("test");
                 force_exit();
             }
         }
@@ -352,7 +351,7 @@ sys_read(uint32_t *eax, char** argv)
     const char* buffer = *(char**)argv[1];
     uint32_t size = *(int*)argv[2];
     
-    validate_vaddr(buffer, size);
+    validate_vaddr_write(buffer, size);
     
     int bytes_read = 0;
     if (fd_no != 0 ){
