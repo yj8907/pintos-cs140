@@ -182,7 +182,6 @@ page_fault (struct intr_frame *f)
   }
     
   if (!user) {
-      PANIC("write: %d", write);
       f->eip = (void*)f->eax;
       f->eax = 0xffffffff;
       return;
