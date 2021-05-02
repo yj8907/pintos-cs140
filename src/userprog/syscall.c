@@ -97,6 +97,7 @@ validate_vaddr_write(void *addr, uint32_t sz)
     if ( is_user_vaddr(addr) && is_user_vaddr(addr+sz))  {
         for (int i = 0; i < sz; i++) {
             if (!put_user(addr+i, 0)) {
+                PANIC("test");
               if (!put_user(addr+i, 0)) force_exit();
             }
         }
