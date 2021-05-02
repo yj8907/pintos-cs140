@@ -161,6 +161,7 @@ page_fault (struct intr_frame *f)
 
   uint32_t stack_sz_limit = 0x04000000;
     
+    PANIC("fault addr: 0x%08x\n", fault_addr);
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
       
@@ -177,7 +178,7 @@ page_fault (struct intr_frame *f)
       page_not_present_handler(fault_addr);
       return;
   }
-  PANIC("fault addr: 0x%08x\n", fault_addr);
+  
   if (!user) {
       
       f->eip = (void*)f->eax;
