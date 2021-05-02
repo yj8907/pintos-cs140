@@ -95,11 +95,10 @@ validate_vaddr_write(void *addr, uint32_t sz)
     
     /* validate addr and addr+sz within user stack */
     if ( is_user_vaddr(addr) && is_user_vaddr(addr+sz))  {
+        int byte;
         for (int i = 0; i < sz; i++) {
-            PANIC("test: %d", !put_user(addr+i, 0));
-            if (!put_user(addr+i, 0)) {
-              if (!put_user(addr+i, 0)) force_exit();
-            }
+            if ( (byte=get_user(addr+i)) == -1 ) force_exit();
+            if (!put_user(addr+i, byte)) force_exit();
         }
     } else {
         force_exit();
