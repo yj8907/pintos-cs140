@@ -129,7 +129,7 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     vm_area_entry->content_bytes = nbytes;
     
 //    if (strcmp(thread_name(), "exec-multiple")==0)
-    printf("allocate page: 0x%08x\n", page);
+//    printf("allocate page: 0x%08x\n", page);
     
     ASSERT(hash_insert(vm_mm->mmap, &vm_area_entry->h_elem) == NULL);
     
