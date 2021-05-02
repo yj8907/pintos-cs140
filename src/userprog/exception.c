@@ -177,8 +177,6 @@ page_fault (struct intr_frame *f)
       page_not_present_handler(fault_addr);
       return;
   }
-  
-        if (fault_addr < 0x10000000 && write && !not_present ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
     
   if (!user) {
       
@@ -186,6 +184,9 @@ page_fault (struct intr_frame *f)
       f->eax = 0xffffffff;
       return;
   }
+    
+            if (fault_addr < 0x10000000 && write && !not_present ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
+    
     if (user) {
         force_exit();
     }
