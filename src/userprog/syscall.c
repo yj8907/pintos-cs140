@@ -373,7 +373,7 @@ sys_write(uint32_t *eax, char** argv)
     const void* buffer = *(char**)argv[1];
     uint32_t size = *(int*)argv[2];
     
-    validate_vaddr_write(buffer, size);
+    validate_vaddr(buffer, size);
     
     struct file* fp;
     int bytes_write = 0;
