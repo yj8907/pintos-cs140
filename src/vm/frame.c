@@ -60,7 +60,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
         printf("page: 0x%08x\n", page);
         printf("frameno: %d\n", frame_no);
     }
-    printf("kpage: 0x%08x, threadname: %s, vmpage: 0x%08x \n", page, thread_name(), (frame_table+frame_no-1)->virtual_page);
+//    printf("kpage: 0x%08x, threadname: %s, vmpage: 0x%08x \n", page, thread_name(), (frame_table+frame_no-1)->virtual_page);
     (frame_table+frame_no)->holder = thread_current();
     (frame_table+frame_no)->numRef = 1;
     (frame_table+frame_no)->virtual_page = vm_pg;
