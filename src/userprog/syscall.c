@@ -94,9 +94,11 @@ validate_vaddr_write(void *addr, uint32_t sz)
     if (addr == NULL) force_exit();
     
     /* validate addr and addr+sz within user stack */
-    if ( !(!is_user_vaddr(addr) || !is_user_vaddr(addr+sz)) ) {
+    if ( is_user_vaddr(addr) && is_user_vaddr(addr+sz))  {
         for (int i = 0; i < sz; i++) {
-            if (!put_user(addr+i, 0)) force_exit();
+            if (!put_user(addr+i, 0)) {
+              if (!put_user(addr+i, 0)) force_exit();
+            }
         }
     } else {
         force_exit();
@@ -373,7 +375,7 @@ sys_write(uint32_t *eax, char** argv)
     const void* buffer = *(char**)argv[1];
     uint32_t size = *(int*)argv[2];
     
-    validate_vaddr(buffer, size);
+    validate_vaddr_write(buffer, size);
     
     struct file* fp;
     int bytes_write = 0;
