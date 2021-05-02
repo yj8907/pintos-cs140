@@ -164,7 +164,6 @@ page_fault (struct intr_frame *f)
     
 //  if ( write && !not_present ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
   
-    
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
       
@@ -181,8 +180,6 @@ page_fault (struct intr_frame *f)
       page_not_present_handler(fault_addr);
       return;
   }
-    
-//        if ( fault_addr < 0x10000000 && !not_present && write ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d, user: %d \n", fault_addr, not_present, write, user);
     
   if (!user) {
       f->eip = (void*)f->eax;
