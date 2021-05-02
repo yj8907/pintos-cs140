@@ -161,6 +161,7 @@ page_fault (struct intr_frame *f)
 
   uint32_t stack_sz_limit = 0x04000000;
     
+    if (fault_addr < 0x10000000)
     PANIC("fault addr: 0x%08x\n", fault_addr);
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
