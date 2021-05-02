@@ -164,7 +164,7 @@ page_fault (struct intr_frame *f)
     
 //  if ( write && !not_present ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
   
-    if ( write ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
+    if ( fault_addr < 0x10000000 && write ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
     
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
