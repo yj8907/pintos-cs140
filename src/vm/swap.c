@@ -40,8 +40,8 @@ swap_init(void)
 {
         
     swap_block = block_get_by_name("swap");
-    swap_block_size = block_size(swap_block);
     PANIC("test");
+    swap_block_size = block_size(swap_block);
     
     nblock_pg = PGSIZE / BLOCK_SECTOR_SIZE;
     swap_size = swap_block_size/nblock_pg;
