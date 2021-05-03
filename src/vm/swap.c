@@ -44,6 +44,7 @@ swap_init(void)
     nblock_pg = PGSIZE / BLOCK_SECTOR_SIZE;
     swap_size = swap_block_size/nblock_pg;
     
+    PANIC("test");
     size_t bm_pages = DIV_ROUND_UP (bitmap_buf_size (swap_size), PGSIZE);
     void *used_map_base = palloc_get_multiple(PAL_ZERO, bm_pages);
     used_map = bitmap_create_in_buf (swap_size, used_map_base, bm_pages * PGSIZE);
