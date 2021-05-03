@@ -8,14 +8,7 @@
 #ifndef swap_h
 #define swap_h
 
-#include <bitmap.h>
-#include <round.h>
-#include "lib/kernel/hash.h"
-
-#include "devices/block.h"
 #include "threads/vaddr.h"
-#include "threads/palloc.h"
-#include "threads/synch.h"
 
 #define SP_SHIFT 1
 #define SP_AREABITS 7

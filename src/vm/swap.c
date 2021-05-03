@@ -4,6 +4,13 @@
 //
 //  Created by Yang Jiang on 5/1/21.
 //
+#include <bitmap.h>
+#include <round.h>
+#include "lib/kernel/hash.h"
+
+#include "devices/block.h"
+#include "threads/palloc.h"
+#include "threads/synch.h"
 
 #include "swap.h"
 
