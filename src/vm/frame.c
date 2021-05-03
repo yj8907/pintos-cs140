@@ -122,9 +122,9 @@ evict_frame(void *frame, size_t page_cnt)
     size_t frame_no = compute_frame_number(frame);
     struct frame_table_entry *fte = (frame_table+frame_no);
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
-    
-    PANIC("test");
+        
     swap_slot_t swap_slot = swap_allocate();
+    PANIC("test: %d", swap_slot);
     swap_write(swap_slot, fte->virtual_page);
     
     vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
