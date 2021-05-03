@@ -119,13 +119,14 @@ evict_frame(void *frame, size_t page_cnt)
     ASSERT(frame != NULL);
     ASSERT(pg_ofs(frame) == 0);
     
+    PANIC("test");
     size_t frame_no = compute_frame_number(frame);
     struct frame_table_entry *fte = (frame_table+frame_no);
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
     
     swap_slot_t swap_slot = swap_allocate();
     swap_write(swap_slot, fte->virtual_page);
-    PANIC("test");
+    
     vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
     
     falloc_free_frame(frame);
