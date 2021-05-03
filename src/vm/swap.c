@@ -38,6 +38,7 @@ slot_to_sector(swap_slot_t slot)
 void
 swap_init(void)
 {
+    /* find swap block */
     struct block *block = NULL;
     for (block = block_first (); block != NULL; block = block_next (block)) {
         if (block_type (block) == BLOCK_SWAP) {
@@ -45,8 +46,6 @@ swap_init(void)
             break;
         }
     }
-    
-    if (swap_block == NULL) PANIC("test: %s\n", "block");
     swap_block_size = block_size(swap_block);
     
     nblock_pg = PGSIZE / BLOCK_SECTOR_SIZE;
