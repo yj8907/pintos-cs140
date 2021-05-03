@@ -124,7 +124,6 @@ evict_frame(void *frame, size_t page_cnt)
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
         
     swap_slot_t swap_slot = swap_allocate();
-    PANIC("test: %d", swap_slot);
     swap_write(swap_slot, fte->virtual_page);
     
     vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
