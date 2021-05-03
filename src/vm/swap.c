@@ -8,7 +8,7 @@
 #include "swap.h"
 
 static struct block* swap_block;
-static block_sector_t block_size;
+static block_sector_t swap_block_size;
 static swap_slot_t swap_size;
 
 static uint8_t nblock_pg;
@@ -24,7 +24,7 @@ slot_to_sector(swap_slot_t slot)
     uint32_t slot_index = slot >> (SP_SHIFT + SP_AREABITS);
     block_sector_t sector_index = slot_index * nblock_pg;
     
-    ASSERT (sector_index < block_size);
+    ASSERT (sector_index < swap_block_size);
     return sector_index;
 }
 
@@ -32,10 +32,10 @@ void
 swap_init(void)
 {
     swap_block = block_get_by_name("swap");
-    block_size = block_size(swap_block);
+    swap_block_size = block_size(swap_block);
     
     nblock_pg = PGSIZE / BLOCK_SECTOR_SIZE;
-    swap_size = block_size/nblock_pg;
+    swap_size = swap_block_size/nblock_pg;
     
     size_t bm_pages = DIV_ROUND_UP (bitmap_buf_size (swap_size), PGSIZE);
     void *used_map_base = palloc_get_multiple(PAL_ZERO, bm_pages);
