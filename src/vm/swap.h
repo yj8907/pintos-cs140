@@ -13,7 +13,7 @@
 
 #include "devices/block.h"
 #include "threads/vaddr.h"
-//#include "threads/palloc.h"
+#include "threads/palloc.h"
 #include "threads/synch.h"
 
 #define SP_SHIFT 1
