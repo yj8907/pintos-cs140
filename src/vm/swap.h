@@ -9,6 +9,7 @@
 #define swap_h
 
 #include <bitmap.h>
+#include <round.h>
 #include "lib/kernel/hash.h"
 
 #include "devices/block.h"
@@ -18,7 +19,7 @@
 
 #define SP_SHIFT 1
 #define SP_AREABITS 7
-#define SP_AREA BITMASK(SP_SHIFT, SP_AREABITS);
+#define SP_AREA BITMASK(SP_SHIFT, SP_AREABITS)
 
 typedef uint32_t swap_slot_t;
 
