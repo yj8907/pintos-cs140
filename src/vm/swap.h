@@ -20,7 +20,7 @@
 #define SP_AREABITS 7
 #define SP_AREA BITMASK(SP_SHIFT, SP_AREABITS);
 
-typdef uint32_t swap_slot_t;
+typedef uint32_t swap_slot_t;
 
 void swap_init(void);
 
