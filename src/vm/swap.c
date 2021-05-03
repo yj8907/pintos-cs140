@@ -38,10 +38,10 @@ slot_to_sector(swap_slot_t slot)
 void
 swap_init(void)
 {
-    PANIC("test");
-    
+        
     swap_block = block_get_by_name("swap");
     swap_block_size = block_size(swap_block);
+    PANIC("test");
     
     nblock_pg = PGSIZE / BLOCK_SECTOR_SIZE;
     swap_size = swap_block_size/nblock_pg;
