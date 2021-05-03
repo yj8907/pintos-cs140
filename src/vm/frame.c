@@ -76,8 +76,8 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
     fte->numRef = 1;
     fte->virtual_page = vm_pg;
     
-    struct list_elem *e = list_end(&frame_in_use_queue);
-    if (!is_tail(e)) PANIC("list");
+//    struct list_elem *e = list_end(&frame_in_use_queue);
+//    if (!is_tail(e)) PANIC("list");
     
     list_push_back(&frame_in_use_queue, &fte->elem);
     
@@ -125,6 +125,7 @@ evict_frame(void *frame, size_t page_cnt)
     
     swap_slot_t swap_slot = swap_allocate();
     swap_write(swap_slot, fte->virtual_page);
+    PANIC("test");
     vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
     
     falloc_free_frame(frame);
