@@ -104,7 +104,7 @@ evict_frame(void *frame, size_t page_cnt)
     
 //    swap_slot_t swap_slot = swap_allocate();
 //    swap_write(swap_slot, fte->virtual_page);
-    vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
+//    vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
     
     falloc_free_frame(frame);
 }
