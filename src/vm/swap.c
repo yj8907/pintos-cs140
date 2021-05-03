@@ -46,6 +46,8 @@ swap_init(void)
             break;
         }
     }
+    ASSERT(swap_block != NULL);
+    
     swap_block_size = block_size(swap_block);
     
     nblock_pg = PGSIZE / BLOCK_SECTOR_SIZE;
