@@ -41,7 +41,7 @@ swap_init(void)
     struct block *block = NULL;
     for (block = block_first (); block != NULL; block = block_next (block)) {
         if (block_type (block) == BLOCK_SWAP) {
-            swap_block = block
+            swap_block = block;
             break;
         }
     }
