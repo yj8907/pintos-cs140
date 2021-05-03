@@ -47,7 +47,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
 {
     void *page = palloc_get_page(flags);
     if (page == NULL) {
-        PANIC("null page: 0x%08x, mmap size: %d \n", vm_pg, hash_size(thread_current()->vm_mm->mmap));
+//        PANIC("null page: 0x%08x, mmap size: %d \n", vm_pg, hash_size(thread_current()->vm_mm->mmap));
         void *new_frame = next_frame_to_evict(1);
         evict_frame(new_frame, 1);
         void *page = palloc_get_page(flags);
@@ -84,7 +84,14 @@ void falloc_free_frame(void *frame)
     struct frame_table_entry* fte = frame_table + compute_frame_number(frame);
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
     
-    if (is_kernel_vaddr(fte->virtual_page)) palloc_free_page(frame);
+    /* free the page and update pagedir */
+    uint32_t *pde = fte->holder->pagedir + pd_no(fte->virtual_page);
+    ASSERT(*pde & PTE_P);
+    uint32_t *pte = pde_get_pt (*pde) + pt_no(fte->virtual_page);
+    ASSERT(*pte & PTE_P);
+    *pte = 0x0;
+    
+    palloc_free_page(frame);
     
     fte->holder = NULL;
     fte->numRef = 0;
@@ -106,9 +113,9 @@ evict_frame(void *frame, size_t page_cnt)
     struct frame_table_entry *fte = (frame_table+frame_no);
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
     
-//    swap_slot_t swap_slot = swap_allocate();
-//    swap_write(swap_slot, fte->virtual_page);
-//    vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
+    swap_slot_t swap_slot = swap_allocate();
+    swap_write(swap_slot, fte->virtual_page);
+    vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
     
     falloc_free_frame(frame);
 }
