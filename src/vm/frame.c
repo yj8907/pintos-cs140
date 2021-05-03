@@ -41,6 +41,12 @@ frame_init(void)
     list_init (&frame_in_use_queue);
 }
 
+static inline bool
+is_tail (struct list_elem *elem)
+{
+  return elem != NULL && elem->prev != NULL && elem->next == NULL;
+}
+
 /* frame is accessed through virtual addressing */
 void*
 falloc_get_frame(void* vm_pg, enum palloc_flags flags)
@@ -69,6 +75,9 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
     fte->holder = thread_current();
     fte->numRef = 1;
     fte->virtual_page = vm_pg;
+    
+    list_elem *e = list_end(&frame_in_use_queue);
+    if (!is_tail(e)) PANIC("list");
     
     list_push_back(&frame_in_use_queue, &fte->elem);
     
