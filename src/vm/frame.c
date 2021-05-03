@@ -7,6 +7,7 @@
 
 #include "frame.h"
 #include <round.h>
+#include "vm/swap.h"
 
 static size_t frame_table_page_cnt;
 static struct frame_table_entry *frame_table;
