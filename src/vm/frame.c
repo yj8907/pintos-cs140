@@ -6,7 +6,10 @@
 //
 
 #include <round.h>
+#include "lib/kernel/hash.h"
+
 #include "frame.h"
+#include "vm/page.h"
 #include "vm/swap.h"
 
 static size_t frame_table_page_cnt;

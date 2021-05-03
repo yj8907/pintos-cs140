@@ -9,12 +9,10 @@
 #define VM_FRAME_H
 
 #include <list.h>
-#include "lib/kernel/hash.h"
 
 #include "threads/palloc.h"
 #include "threads/vaddr.h"
 #include "threads/thread.h"
-#include "vm/page.h"
 
 struct frame_table_entry {
     struct thread *holder;
