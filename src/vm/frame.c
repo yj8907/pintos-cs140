@@ -76,7 +76,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
     fte->numRef = 1;
     fte->virtual_page = vm_pg;
     
-    list_elem *e = list_end(&frame_in_use_queue);
+    struct list_elem *e = list_end(&frame_in_use_queue);
     if (!is_tail(e)) PANIC("list");
     
     list_push_back(&frame_in_use_queue, &fte->elem);
