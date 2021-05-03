@@ -9,6 +9,7 @@
 #include "lib/kernel/hash.h"
 
 #include "frame.h"
+#include "threads/pte.h"
 #include "vm/page.h"
 #include "vm/swap.h"
 
