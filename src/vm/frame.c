@@ -22,8 +22,7 @@ static size_t compute_frame_entry_no(struct frame_table_entry* ptr);
 static size_t
 compute_frame_entry_no(struct frame_table_entry* ptr)
 {
-    ASSERT ( (size_t)(ptr - frame_table) % sizeof(struct frame_table_entry) == 0);
-    return (size_t)(ptr - frame_table) / sizeof(struct frame_table_entry);
+    return (size_t)(ptr - frame_table);
 }
 
 static size_t compute_frame_number(void *frame)
@@ -58,19 +57,20 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
     ASSERT(pg_ofs(page) == 0);
     
     int frame_no = compute_frame_number(page);
+    struct frame_table_entry* fte = frame_table+frame_no;
     
-//    ASSERT((frame_table+frame_no)->holder == NULL);
-    if ((frame_table+frame_no)->holder != NULL) {
+//    ASSERT(fte->holder == NULL);
+    if (fte->holder != NULL) {
         printf("thread name: %s\n", (frame_table+frame_no)->holder->name);
         printf("page: 0x%08x\n", page);
         printf("frameno: %d\n", frame_no);
     }
 
-    (frame_table+frame_no)->holder = thread_current();
-    (frame_table+frame_no)->numRef = 1;
-    (frame_table+frame_no)->virtual_page = vm_pg;
+    fte->holder = thread_current();
+    fte->numRef = 1;
+    fte->virtual_page = vm_pg;
     
-    list_push_back(&frame_in_use_queue, &(frame_table+frame_no)->elem);
+    list_push_back(&frame_in_use_queue, &fte->elem);
     
     return page;
 }
@@ -90,7 +90,7 @@ void falloc_free_frame(void *frame)
     ASSERT(*pde & PTE_P);
     uint32_t *pte = pde_get_pt (*pde) + pt_no(fte->virtual_page);
     ASSERT(*pte & PTE_P);
-    *pte = 0x0;
+    *pte = *pte & !PTE_P;
     
     palloc_free_page(frame);
     
@@ -129,6 +129,5 @@ next_frame_to_evict(size_t page_cnt)
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     
     return ptov(compute_frame_entry_no(fte)*PGSIZE);
-    
 }
 
