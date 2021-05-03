@@ -69,11 +69,7 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
     {
         struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
-//        if (frame == 0xc0000000)
-//        PANIC("falloc_free_frame: 0x%08x, threadname: %s, vpage: 0x%08x, va: 0x%08x, vm_mm: 0x%08x \n",
-//              frame, thread_name(), va->vm_start, va, vm_mm);
-//        printf("falloc_free_frame: 0x%08x, threadname: %s, vpage: 0x%08x, va: 0x%08x, vm_mm: 0x%08x \n",
-//                      frame, thread_name(), va->vm_start, va, vm_mm);
+
         if (frame != NULL) falloc_free_frame(frame);
     }
     
@@ -139,21 +135,16 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
                
 
 void
-vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t swap_location)
+vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t swap_slot)
 {
     
     ASSERT(pg_ofs(pg) == 0);
     
-    struct vm_mm_struct *vm_mm = t->vm_mm;
-    struct vm_area *va = vm_area_lookup(vm_mm, pg);
-    
-    if (va == NULL) return;
+    struct vm_area *va = vm_area_lookup(t->vm_mm, pg);
+    ASSERT(va != NULL);
     
     va->state = next_state;
-    if (next_state == SWAPPED) {
-        ASSERT(swap_location != NULL);
-        va->swap_location = swap_location;
-    }
+    if (next_state == SWAPPED) va->swap_location = swap_slot;
     
 }
                

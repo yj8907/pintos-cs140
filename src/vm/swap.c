@@ -1,0 +1,95 @@
+//
+//  swap.c
+//  
+//
+//  Created by Yang Jiang on 5/1/21.
+//
+
+#include "swap.h"
+
+static struct block* swap_block;
+static block_sector_t block_size;
+static swap_slot_t swap_size;
+
+static uint8_t nblock_pg;
+static struct bitmap *used_map;
+struct lock lock;
+
+static block_sector_t slot_to_sector(swap_slot_t);
+
+static block_sector_t
+slot_to_sector(swap_slot_t slot)
+{
+    ASSERT( ((slot & SP_AREA) >> SP_SHIFT) == 0 );
+    uint32_t slot_index = slot >> (SP_SHIFT + SP_AREABITS);
+    block_sector_t sector_index = slot_index * nblock_pg;
+    
+    ASSERT (sector_index < block_size);
+    return sector_index;
+}
+
+void
+swap_init(void)
+{
+    swap_block = block_get_by_name("swap");
+    block_size = block_size(swap_block);
+    
+    nblock_pg = PGSIZE / BLOCK_SECTOR_SIZE;
+    swap_size = block_size/nblock_pg;
+    
+    size_t bm_pages = DIV_ROUND_UP (bitmap_buf_size (swap_size), PGSIZE);
+    void *used_map_base = palloc_get_multiple(PAL_ZERO, bm_pages);
+    used_map = bitmap_create_in_buf (swap_size, base, bm_pages * PGSIZE);
+    
+    lock_init (&lock);
+    
+}
+
+void
+swap_read(swap_slot_t slot, void *page)
+{
+    ASSERT(pg_ofs(page) == 0);
+    block_sector_t sector = slot_to_sector(slot);
+    for (size_t i = 0; i < nblock_pg; i++) {
+        block_read(swap_block, sector, page);
+        sector += 1;
+        page += BLOCK_SECTOR_SIZE;
+    }
+}
+
+void
+swap_write(swap_slot_t slot, void *page)
+{
+    ASSERT(pg_ofs(page) == 0);
+    block_sector_t sector = slot_to_sector(slot);
+    for (size_t i = 0; i < nblock_pg; i++) {
+        block_write(swap_block, sector, page);
+        sector += 1;
+        page += BLOCK_SECTOR_SIZE;
+    }
+}
+
+swap_slot_t
+swap_allocate(void)
+{
+    lock_acquire(&lock);
+    
+    size_t swap_index;
+    lock_acquire (&lock);
+    swap_slot_t slot_index = bitmap_scan_and_flip (used_map, 0, 1, false);
+    lock_release (&lock);
+    
+    if (slot_index != BITMAP_ERROR)
+        return slot_index;
+    else
+        PANIC("swap_allocate: out of slots");
+};
+
+void
+swap_free(swap_slot_t slot_index)
+{
+    ASSERT(slot_index < swap_size);
+    ASSERT (bitmap_all (used_map, slot_index, 1));
+    bitmap_set_multiple (used_map, slot_index, 1, false);
+}
+

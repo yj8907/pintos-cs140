@@ -60,7 +60,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
         printf("page: 0x%08x\n", page);
         printf("frameno: %d\n", frame_no);
     }
-//    printf("kpage: 0x%08x, threadname: %s, vmpage: 0x%08x \n", page, thread_name(), (frame_table+frame_no-1)->virtual_page);
+
     (frame_table+frame_no)->holder = thread_current();
     (frame_table+frame_no)->numRef = 1;
     (frame_table+frame_no)->virtual_page = vm_pg;
@@ -79,8 +79,7 @@ void falloc_free_frame(void *frame)
     
     struct frame_table_entry* fte = frame_table + compute_frame_number(frame);
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
-//    if (fte->holder == NULL || fte->virtual_page == NULL)
-//        PANIC("frame: 0x%08x, page: 0x%08x \n", frame, fte->virtual_page);
+    
     if (is_kernel_vaddr(fte->virtual_page)) palloc_free_page(frame);
     
     fte->holder = NULL;
@@ -100,12 +99,12 @@ evict_frame(void *frame, size_t page_cnt)
     ASSERT(pg_ofs(frame) == 0);
     
     size_t frame_no = compute_frame_number(frame);
+    struct frame_table_entry *fte = (frame_table+frame_no);
+    ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
     
-    ASSERT((frame_table+frame_no)->holder != NULL);
-    
-    uint32_t swap_location = NULL; /* need to implement swapping */
-    vm_update_page((frame_table+frame_no)->holder, (frame_table+frame_no)->virtual_page,
-                   SWAPPED, swap_location);
+    swap_slot_t swap_slot = swap_allocate();
+    swap_write(swap_slot, fte->virtual_page);
+    vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_location);
     
     falloc_free_frame(frame);
 }
@@ -117,7 +116,7 @@ next_frame_to_evict(size_t page_cnt)
     ASSERT(page_cnt == 1);
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     
-//    return ptov(compute_frame_entry_no(fte)*PGSIZE);
-    return NULL;
+    return ptov(compute_frame_entry_no(fte)*PGSIZE);
+    
 }
 

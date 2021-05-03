@@ -15,6 +15,7 @@
 #include "threads/vaddr.h"
 #include "threads/thread.h"
 #include "vm/page.h"
+#include "vm/swap.h"
 
 struct frame_table_entry {
     struct thread *holder;
