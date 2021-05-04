@@ -60,6 +60,8 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
         void *new_frame = next_frame_to_evict(1);
         PANIC("new frame: 0x%08x\n", new_frame);
         evict_frame(new_frame, 1);
+        
+        palloc_free_page(new_frame);
         void *page = palloc_get_page(flags);
     }
     
