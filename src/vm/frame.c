@@ -57,14 +57,13 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
     if (page == NULL) {
         falloc_counter += 1;
 //        PANIC("null page: 0x%08x, mmap size: %d \n", vm_pg, hash_size(thread_current()->vm_mm->mmap));
-        void *new_frame = next_frame_to_evict(1);        
+        void *new_frame = next_frame_to_evict(1);
         evict_frame(new_frame, 1);
         
-        palloc_free_page(new_frame);
         void *page = palloc_get_page(flags);
     }
     
-    if (page == NULL) PANIC("no new frame available: %d\n", falloc_counter);
+    if (page == NULL) PANIC("no new frame available: %d\n", flags == PAL_USER);
     ASSERT(pg_ofs(page) == 0);
     
     int frame_no = compute_frame_number(page);
