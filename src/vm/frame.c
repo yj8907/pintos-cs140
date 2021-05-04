@@ -51,6 +51,9 @@ is_tail (struct list_elem *elem)
 void*
 falloc_get_frame(void* vm_pg, enum palloc_flags flags)
 {
+    static falloc_counter = 0;
+    falloc_counter += 1;
+    
     void *page = palloc_get_page(flags);
     if (page == NULL) {
 //        PANIC("null page: 0x%08x, mmap size: %d \n", vm_pg, hash_size(thread_current()->vm_mm->mmap));
@@ -59,7 +62,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
         void *page = palloc_get_page(flags);
     }
     
-    if (page == NULL) PANIC("no new frame available");
+    if (page == NULL) PANIC("no new frame available: %d\n", falloc_counter);
     ASSERT(pg_ofs(page) == 0);
     
     int frame_no = compute_frame_number(page);
@@ -124,7 +127,7 @@ evict_frame(void *frame, size_t page_cnt)
     swap_write(swap_slot, fte->virtual_page);
     
     vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
-    PANIC("frame: 0x%08x\n", frame);
+    
     falloc_free_frame(frame);
 }
 
