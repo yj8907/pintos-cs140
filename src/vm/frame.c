@@ -57,8 +57,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
     if (page == NULL) {
         falloc_counter += 1;
 //        PANIC("null page: 0x%08x, mmap size: %d \n", vm_pg, hash_size(thread_current()->vm_mm->mmap));
-        void *new_frame = next_frame_to_evict(1);
-        PANIC("new frame: 0x%08x\n", new_frame);
+        void *new_frame = next_frame_to_evict(1);        
         evict_frame(new_frame, 1);
         
         palloc_free_page(new_frame);
