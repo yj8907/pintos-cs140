@@ -33,7 +33,7 @@ compute_frame_number(void *frame)
     return (size_t)vtop(frame)/PGSIZE;
 }
 
-static vm_area*
+static struct vm_area*
 fetch_vm_area_for_frame(struct frame_table_entry* fte)
 {
     return vm_area_lookup(thread_current()->vm_mm, fte->virtual_page);
