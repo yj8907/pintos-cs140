@@ -209,7 +209,7 @@ page_not_present_handler(void *addr)
         if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
     }
     else if (va->state == SWAPPED) {
-        
+        PANIC("swap");
     }
         
 }
