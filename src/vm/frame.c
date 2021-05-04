@@ -52,10 +52,10 @@ void*
 falloc_get_frame(void* vm_pg, enum palloc_flags flags)
 {
     static falloc_counter = 0;
-    falloc_counter += 1;
     
     void *page = palloc_get_page(flags);
     if (page == NULL) {
+        falloc_counter += 1;
 //        PANIC("null page: 0x%08x, mmap size: %d \n", vm_pg, hash_size(thread_current()->vm_mm->mmap));
         void *new_frame = next_frame_to_evict(1);
         evict_frame(new_frame, 1);
