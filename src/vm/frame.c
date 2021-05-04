@@ -124,7 +124,7 @@ evict_frame(void *frame, size_t page_cnt)
     swap_write(swap_slot, fte->virtual_page);
     
     vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
-    
+    PANIC("frame: 0x%08x\n", frame);
     falloc_free_frame(frame);
 }
 
