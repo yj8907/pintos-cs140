@@ -20,7 +20,7 @@ enum page_state
 {
     VALID,
     ALLOCATED,
-    SWAPPED
+    ONDISK
 };
 
 enum page_data_type

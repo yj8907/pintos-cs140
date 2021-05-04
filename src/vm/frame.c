@@ -25,11 +25,18 @@ compute_frame_entry_no(struct frame_table_entry* ptr)
     return (size_t)(ptr - frame_table);
 }
 
-static size_t compute_frame_number(void *frame)
+static size_t
+compute_frame_number(void *frame)
 {
     ASSERT (pg_ofs(frame) == 0);
     ASSERT ((size_t)vtop(frame)/PGSIZE < init_ram_pages);
     return (size_t)vtop(frame)/PGSIZE;
+}
+
+static vm_area*
+fetch_vm_area_for_frame(struct frame_table_entry* fte)
+{
+    return vm_area_lookup(thread_current()->vm_mm, fte->virtual_page);
 }
 
 void
@@ -127,12 +134,34 @@ evict_frame(void *frame, size_t page_cnt)
     struct frame_table_entry *fte = (frame_table+frame_no);
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
     
-    swap_slot_t swap_slot = swap_allocate();
-    swap_write(swap_slot, fte->virtual_page);
-    
-    vm_update_page(fte->holder, fte->virtual_page, SWAPPED, swap_slot);
+    if (fetch_vm_area_for_frame(fte)->data_type == ANONYMOUS) {
+        swap_slot_t swap_slot = swap_allocate();
+        swap_write(swap_slot, fte->virtual_page);
+        
+        vm_update_page(fte->holder, fte->virtual_page, ONDISK, swap_slot);
+    } else {
+        PANIC("not implemented");
+    }
     
     falloc_free_frame(frame);
+}
+
+void
+load_frame(void *frame, size_t page_cnt)
+{
+    ASSERT(page_cnt == 1);
+    
+    ASSERT(frame != NULL);
+    ASSERT(pg_ofs(frame) == 0);
+    
+    size_t frame_no = compute_frame_number(frame);
+    struct frame_table_entry *fte = (frame_table+frame_no);
+    struct vm_area *va = fetch_vm_area_for_frame(fte);
+    ASSERT(va->state == ONDISK);
+    
+    if (va->data_type == ANONYMOUS) {
+        swap_read(va->swap_location, va->start);
+    }
 }
 
 /* implment page replacement policy */

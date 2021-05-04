@@ -28,6 +28,8 @@ void *falloc_get_frame(void *, enum palloc_flags);
 void falloc_free_frame (void *);
 
 void evict_frame(void*, size_t page_cnt);
+void load_frame(void*, size_t page_cnt);
+
 void* next_frame_to_evict(size_t page_cnt);
 
 #endif /* frame_h */

@@ -144,7 +144,9 @@ vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t 
     ASSERT(va != NULL);
     
     va->state = next_state;
-    if (next_state == SWAPPED) va->swap_location = swap_slot;
+    if (next_state == ONDISK && va->data_type == ANONYMOUS) {
+        va->swap_location = swap_slot;
+    }
     
 }
                
@@ -196,9 +198,9 @@ page_not_present_handler(void *addr)
     if (va == NULL) force_exit();
     if (va->state == ALLOCATED) force_exit();
     
+    void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
+    
     if (va->state == VALID) {
-        
-        void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
 //        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
@@ -206,11 +208,12 @@ page_not_present_handler(void *addr)
             }
         }
         va->state = ALLOCATED;
-        if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
     }
-    else if (va->state == SWAPPED) {
-        PANIC("swap");
+    else if (va->state == ONDISK) {
+        load_frame(kpage, addr);
     }
+    
+    if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
         
 }
 
