@@ -60,11 +60,12 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
         void *new_frame = next_frame_to_evict(1);
         evict_frame(new_frame, 1);
         
-        void *page = palloc_get_page(flags);
+        page = palloc_get_page(flags);
         
-        if (page == NULL) PANIC("no new frame available: %d, vm_pg: 0x%08x, frame: 0x%08x \n",
-                                flags & PAL_USER, vm_pg, new_frame);
     }
+    
+    if (page == NULL) PANIC("no new frame available: %d, vm_pg: 0x%08x \n",
+                                    flags & PAL_USER, vm_pg);
     
     ASSERT(pg_ofs(page) == 0);
     
