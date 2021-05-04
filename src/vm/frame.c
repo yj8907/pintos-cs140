@@ -59,7 +59,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
         void *page = palloc_get_page(flags);
     }
     
-    if (page == NULL) thread_exit();
+    if (page == NULL) PANIC("no new frame available");
     ASSERT(pg_ofs(page) == 0);
     
     int frame_no = compute_frame_number(page);
