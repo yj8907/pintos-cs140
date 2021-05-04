@@ -88,8 +88,6 @@ swap_write(swap_slot_t slot, void *page)
 swap_slot_t
 swap_allocate(void)
 {
-    lock_acquire(&lock);
-    
     size_t swap_index;
     lock_acquire (&lock);
     swap_slot_t slot_index = bitmap_scan_and_flip (used_map, 0, 1, false);
