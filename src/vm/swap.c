@@ -93,8 +93,10 @@ swap_allocate(void)
     swap_slot_t slot_index = bitmap_scan_and_flip (used_map, 0, 1, false);
     lock_release (&lock);
     
+    uint32_t swap_area = 0;
+    
     if (slot_index != BITMAP_ERROR)
-        return slot_index;
+        return slot_index << (SP_SHIFT + SP_AREABITS) + swap_area << SP_SHIFT;
     else
         PANIC("swap_allocate: out of slots");
 };
