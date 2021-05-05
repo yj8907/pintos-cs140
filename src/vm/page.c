@@ -41,11 +41,11 @@ vm_mm_init(void)
     uint32_t *kernel_free_ptr = 0;
     uint32_t *user_free_ptr = 0;
     
-    struct vm_mm_struct* vm_mm = malloc(sizeof struct vm);
+    struct vm_mm_struct* vm_mm = malloc(sizeof(struct vm));
     
     if (vm_mm == NULL) {
         evict_frame(next_frame_to_evict(1), 1);
-        vm_mm = malloc(sizeof struct vm);
+        vm_mm = malloc(sizeof(struct vm));
         ASSERT (vm_mm != NULL);
     }
     
@@ -112,7 +112,7 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     
     for (int i = 0; i<page_cnt; i++){
                 
-        struct vm_area* vm_area_entry = malloc(sizeof struct vm_area);
+        struct vm_area* vm_area_entry = malloc(sizeof(struct vm_area));
         
         vm_area_entry->vm_start = page;
         vm_area_entry->vm_end = page + PGSIZE;
