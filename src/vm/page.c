@@ -41,11 +41,11 @@ vm_mm_init(void)
     uint32_t *kernel_free_ptr = 0;
     uint32_t *user_free_ptr = 0;
     
-    struct vm_mm_struct* vm_mm = malloc(sizeof(struct vm));
+    struct vm_mm_struct* vm_mm = malloc(sizeof(struct vm_mm_struct));
     
     if (vm_mm == NULL) {
         evict_frame(next_frame_to_evict(1), 1);
-        vm_mm = malloc(sizeof(struct vm));
+        vm_mm = malloc(sizeof(struct vm_mm_struct));
         ASSERT (vm_mm != NULL);
     }
     
@@ -53,7 +53,7 @@ vm_mm_init(void)
     vm_mm->kernel_ptr = kernel_free_ptr;
 
     /* initialiez mmap has table */
-    vm_mm->mmap = vm_mm + sizeof(struct vm_mm_struct);
+    vm_mm->mmap = malloc(sizeof(struct hash));
     hash_init(vm_mm->mmap, &vm_hash_hash_func, &vm_hash_less_func, NULL);
     
     return vm_mm;
