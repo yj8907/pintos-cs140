@@ -1,4 +1,5 @@
 
+#include "lib/user/syscall.h"
 #include "userprog/syscall.h"
 #include <stdio.h>
 #include <debug.h>
