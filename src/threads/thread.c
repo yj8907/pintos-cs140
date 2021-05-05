@@ -1045,7 +1045,7 @@ allocate_mmapid (void *start_pg, void *end_pg)
 }
 
 struct mmap_descriptor*
-fetch_mmap(mapid_t mmap_no)
+fetch_mmap(int mmap_no)
 {
     struct thread *cur = thread_current();
     struct mmap_descriptor *mmap_d;

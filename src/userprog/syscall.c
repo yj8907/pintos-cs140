@@ -1,5 +1,4 @@
 
-#include "lib/user/syscall.h"
 #include "userprog/syscall.h"
 #include <stdio.h>
 #include <debug.h>
@@ -448,7 +447,7 @@ sys_close(uint32_t *eax, char** argv)
 static void
 sys_mmap(uint32_t *eax, char** argv)
 {
-    mapid_t ret = MAP_FAILED;
+    int ret = MAP_FAILED;
     memcpy(eax, &ret, sizeof(ret));
     
     int fd_no = *(int*)argv[0];
@@ -471,7 +470,7 @@ sys_mmap(uint32_t *eax, char** argv)
 static void
 sys_munmap(uint32_t *eax, char** argv)
 {
-    mapid_t mmap_no = *(int*)argv[0];
+    int mmap_no = *(int*)argv[0];
     
     struct mmap_descriptor* mmap_d = fetch_mmap(mmap_no);
     if (fp == NULL) return;

@@ -26,7 +26,7 @@ struct mmap_descriptor
 {
     void *start_pg;
     void *end_pg;
-    mapid_t mmap_no;
+    int mmap_no;
     
     struct list_elem elem;
 };

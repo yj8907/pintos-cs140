@@ -198,7 +198,7 @@ struct file* fetch_file(int);
 
 #ifdef VM
 int allocate_mmapid(void*, void*);
-struct mmap_descriptor* fetch_mmap(mapid_t);
+struct mmap_descriptor* fetch_mmap(int);
 #endif
 
 /* Performs some operation on thread t, given auxiliary data AUX. */
