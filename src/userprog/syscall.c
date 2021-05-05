@@ -2,13 +2,18 @@
 #include <stdio.h>
 #include <debug.h>
 #include <syscall-nr.h>
+#include <string.h>
+
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "threads/vaddr.h"
 #include "filesys/file.h"
-
-#include <string.h>
 #include "threads/palloc.h"
 #include "threads/malloc.h"
+
+#ifdef VM
+#include "vm/page.h"
+#endif
 
 static int argc_max = 3;
 
@@ -63,6 +68,9 @@ static void sys_write(uint32_t *eax, char** argv);
 static void sys_seek(uint32_t *eax, char** argv);
 static void sys_tell(uint32_t *eax, char** argv);
 static void sys_close(uint32_t *eax, char** argv);
+
+static void sys_mmap(uint32_t *eax, char** argv);
+static void sys_munmap(uint32_t *eax, char** argv);
 
 void
 force_exit(void)
@@ -212,7 +220,13 @@ syscall_handler (struct intr_frame *f)
       case SYS_CLOSE:
           sys_close(eax, argv);
           break;
-                
+      case SYS_MMAP:
+          argc = 2;
+          load_arguments(argc, args, argv);
+          sys_mmap(eax, argv);
+      case SYS_MUNMAP:
+          sys_munmap(eax, argv);
+          
       default:
         break;
     }
@@ -427,5 +441,44 @@ sys_close(uint32_t *eax, char** argv)
     
     list_remove(&fd->elem);
     free(fd);
+};
+
+static void
+sys_mmap(uint32_t *eax, char** argv)
+{
+    mapid_t ret = MAP_FAILED;
+    memcpy(eax, &ret, sizeof(ret));
+    
+    int fd_no = *(int*)argv[0];
+    void* buffer = *(char**)argv[1];
+    
+    ASSERT(pg_ofs(buffer) == 0);
+    
+    struct file* fp = fetch_file(fd_no);
+    if (fp == NULL) return;
+    
+    size_t mmap_pages = DIV_ROUND_UP (file_length(fp), PGSIZE);
+    vm_alloc_page(buffer, thread_current()->vm_mm, mmap_pages, PAL_USER | PAL_ZERO, DISK_RW, fp, file_size, true);
+    
+    if ( (ret = allocate_mmapid(buffer, buffer + mmap_pages*PGSIZE)) == -1)
+        ret = MAP_FAILED;
+    memcpy(eax, &ret, sizeof(ret));
+};
+
+
+static void
+sys_munmap(uint32_t *eax, char** argv)
+{
+    mapid_t mmap_no = *(int*)argv[0];
+    
+    struct mmap_descriptor* mmap_d = fetch_mmap(mmap_no);
+    if (fp == NULL) return;
+    
+    size_t mmap_pages = DIV_ROUND_UP (file_length(fp), PGSIZE);
+    vm_alloc_page(buffer, thread_current()->vm_mm, mmap_pages, PAL_USER | PAL_ZERO, DISK_RW, fp, file_size, true);
+    
+    if ( (ret = allocate_mmapid(buffer, buffer + mmap_pages*PGSIZE)) == -1)
+        ret = MAP_FAILED;
+    memcpy(eax, &ret, sizeof(ret));
 };
 

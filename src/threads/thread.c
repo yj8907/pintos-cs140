@@ -797,6 +797,10 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     
     /* initialize file descriptor number to 2 */
     t->fd_no = 2;
+#ifdef VM
+    t->mmap_no = 0;
+    list_init(&t->mmap_list);
+#endif
     
     t->tcb = malloc (128);
     
@@ -1017,6 +1021,47 @@ allocate_fd (struct file* fp)
     
   return fd->fd_no;
         
+}
+
+/* Allocate id for a new mmap file. */
+int
+allocate_mmapid (void *start_pg, void *end_pg)
+{
+  struct mmap_descriptor *mmap_d = malloc(24);
+  
+  if (mmap_d == NULL) return -1;
+  
+  struct thread *cur = thread_current();
+    
+  mmap_d->start_pg = start_pg;
+  mmap_d->end_pg = end_pg;
+  lock_acquire (&tid_lock);
+  mmap_d->mmap_no = cur->mmap_no++;
+  list_push_back(&cur->mmap_list, &mmap_d->elem);
+  lock_release (&tid_lock);
+    
+  return mmap_d->mmap_no;
+        
+}
+
+struct mmap_descriptor*
+fetch_mmap(mapid_t mmap_no)
+{
+    struct thread *cur = thread_current();
+    struct mmap_descriptor *mmap_d;
+    
+    if (!list_empty(&cur->mmap_list)) {
+        struct list_elem *e = list_front(&cur->mmap_list);
+        while (e != list_tail(&cur->mmap_list)) {
+            mmap_d = list_entry(e, struct mmap_descriptor, elem);
+            if (mmap_d->mmap_no == mmap_no) break;
+            e = list_next(e);
+        }
+        return e != list_tail(&cur->mmap_list) ? mmap_d : NULL;
+    } else {
+        return NULL;
+    }
+    
 }
 
 /* Fetch file descriptor pointer for a fd no. */

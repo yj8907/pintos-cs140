@@ -57,7 +57,6 @@ struct vm_mm_struct
     struct hash *mmap;
     void *user_ptr;
     void *kernel_ptr;
-    void *end_ptr;
     void *esp;
 };
 
@@ -72,7 +71,7 @@ void *vm_page_to_frame(uint32_t*, void*);
 
 void *vm_alloc_page(void*, struct vm_mm_struct* vm_mm, size_t page_cnt, enum palloc_flags, enum page_data_type,
                     struct file* file, uint32_t nbytes, bool);
-
+void vm_free_page(void *, struct vm_mm_struct *);
 void vm_update_page(struct thread* t, void* pg, enum page_state, uint32_t);
 
 struct vm_area *vm_area_lookup(struct vm_mm_struct*, void* pg);

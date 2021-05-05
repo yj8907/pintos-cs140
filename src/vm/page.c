@@ -8,6 +8,7 @@
 #include "page.h"
 #include <string.h>
 #include "threads/pte.h"
+#include "threads/malloc.h"
 
 static bool install_page (void *upage, void *kpage, bool writable);
 
@@ -40,11 +41,12 @@ vm_mm_init(void)
     uint32_t *kernel_free_ptr = 0;
     uint32_t *user_free_ptr = 0;
     
-    struct vm_mm_struct* vm_mm = palloc_get_page (0);
+    struct vm_mm_struct* vm_mm = malloc(sizeof struct vm);
     
     if (vm_mm == NULL) {
         evict_frame(next_frame_to_evict(1), 1);
-        vm_mm = palloc_get_page (0);
+        vm_mm = malloc(sizeof struct vm);
+        ASSERT (vm_mm != NULL);
     }
     
     vm_mm->user_ptr = user_free_ptr;
@@ -53,8 +55,6 @@ vm_mm_init(void)
     /* initialiez mmap has table */
     vm_mm->mmap = vm_mm + sizeof(struct vm_mm_struct);
     hash_init(vm_mm->mmap, &vm_hash_hash_func, &vm_hash_less_func, NULL);
-
-    vm_mm->end_ptr = vm_mm + sizeof(struct vm_mm_struct) + sizeof(struct hash);
     
     return vm_mm;
 }
@@ -73,7 +73,7 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
         if (frame != NULL) falloc_free_frame(frame);
     }
     
-    palloc_free_page(vm_mm);
+    free(vm_mm);
     
 };
 
@@ -106,33 +106,45 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     vm_alloc_counter += 1;
     
     ASSERT(vm_mm != NULL);
+    void *start_page = page;
     
-    if (pg_ofs(vm_mm->end_ptr) + sizeof(struct vm_area) >= PGSIZE)
-        vm_mm->end_ptr = palloc_get_page(0);
-            
-    struct vm_area* vm_area_entry = vm_mm->end_ptr;
+    off_t file_pos = file != NULL ? file_tell(file) : 0;
+    
+    for (int i = 0; i<page_cnt; i++){
+                
+        struct vm_area* vm_area_entry = malloc(sizeof struct vm_area);
         
-    vm_mm->end_ptr += sizeof(struct vm_area);
-    
-    vm_area_entry->vm_start = page;
-    vm_area_entry->vm_end = page + PGSIZE;
-    vm_area_entry->data_type = pg_type;
-    vm_area_entry->state = VALID;
-    vm_area_entry->protection = writable ? WRITE : RDONLY;
+        vm_area_entry->vm_start = page;
+        vm_area_entry->vm_end = page + PGSIZE;
+        vm_area_entry->data_type = pg_type;
+        vm_area_entry->state = VALID;
+        vm_area_entry->protection = writable ? WRITE : RDONLY;
         
-    vm_area_entry->file = file;
-    if (file != NULL) vm_area_entry->file_pos = file_tell(file);
-    vm_area_entry->content_bytes = nbytes;
+        vm_area_entry->file = file;
+        if (file != NULL) {
+            vm_area_entry->file_pos = file_pos;
+            file_pos += PGSIZE;
+        }
+        
+        ASSERT(nbytes >= 0);
+        vm_area_entry->content_bytes = nbytes > PGSIZE ? PGSIZE : nbytes;
+                
+        ASSERT(hash_insert(vm_mm->mmap, &vm_area_entry->h_elem) == NULL);
+        page += PGSIZE;
+        nbytes -= PGSIZE;
+    }
     
-//    if (strcmp(thread_name(), "exec-multiple")==0)
-//    printf("allocate page: 0x%08x\n", page);
-    
-    ASSERT(hash_insert(vm_mm->mmap, &vm_area_entry->h_elem) == NULL);
-    
-    return page;
+    return start_page;
 }
 
                
+void
+vm_free_page(void *page, struct vm_mm_struct *vm_mm)
+{
+    struct vm_area *va = vm_area_lookup(vm_mm, page);
+    if (va == NULL) return;
+    
+}
 
 void
 vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t swap_slot)

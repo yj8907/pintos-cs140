@@ -154,6 +154,9 @@ struct thread
 
 #ifdef VM
     struct vm_mm_struct *vm_mm;
+    int mmap_no;
+      
+    struct list mmap_list;
 #endif
       
     /* Owned by thread.c. */
@@ -192,6 +195,11 @@ void thread_yield (void);
 int allocate_fd (struct file*);
 struct file_descriptor* fetch_file_descriptor(int);
 struct file* fetch_file(int);
+
+#ifdef VM
+int allocate_mmapid(void*, size_t);
+struct mmap_descriptor* fetch_mmap(mapid_t);
+#endif
 
 /* Performs some operation on thread t, given auxiliary data AUX. */
 typedef void thread_action_func (struct thread *t, void *aux);
