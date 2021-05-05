@@ -1,6 +1,7 @@
 #ifndef USERPROG_SYSCALL_H
 #define USERPROG_SYSCALL_H
 
+#include "lib/user/syscall.h"
 #include "threads/thread.h"
 #include "threads/synch.h"
 
