@@ -459,7 +459,8 @@ sys_mmap(uint32_t *eax, char** argv)
     struct file* fp = fetch_file(fd_no);
     if (fp == NULL) return;
     
-    size_t mmap_pages = DIV_ROUND_UP (file_length(fp), PGSIZE);
+    size_t file_size = file_length(fp);
+    size_t mmap_pages = DIV_ROUND_UP (file_size, PGSIZE);
     vm_alloc_page(buffer, thread_current()->vm_mm, mmap_pages, PAL_USER | PAL_ZERO, DISK_RW, fp, file_size, true);
     
     if ( (ret = allocate_mmapid(buffer, buffer + mmap_pages*PGSIZE)) == -1)
@@ -474,13 +475,10 @@ sys_munmap(uint32_t *eax, char** argv)
     int mmap_no = *(int*)argv[0];
     
     struct mmap_descriptor* mmap_d = fetch_mmap(mmap_no);
-    if (fp == NULL) return;
+    if (mmap_d == NULL) return;
+   
+    for (void *pg = mmap_d->start_pg; pg < mmap_d->end_pg; pg += PGSIZE)
+        vm_free_page(pg, thread_current()->vm_mm);
     
-    size_t mmap_pages = DIV_ROUND_UP (file_length(fp), PGSIZE);
-    vm_alloc_page(buffer, thread_current()->vm_mm, mmap_pages, PAL_USER | PAL_ZERO, DISK_RW, fp, file_size, true);
-    
-    if ( (ret = allocate_mmapid(buffer, buffer + mmap_pages*PGSIZE)) == -1)
-        ret = MAP_FAILED;
-    memcpy(eax, &ret, sizeof(ret));
 };
 
