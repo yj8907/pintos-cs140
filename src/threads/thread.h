@@ -197,7 +197,7 @@ struct file_descriptor* fetch_file_descriptor(int);
 struct file* fetch_file(int);
 
 #ifdef VM
-int allocate_mmapid(void*, size_t);
+int allocate_mmapid(void*, void*);
 struct mmap_descriptor* fetch_mmap(mapid_t);
 #endif
 
