@@ -16,6 +16,7 @@ static void vm_area_clear(struct hash_elem *e, void *aux);
 static void
 vm_area_clear(struct hash_elem *e, void *aux)
 {
+    if (va->file != NULL) file_close(va->file);
     free(hash_entry(e, struct vm_area, h_elem));
 }
 
@@ -78,7 +79,6 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
         struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
         
-        if (va->file != NULL) file_close(va->file);
         if (frame != NULL) falloc_free_frame(frame);
     }
     
