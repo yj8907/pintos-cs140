@@ -86,7 +86,6 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
             } else if (va->data_type == DISK_RW) {
                 evict_frame(frame, 1);
             }
-//            falloc_free_frame(frame);
         }
     }
     
@@ -142,7 +141,7 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
                 
         if (file != NULL) {
             vm_area_entry->file = file_reopen(file); /* reopen file in case it is closed */
-            vm_area_entry->file = file;
+//            vm_area_entry->file = file;
             vm_area_entry->file_pos = file_pos;
             file_pos += PGSIZE;
         }
