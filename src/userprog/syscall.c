@@ -476,7 +476,10 @@ sys_munmap(uint32_t *eax, char** argv)
     int mmap_no = *(int*)argv[0];
     
     struct mmap_descriptor* mmap_d = fetch_mmap(mmap_no);
-    if (mmap_d == NULL) return;
+    if (mmap_d == NULL) {
+        PANIC("test");
+        return;
+    }
    
     for (void *pg = mmap_d->start_pg; pg < mmap_d->end_pg; pg += PGSIZE)
         vm_free_page(pg, thread_current()->vm_mm);
