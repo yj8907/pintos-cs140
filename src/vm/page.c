@@ -165,7 +165,13 @@ vm_free_page(void *page, struct vm_mm_struct *vm_mm)
     if (va == NULL) return;
     
     void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
-    if (frame != NULL) evict_frame(frame, 1);
+    if (frame != NULL) {
+      if (va->data_type != DISK_RW) {
+          falloc_free_frame(frame);
+      } else if (va->data_type == DISK_RW) {
+          evict_frame(frame, 1);
+      }
+    }
     /* delete from hash, then free va memory */
     hash_delete(vm_mm->mmap, &va->h_elem);
     free(va);
