@@ -568,7 +568,6 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
         vm_alloc_page(upage, thread_current()->vm_mm, 1, PAL_USER, DISK_RDONLY, file, page_read_bytes, writable);
         ofs += page_read_bytes;
         file_seek (file, ofs);
-//        uint8_t *kpage = falloc_get_frame(upage, PAL_USER);
 #else
         uint8_t *kpage = palloc_get_page (PAL_USER);
 #endif
