@@ -11,6 +11,14 @@
 #include "threads/malloc.h"
 
 static bool install_page (void *upage, void *kpage, bool writable);
+static void vm_area_clear(struct hash_elem *e, void *aux);
+
+static void
+vm_area_clear(struct hash_elem *e, void *aux)
+{
+    free(hash_entry(e, struct vm_area, h_elem));
+}
+
 
 unsigned
 vm_hash_hash_func(const struct hash_elem *e, void *aux)
@@ -69,11 +77,12 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
     {
         struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
-        if (va->file != NULL) file_close(va->file);
         
+        if (va->file != NULL) file_close(va->file);
         if (frame != NULL) falloc_free_frame(frame);
     }
     
+    hash_destroy(vm_mm->mmap, vm_area_clear);
     free(vm_mm);
     
 };
@@ -145,6 +154,9 @@ vm_free_page(void *page, struct vm_mm_struct *vm_mm)
     struct vm_area *va = vm_area_lookup(vm_mm, page);
     if (va == NULL) return;
     
+    /* delete from hash, then free va memory */
+    hash_delete(vm_mm->mmap, &va->h_elem);
+    free(va);
 }
 
 void
