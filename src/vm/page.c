@@ -16,8 +16,9 @@ static void vm_area_clear(struct hash_elem *e, void *aux);
 static void
 vm_area_clear(struct hash_elem *e, void *aux)
 {
+    struct vm_area *va = hash_entry(e, struct vm_area, h_elem);
     if (va->file != NULL) file_close(va->file);
-    free(hash_entry(e, struct vm_area, h_elem));
+    free(va);
 }
 
 
