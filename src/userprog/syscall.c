@@ -454,10 +454,8 @@ sys_mmap(uint32_t *eax, char** argv)
     
     int fd_no = *(int*)argv[0];
     void* buffer = *(char**)argv[1];
-    if (buffer == 0x0) return;
-    
-    ASSERT(pg_ofs(buffer) == 0);
-    
+    if (buffer == 0x0 || pg_ofs(buffer) != 0) return;
+            
     struct file* fp = fetch_file(fd_no);
     if (fp == NULL) return;
     
