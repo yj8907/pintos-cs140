@@ -454,7 +454,7 @@ sys_mmap(uint32_t *eax, char** argv)
     
     int fd_no = *(int*)argv[0];
     void* buffer = *(char**)argv[1];
-    if (buffer == 0x0 || pg_ofs(buffer) != 0) return;
+    if (buffer == 0x0 || pg_ofs(buffer) != 0 || buffer == NULL) return;
             
     struct file* fp = fetch_file(fd_no);
     if (fp == NULL) return;
