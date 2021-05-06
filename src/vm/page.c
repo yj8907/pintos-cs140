@@ -81,12 +81,12 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
         
         if (frame != NULL) {
-//            if (va->data_type == ANONYMOUS) {
-//                falloc_free_frame(frame);
-//            } else if (va->data_type == DISK_RW) {
-//                evict_frame(frame, 1);
-//            }
-            falloc_free_frame(frame);
+            if (va->data_type == ANONYMOUS) {
+                falloc_free_frame(frame);
+            } else if (va->data_type == DISK_RW) {
+                evict_frame(frame, 1);
+            }
+//            falloc_free_frame(frame);
         }
     }
     
