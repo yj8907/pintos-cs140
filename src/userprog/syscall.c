@@ -477,7 +477,7 @@ sys_munmap(uint32_t *eax, char** argv)
     
     struct mmap_descriptor* mmap_d = fetch_mmap(mmap_no);
     if (mmap_d == NULL) {
-        PANIC("test %d", mmap_no);
+        PANIC("test %d", MAP_FAILED);
         return;
     }
    
