@@ -69,7 +69,8 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
     {
         struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
-
+        if (va->file != NULL) file_close(va->file);
+        
         if (frame != NULL) falloc_free_frame(frame);
     }
     
@@ -119,9 +120,9 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
         vm_area_entry->data_type = pg_type;
         vm_area_entry->state = VALID;
         vm_area_entry->protection = writable ? WRITE : RDONLY;
-        
-        vm_area_entry->file = file;
+                
         if (file != NULL) {
+            vm_area_entry->file = file_reopen(file); /* reopen file in case it is closed */
             vm_area_entry->file_pos = file_pos;
             file_pos += PGSIZE;
         }
