@@ -141,7 +141,7 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
         vm_area_entry->protection = writable ? WRITE : RDONLY;
                 
         if (file != NULL) {
-//            vm_area_entry->file = file_reopen(file); /* reopen file in case it is closed */
+            vm_area_entry->file = file_reopen(file); /* reopen file in case it is closed */
             vm_area_entry->file = file;
             vm_area_entry->file_pos = file_pos;
             file_pos += PGSIZE;
