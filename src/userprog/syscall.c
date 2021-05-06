@@ -466,7 +466,7 @@ sys_mmap(uint32_t *eax, char** argv)
     
     if ( (ret = allocate_mmapid(buffer, buffer + mmap_pages*PGSIZE)) == -1)
         ret = MAP_FAILED;
-    PANIC("mmapid %d\n", ret);
+    printf("mmapid %d\n", ret);
     memcpy(eax, &ret, sizeof(ret));
 };
 
@@ -478,7 +478,7 @@ sys_munmap(uint32_t *eax, char** argv)
     
     struct mmap_descriptor* mmap_d = fetch_mmap(mmap_no);
     if (mmap_d == NULL) {
-        PANIC("test %d", mmap_no);
+        printf("test %d", mmap_no);
         return;
     }
    
