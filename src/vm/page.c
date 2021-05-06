@@ -80,7 +80,13 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
         struct vm_area *va = hash_entry (hash_cur (&i), struct vm_area, h_elem);
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
         
-        if (frame != NULL) falloc_free_frame(frame);
+        if (frame != NULL) {
+            if (va->data_type == ANONYMOUS) {
+                falloc_free_frame(frame);
+            } else if (va->data_type == DISK_RW) {
+                evict_frame(frame, 1);
+            }
+        }
     }
     
     hash_destroy(vm_mm->mmap, vm_area_clear);
