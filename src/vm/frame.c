@@ -97,7 +97,6 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
 
 void falloc_free_frame(void *frame)
 {
-
     if (frame == NULL) return;
     
     ASSERT(pg_ofs(frame) == 0);
@@ -134,13 +133,16 @@ evict_frame(void *frame, size_t page_cnt)
     struct frame_table_entry *fte = (frame_table+frame_no);
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
     
-    if (fetch_vm_area_for_frame(fte)->data_type == ANONYMOUS) {
+    struct vm_area *va = fetch_vm_area_for_frame(fte);
+    if (va->data_type == ANONYMOUS) {
         swap_slot_t swap_slot = swap_allocate();
         swap_write(swap_slot, fte->virtual_page);
         
         vm_update_page(fte->holder, fte->virtual_page, ONDISK, swap_slot);
-    } else {
-        PANIC("not implemented");
+    } else if (va->data_type == DISK_RW) {
+        ASSERT(va->file != NULL);
+        if (pagedir_is_dirty(thread_current()->pagedir, va->vm_start))
+            file_write_at(file, va->vm_start, va->content_bytes, va->file_pos);
     }
     
     falloc_free_frame(frame);

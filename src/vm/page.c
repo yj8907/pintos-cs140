@@ -122,7 +122,9 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     off_t file_pos = file != NULL ? file_tell(file) : 0;
     
     for (int i = 0; i<page_cnt; i++){
-                
+        
+        if (vm_area_lookup(vm_mm, page) != NULL) return NULL;
+        
         struct vm_area* vm_area_entry = malloc(sizeof(struct vm_area));
         
         vm_area_entry->vm_start = page;
@@ -155,6 +157,7 @@ vm_free_page(void *page, struct vm_mm_struct *vm_mm)
     struct vm_area *va = vm_area_lookup(vm_mm, page);
     if (va == NULL) return;
     
+    evict_frame(vm_page_to_frame(thread_current()->pagedir, va->start_page));
     /* delete from hash, then free va memory */
     hash_delete(vm_mm->mmap, &va->h_elem);
     free(va);

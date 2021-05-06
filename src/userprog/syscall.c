@@ -454,6 +454,7 @@ sys_mmap(uint32_t *eax, char** argv)
     
     int fd_no = *(int*)argv[0];
     void* buffer = *(char**)argv[1];
+    if (buffer == 0x0) return;
     
     ASSERT(pg_ofs(buffer) == 0);
     
@@ -462,7 +463,8 @@ sys_mmap(uint32_t *eax, char** argv)
     
     size_t file_size = file_length(fp);
     size_t mmap_pages = DIV_ROUND_UP (file_size, PGSIZE);
-    vm_alloc_page(buffer, thread_current()->vm_mm, mmap_pages, PAL_USER | PAL_ZERO, DISK_RW, fp, file_size, true);
+    buffer = vm_alloc_page(buffer, thread_current()->vm_mm, mmap_pages, PAL_USER | PAL_ZERO, DISK_RW, fp, file_size, true);
+    if (buffer == NULL) return;
     
     if ( (ret = allocate_mmapid(buffer, buffer + mmap_pages*PGSIZE)) == -1)
         ret = MAP_FAILED;
