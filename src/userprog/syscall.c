@@ -227,8 +227,10 @@ syscall_handler (struct intr_frame *f)
           argc = 2;
           load_arguments(argc, args, argv);
           sys_mmap(eax, argv);
+          break;
       case SYS_MUNMAP:
           sys_munmap(eax, argv);
+          break;
           
       default:
         break;
