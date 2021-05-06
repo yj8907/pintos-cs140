@@ -468,7 +468,7 @@ sys_mmap(uint32_t *eax, char** argv)
     
     if ( (ret = allocate_mmapid(buffer, buffer + mmap_pages*PGSIZE)) == -1)
         ret = MAP_FAILED;
-    printf("mmapid %d\n", ret);
+    
     memcpy(eax, &ret, sizeof(ret));
 };
 
@@ -479,10 +479,7 @@ sys_munmap(uint32_t *eax, char** argv)
     int mmap_no = *(int*)argv[0];
     
     struct mmap_descriptor* mmap_d = fetch_mmap(mmap_no);
-    if (mmap_d == NULL) {
-        printf("test %d", mmap_no);
-        return;
-    }
+    if (mmap_d == NULL) return;
    
     for (void *pg = mmap_d->start_pg; pg < mmap_d->end_pg; pg += PGSIZE)
         vm_free_page(pg, thread_current()->vm_mm);
