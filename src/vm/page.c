@@ -163,7 +163,8 @@ vm_free_page(void *page, struct vm_mm_struct *vm_mm)
     struct vm_area *va = vm_area_lookup(vm_mm, page);
     if (va == NULL) return;
     
-    evict_frame(vm_page_to_frame(thread_current()->pagedir, va->vm_start), 1);
+    void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
+    if (frame != NULL) evict_frame(frame, 1);
     /* delete from hash, then free va memory */
     hash_delete(vm_mm->mmap, &va->h_elem);
     free(va);
