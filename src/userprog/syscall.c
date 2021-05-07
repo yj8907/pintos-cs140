@@ -394,7 +394,7 @@ sys_write(uint32_t *eax, char** argv)
     const void* buffer = *(char**)argv[1];
     uint32_t size = *(int*)argv[2];
     
-     printf("write %d", fd_no);
+     printf("write %d to: 0x%08x", fd_no, buffer);
     
     validate_vaddr_write(buffer, size);
     
