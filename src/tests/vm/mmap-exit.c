@@ -15,7 +15,6 @@ test_main (void)
   quiet = true;
   CHECK ((child = exec ("child-mm-wrt")) != -1, "exec \"child-mm-wrt\"");
   CHECK (wait (child) == 0, "wait for child (should return 0)");
-  PANIC("test");
   quiet = false;
 
   /* Check file contents. */
