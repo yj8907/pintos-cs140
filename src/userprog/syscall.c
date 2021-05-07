@@ -349,7 +349,6 @@ sys_open(uint32_t *eax, char** argv)
 static void
 sys_filesize(uint32_t *eax, char** argv)
 {
-    PANIC("test");
     int fd = *(int*)argv[0];
     
     struct file* fp = fetch_file(fd);
@@ -357,7 +356,7 @@ sys_filesize(uint32_t *eax, char** argv)
     sema_down(&filesys_sema);
     int ret = fp == NULL ? 0 : file_length(fp);
     sema_up(&filesys_sema);
-    
+    PANIC("test: %d\n", ret);
     memcpy(eax, &ret, sizeof(ret));
 };
 
