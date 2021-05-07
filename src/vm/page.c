@@ -244,11 +244,11 @@ page_not_present_handler(void *addr)
     if (va->state == VALID) {
 //        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
         if (va->data_type != ANONYMOUS) {
-            if (va->data_type == DISK_RW) PANIC("test");
-            
             if (!load_from_file(va, kpage)) {
+                if (va->data_type == DISK_RW) PANIC("test1");
                 force_exit();
             }
+            if (va->data_type == DISK_RW) PANIC("test2");
         }
         va->state = ALLOCATED;
     }
