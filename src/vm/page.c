@@ -89,7 +89,7 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
             }
         }
     }
-    
+    PANIC("test");
     hash_destroy(vm_mm->mmap, vm_area_clear);
     free(vm_mm);
     
