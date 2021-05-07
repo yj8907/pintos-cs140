@@ -349,6 +349,7 @@ sys_open(uint32_t *eax, char** argv)
 static void
 sys_filesize(uint32_t *eax, char** argv)
 {
+    PANIC("test");
     int fd = *(int*)argv[0];
     
     struct file* fp = fetch_file(fd);
