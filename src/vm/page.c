@@ -237,8 +237,6 @@ page_not_present_handler(void *addr)
     void *page = pg_round_down(addr);
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
     
-//    if (addr == 0x08048892 && va->state == ALLOCATED) PANIC("vm_area: 0x%08x, allocated:%d \n", va, va->state == ALLOCATED);
-    
     if (va == NULL) force_exit();
     if (va->state == ALLOCATED) force_exit();
     
@@ -254,7 +252,11 @@ page_not_present_handler(void *addr)
         va->state = ALLOCATED;
     }
     else if (va->state == ONDISK) {
-        load_frame(kpage, addr);
+        if (va->data_type != DISK_RW)
+            load_frame(kpage, addr);
+        else
+            load_from_file(va, kpage);
+        va->state = ALLOCATED;
     }
     
     if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();

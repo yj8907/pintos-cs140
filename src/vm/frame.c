@@ -134,7 +134,7 @@ evict_frame(void *frame, size_t page_cnt)
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
     
     struct vm_area *va = fetch_vm_area_for_frame(fte);
-    if (va->data_type == ANONYMOUS) {
+    if (va->data_type != DISK_RW) {
         swap_slot_t swap_slot = swap_allocate();
         swap_write(swap_slot, fte->virtual_page);
         
@@ -143,6 +143,7 @@ evict_frame(void *frame, size_t page_cnt)
         ASSERT(va->file != NULL);
         if (pagedir_is_dirty(thread_current()->pagedir, va->vm_start))
             file_write_at(va->file, va->vm_start, va->content_bytes, va->file_pos);
+        vm_update_page(fte->holder, fte->virtual_page, ONDISK, 0);
     }
     
     falloc_free_frame(frame);
