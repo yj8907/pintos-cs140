@@ -236,7 +236,7 @@ page_not_present_handler(void *addr)
     void *page = pg_round_down(addr);
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
     
-    if (va == NULL) { printf("test1"); force_exit(); }
+    if (va == NULL) { printf("test1: 0x%08x\n", addr); force_exit(); }
     if (va->state == ALLOCATED) { printf("test2"); force_exit(); }
     
     void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
