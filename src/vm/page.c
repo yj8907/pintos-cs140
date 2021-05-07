@@ -181,17 +181,15 @@ vm_free_page(void *page, struct vm_mm_struct *vm_mm)
 void
 vm_update_page(struct thread* t, void *pg, enum page_state next_state, uint32_t swap_slot)
 {
-    
     ASSERT(pg_ofs(pg) == 0);
     
     struct vm_area *va = vm_area_lookup(t->vm_mm, pg);
     ASSERT(va != NULL);
     
     va->state = next_state;
-    if (next_state == ONDISK && va->data_type == ANONYMOUS) {
+    if (next_state == ONDISK && va->data_type != DISK_RW) {
         va->swap_location = swap_slot;
     }
-    
 }
                
 struct vm_area*
