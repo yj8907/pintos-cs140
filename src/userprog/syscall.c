@@ -352,10 +352,9 @@ sys_filesize(uint32_t *eax, char** argv)
     int fd = *(int*)argv[0];
     
     struct file* fp = fetch_file(fd);
-    
-    PANIC("test: 0x%08x\n", fp);
-    
+            
     sema_down(&filesys_sema);
+    PANIC("test: 0x%08x\n", fp);
     int ret = fp == NULL ? 0 : file_length(fp);
     sema_up(&filesys_sema);
     
