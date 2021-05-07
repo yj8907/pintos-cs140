@@ -479,10 +479,10 @@ static void
 sys_munmap(uint32_t *eax, char** argv)
 {
     int mmap_no = *(int*)argv[0];
- PANIC("test: %d\n", mmap_no);
+// PANIC("test: %d\n", mmap_no);
     struct mmap_descriptor* mmap_d = fetch_mmap(mmap_no);
     if (mmap_d == NULL) {
-        PANIC("test: %d\n", mmap_no);
+//        PANIC("test: %d\n", mmap_no);
         return;
     }
    
