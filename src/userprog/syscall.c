@@ -364,7 +364,7 @@ sys_filesize(uint32_t *eax, char** argv)
 static void
 sys_read(uint32_t *eax, char** argv)
 {
-    if (strcmp(thread_name(), "mmap-exit") == 0) PANIC("test");
+//    if (strcmp(thread_name(), "mmap-exit") == 0) PANIC("test");
     
     int fd_no = *(int*)argv[0];
     const char* buffer = *(char**)argv[1];
