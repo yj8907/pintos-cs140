@@ -80,7 +80,6 @@ force_exit(void)
 {
     int status = -1;
     char *argv[argc_max];
-//    printf("test: 0x%08x\n", filesys_sema.value);
     argv[0] = &status;
     sys_exit(NULL, argv);
 }

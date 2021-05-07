@@ -186,21 +186,16 @@ process_exit (void)
         }
     }
   }
-//    printf("process_exit3\n");
+
   /* close files and free page for fd */
   if (!list_empty(&cur->fildes)){
       struct list_elem* e = list_front(&cur->fildes);
       struct file_descriptor* fd;
       while (e != list_tail(&cur->fildes)){
-//          printf("process_exit41 %s, 0x%08x \n", thread_name(), e);
           fd = list_entry(e, struct file_descriptor, elem);
-//          printf("process_exit42 %s, 0x%08x \n", thread_name(), &filesys_sema);
           sema_down(&filesys_sema);
-//          printf("process_exit43 %s, 0x%08x \n", thread_name(), fd->fp);
-//          printf("process_exit44 %s, 0x%08x \n", thread_name(), fd->fd_no);
           file_close(fd->fp);
           sema_up(&filesys_sema);
-//          printf("process_exit45 %s, 0x%08x \n", thread_name(), fd->fd_no);
           e = list_remove(e);
           free(fd); /* free memory allocated by malloc */
       }
