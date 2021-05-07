@@ -195,7 +195,7 @@ process_exit (void)
       while (e != list_tail(&cur->fildes)){
           printf("process_exit41 0x%08x \n", e);
           fd = list_entry(e, struct file_descriptor, elem);
-          printf("process_exit42 0x%08x \n", fd);
+          printf("process_exit42 0x%08x \n", &filesys_sema);
           sema_down(&filesys_sema);
           printf("process_exit43 0x%08x \n", fd->fp);
           file_close(fd->fp);
