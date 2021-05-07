@@ -236,8 +236,8 @@ page_not_present_handler(void *addr)
     void *page = pg_round_down(addr);
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
     
-    if (va == NULL) { printf("test1: 0x%08x\n", addr); force_exit(); }
-    if (va->state == ALLOCATED) { printf("test2"); force_exit(); }
+    if (va == NULL) force_exit();
+    if (va->state == ALLOCATED) force_exit();
     
     void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
             
@@ -245,7 +245,6 @@ page_not_present_handler(void *addr)
 //        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
-                printf("test3");
                 force_exit();
             }
         }
@@ -259,7 +258,7 @@ page_not_present_handler(void *addr)
         va->state = ALLOCATED;
     }
     
-    if (!install_page(page, kpage, va->protection == WRITE ? true : false)) { printf("test4"); force_exit(); };
+    if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
         
 }
 

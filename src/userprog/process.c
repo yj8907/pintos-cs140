@@ -153,8 +153,7 @@ process_exit (void)
   sema_down(&filesys_sema);
   if (cur->tcb->file != NULL) file_close (cur->tcb->file);
   sema_up(&filesys_sema);
-
-  printf("process_exit1\n");
+  
   /* if parent thread already exists, free tcb page
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
@@ -165,7 +164,7 @@ process_exit (void)
       cur->tcb->thread_exit = 1;
       sema_up(&cur->tcb->sema);
   }
- printf("process_exit2\n");
+// printf("process_exit2\n");
   /* set parent exit status to true for all child processes */
   if (!list_empty(&cur->child_list)){
     struct list_elem *e = list_front(&cur->child_list);
@@ -187,32 +186,30 @@ process_exit (void)
         }
     }
   }
-    printf("process_exit3\n");
+//    printf("process_exit3\n");
   /* close files and free page for fd */
   if (!list_empty(&cur->fildes)){
       struct list_elem* e = list_front(&cur->fildes);
       struct file_descriptor* fd;
       while (e != list_tail(&cur->fildes)){
-          printf("process_exit41 %s, 0x%08x \n", thread_name(), e);
+//          printf("process_exit41 %s, 0x%08x \n", thread_name(), e);
           fd = list_entry(e, struct file_descriptor, elem);
-          printf("process_exit42 %s, 0x%08x \n", thread_name(), &filesys_sema);
+//          printf("process_exit42 %s, 0x%08x \n", thread_name(), &filesys_sema);
           sema_down(&filesys_sema);
 //          printf("process_exit43 %s, 0x%08x \n", thread_name(), fd->fp);
-          printf("process_exit44 %s, 0x%08x \n", thread_name(), fd->fd_no);
+//          printf("process_exit44 %s, 0x%08x \n", thread_name(), fd->fd_no);
           file_close(fd->fp);
           sema_up(&filesys_sema);
-          printf("process_exit45 %s, 0x%08x \n", thread_name(), fd->fd_no);
+//          printf("process_exit45 %s, 0x%08x \n", thread_name(), fd->fd_no);
           e = list_remove(e);
           free(fd); /* free memory allocated by malloc */
       }
   }
     
   uint32_t *pd;
-   printf("process_exit4\n");
 #ifdef VM
   vm_mm_destroy(cur->vm_mm);
 #endif
-    printf("process_exit5");
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
   pd = cur->pagedir;
