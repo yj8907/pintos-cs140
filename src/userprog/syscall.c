@@ -396,7 +396,7 @@ sys_write(uint32_t *eax, char** argv)
     
      printf("write %d to: 0x%08x", fd_no, buffer);
     
-    validate_vaddr_write(buffer, size);
+    validate_vaddr(buffer, size);
     
     struct file* fp;
     int bytes_write = 0;
