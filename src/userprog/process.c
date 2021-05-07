@@ -193,9 +193,11 @@ process_exit (void)
       struct list_elem* e = list_front(&cur->fildes);
       struct file_descriptor* fd;
       while (e != list_tail(&cur->fildes)){
-          printf("process_exit4 0x%08x \n", e);
+          printf("process_exit41 0x%08x \n", e);
           fd = list_entry(e, struct file_descriptor, elem);
+          printf("process_exit42 0x%08x \n", fd);
           sema_down(&filesys_sema);
+          printf("process_exit43 0x%08x \n", fd->fp);
           file_close(fd->fp);
           sema_up(&filesys_sema);
           free(fd); /* free memory allocated by malloc */
