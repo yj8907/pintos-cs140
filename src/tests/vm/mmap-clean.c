@@ -30,7 +30,6 @@ test_main (void)
   /* Close mapping.  Data should not be written back, because we
      didn't modify it via the mapping. */
   msg ("munmap \"sample.txt\"");
-  PANIC("test");
   munmap (map);
 
   /* Read file back. */

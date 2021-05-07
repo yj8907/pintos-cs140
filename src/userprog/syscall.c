@@ -406,7 +406,7 @@ sys_write(uint32_t *eax, char** argv)
         bytes_write = file_write(fp, buffer, size);
         sema_up(&filesys_sema);
     }
-    
+    if (fp == NULL) PANIC("write");
     memcpy(eax, &bytes_write, sizeof(bytes_write));
 };
 
