@@ -202,7 +202,7 @@ process_exit (void)
     
   uint32_t *pd;
   
-#ifdef VM
+#ifdef VM    
   vm_mm_destroy(cur->vm_mm);
 #endif
   /* Destroy the current process's page directory and switch back
