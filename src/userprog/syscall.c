@@ -468,7 +468,7 @@ sys_mmap(uint32_t *eax, char** argv)
     
     if ( (ret = allocate_mmapid(buffer, buffer + mmap_pages*PGSIZE)) == -1)
         ret = MAP_FAILED;
-    PANIC("test");
+    
     memcpy(eax, &ret, sizeof(ret));
 };
 
