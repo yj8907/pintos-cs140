@@ -202,6 +202,7 @@ process_exit (void)
           file_close(fd->fp);
           sema_up(&filesys_sema);
           printf("process_exit45 %s, 0x%08x \n", thread_name(), fd->fd_no);
+          e = list_remove(e);
           free(fd); /* free memory allocated by malloc */
       }
   }
