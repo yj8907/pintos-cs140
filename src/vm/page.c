@@ -72,6 +72,7 @@ vm_mm_init(void)
 void*
 vm_mm_destroy(struct vm_mm_struct *vm_mm)
 {
+    PANIC("test");
     /* iterate through mmap and clear frame table */
     struct hash_iterator i;
     hash_first (&i, vm_mm->mmap);
@@ -89,7 +90,7 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
             }
         }
     }
-    PANIC("test");
+    
     hash_destroy(vm_mm->mmap, vm_area_clear);
     free(vm_mm);
     
