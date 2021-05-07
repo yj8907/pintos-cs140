@@ -394,6 +394,8 @@ sys_write(uint32_t *eax, char** argv)
     const void* buffer = *(char**)argv[1];
     uint32_t size = *(int*)argv[2];
     
+     printf("write %d", fd_no);
+    
     validate_vaddr_write(buffer, size);
     
     struct file* fp;
@@ -406,7 +408,6 @@ sys_write(uint32_t *eax, char** argv)
         bytes_write = file_write(fp, buffer, size);
         sema_up(&filesys_sema);
     }
-    if (fp == NULL) printf("write %d", fd_no);
     memcpy(eax, &bytes_write, sizeof(bytes_write));
 };
 
