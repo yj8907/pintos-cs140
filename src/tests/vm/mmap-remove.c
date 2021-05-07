@@ -39,5 +39,5 @@ test_main (void)
       fail ("byte %zu of mmap'd region has value %02hhx (should be 0)",
             i, actual[i]);
 
- // munmap (map);
+  munmap (map);
 }
