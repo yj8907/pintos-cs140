@@ -20,6 +20,5 @@ test_main (void)
   CHECK ((handle = open ("sample.txt")) > 1, "open \"sample.txt\"");
   CHECK (mmap (handle, ACTUAL) != MAP_FAILED, "mmap \"sample.txt\"");
   memcpy (ACTUAL, sample, sizeof sample);
-  PANIC("test");
 }
 
