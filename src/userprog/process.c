@@ -154,7 +154,7 @@ process_exit (void)
   if (cur->tcb->file != NULL) file_close (cur->tcb->file);
   sema_up(&filesys_sema);
 
-  printf("process_exit1");
+  printf("process_exit1\n");
   /* if parent thread already exists, free tcb page
    set current process exit state as true */
   sema_down(&cur->tcb->sema);
@@ -165,7 +165,7 @@ process_exit (void)
       cur->tcb->thread_exit = 1;
       sema_up(&cur->tcb->sema);
   }
- printf("process_exit2");
+ printf("process_exit2\n");
   /* set parent exit status to true for all child processes */
   if (!list_empty(&cur->child_list)){
     struct list_elem *e = list_front(&cur->child_list);
@@ -187,12 +187,13 @@ process_exit (void)
         }
     }
   }
-    printf("process_exit3");
+    printf("process_exit3\n");
   /* close files and free page for fd */
   if (!list_empty(&cur->fildes)){
       struct list_elem* e = list_front(&cur->fildes);
       struct file_descriptor* fd;
       while (e != list_tail(&cur->fildes)){
+          printf("process_exit4 0x%08x \n", e);
           fd = list_entry(e, struct file_descriptor, elem);
           sema_down(&filesys_sema);
           file_close(fd->fp);
@@ -202,7 +203,7 @@ process_exit (void)
   }
     
   uint32_t *pd;
-   printf("process_exit4");
+   printf("process_exit4\n");
 #ifdef VM
   vm_mm_destroy(cur->vm_mm);
 #endif
