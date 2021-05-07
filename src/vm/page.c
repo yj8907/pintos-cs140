@@ -245,7 +245,7 @@ page_not_present_handler(void *addr)
 //        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
-                printf("test3")
+                printf("test3");
                 force_exit();
             }
         }
