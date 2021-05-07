@@ -197,7 +197,7 @@ process_exit (void)
           fd = list_entry(e, struct file_descriptor, elem);
           printf("process_exit42 %s, 0x%08x \n", thread_name(), &filesys_sema);
           sema_down(&filesys_sema);
-          printf("process_exit43 %s, 0x%08x \n", thread_name(), fd->fp);
+//          printf("process_exit43 %s, 0x%08x \n", thread_name(), fd->fp);
           printf("process_exit44 %s, 0x%08x \n", thread_name(), fd->fd_no);
           file_close(fd->fp);
           sema_up(&filesys_sema);
