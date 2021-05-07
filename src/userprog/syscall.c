@@ -408,7 +408,6 @@ sys_write(uint32_t *eax, char** argv)
     }
     
     memcpy(eax, &bytes_write, sizeof(bytes_write));
-    PANIC("test");
 };
 
 static void
