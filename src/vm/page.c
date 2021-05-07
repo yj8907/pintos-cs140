@@ -240,9 +240,7 @@ page_not_present_handler(void *addr)
     if (va->state == ALLOCATED) force_exit();
     
     void *kpage = falloc_get_frame(page, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
-    
-    if (va->data_type == DISK_RW && va->state != VALID) PANIC("test2");
-    
+            
     if (va->state == VALID) {
 //        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
         if (va->data_type != ANONYMOUS) {
