@@ -23,9 +23,9 @@ test_main (void)
     fail ("read of mmap'd file reported bad data");
 
   /* Modify file. */
- // CHECK (write (handle, overwrite, strlen (overwrite))
-   //      == (int) strlen (overwrite),
-     //    "write \"sample.txt\"");
+  CHECK (write (handle, overwrite, strlen (overwrite))
+         == (int) strlen (overwrite),
+         "write \"sample.txt\"");
 
   /* Close mapping.  Data should not be written back, because we
      didn't modify it via the mapping. */
