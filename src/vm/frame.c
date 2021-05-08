@@ -173,6 +173,7 @@ void*
 next_frame_to_evict(void *eip, size_t page_cnt)
 {
     ASSERT(page_cnt == 1);
+    PANIC("frame vm: 0x%08x\n", 0);
     struct thread *cur = thread_current();
     
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
@@ -184,7 +185,7 @@ next_frame_to_evict(void *eip, size_t page_cnt)
         
         fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     }
-    printf("frame vm: 0x%08x\n", fte->virtual_page);
+    
     return ptov(compute_frame_entry_no(fte)*PGSIZE);
 }
 
