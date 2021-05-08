@@ -263,12 +263,12 @@ page_not_present_handler(void *addr, void *eip)
 }
 
 void
-vm_grow_stack(void *addr)
+vm_grow_stack(void *addr, void* eip)
 {
     void *stack_pg = pg_round_down(addr);
     ASSERT (stack_pg  < PHYS_BASE);
     stack_pg = vm_alloc_page(stack_pg, thread_current()->vm_mm, 1, PAL_USER, ANONYMOUS, NULL, 0, true);
-    page_not_present_handler(addr);
+    page_not_present_handler(addr, eip);
 
 }
 
