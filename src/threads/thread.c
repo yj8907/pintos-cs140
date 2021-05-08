@@ -802,7 +802,7 @@ init_thread_control_block(struct thread *t, bool setup_parent)
     list_init(&t->mmap_list);
 #endif
     
-    t->tcb = malloc (128);
+    t->tcb = malloc (sizeof(struct thread_control_block));
     
     if (t->tcb == NULL) return -1;
     
@@ -1007,7 +1007,7 @@ allocate_fd (struct file* fp)
 {
   struct file_descriptor *fd;
 //  fd = palloc_get_page(PAL_ZERO);
-  fd = malloc(128);
+  fd = malloc(sizeof(struct file_descriptor));
   
   if (fd == NULL) return -1;
   
@@ -1027,7 +1027,7 @@ allocate_fd (struct file* fp)
 int
 allocate_mmapid (void *start_pg, void *end_pg)
 {
-  struct mmap_descriptor *mmap_d = malloc(24);
+  struct mmap_descriptor *mmap_d = malloc(sizeof(struct mmap_descriptor));
   
   if (mmap_d == NULL) return -1;
   
