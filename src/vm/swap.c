@@ -65,12 +65,14 @@ void
 swap_read(swap_slot_t slot, void *page)
 {
     ASSERT(pg_ofs(page) == 0);
+    printf("start read slot %d\n", slot);
     block_sector_t sector = slot_to_sector(slot);
     for (size_t i = 0; i < nblock_pg; i++) {
         block_read(swap_block, sector, page);
         sector += 1;
         page += BLOCK_SECTOR_SIZE;
     }
+    printf("finish read slot %d\n", slot);
 }
 
 void
@@ -78,11 +80,13 @@ swap_write(swap_slot_t slot, void *page)
 {
     ASSERT(pg_ofs(page) == 0);
     block_sector_t sector = slot_to_sector(slot);
+    printf("start write slot %d\n", slot);
     for (size_t i = 0; i < nblock_pg; i++) {
         block_write(swap_block, sector, page);
         sector += 1;
         page += BLOCK_SECTOR_SIZE;
     }
+    printf("finish write slot %d\n", slot);
 }
 
 swap_slot_t
@@ -90,9 +94,9 @@ swap_allocate(void)
 {
     size_t swap_index;
     if (lock_held_by_current_thread(&lock)) PANIC("swap allocate");
-//    lock_acquire (&lock);
+    lock_acquire (&lock);
     swap_slot_t slot_index = bitmap_scan_and_flip (used_map, 0, 1, false);
-//    lock_release (&lock);
+    lock_release (&lock);
     
     uint32_t swap_area = 0;
     
