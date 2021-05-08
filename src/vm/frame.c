@@ -67,7 +67,6 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
 //        PANIC("null page: 0x%08x, mmap size: %d \n", vm_pg, hash_size(thread_current()->vm_mm->mmap));
         void *new_frame = next_frame_to_evict(eip, 1);
         evict_frame(new_frame, 1);
-        printf("falloc_get_frame: 0x%08x\n", vm_pg);
         page = palloc_get_page(flags);
         
     }
