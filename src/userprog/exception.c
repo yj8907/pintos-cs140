@@ -162,7 +162,7 @@ page_fault (struct intr_frame *f)
   uint32_t stack_sz_limit = 0x04000000;
         
     
-//  if ( write && !not_present ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
+  if ( f->cs == 0x001b ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
   
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
