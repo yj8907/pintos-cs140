@@ -252,7 +252,7 @@ page_not_present_handler(void *addr)
     }
     else if (va->state == ONDISK) {
         if (va->data_type != DISK_RW)
-            load_frame(kpage, addr);
+            load_frame(kpage, 1);
         else
             load_from_file(va, kpage);
         va->state = ALLOCATED;
