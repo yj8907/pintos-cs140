@@ -90,9 +90,9 @@ swap_allocate(void)
 {
     size_t swap_index;
     if (lock_held_by_current_thread(&lock)) PANIC("swap allocate");
-    lock_acquire (&lock);
+//    lock_acquire (&lock);
     swap_slot_t slot_index = bitmap_scan_and_flip (used_map, 0, 1, false);
-    lock_release (&lock);
+//    lock_release (&lock);
     
     uint32_t swap_area = 0;
     
