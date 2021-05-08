@@ -163,8 +163,8 @@ load_frame(void *frame, size_t page_cnt)
     ASSERT(va->state == ONDISK);
     
     if (va->data_type == ANONYMOUS) {
-        /* since virtual page has not been installed, need to use ptov to obtain kernel virtual page */
-        swap_read(va->swap_location, ptov(frame));
+        /* since virtual page has not been installed, need to use frame page */
+        swap_read(va->swap_location, frame);
     }
 }
 
