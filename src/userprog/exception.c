@@ -161,14 +161,13 @@ page_fault (struct intr_frame *f)
 
   uint32_t stack_sz_limit = 0x04000000;
         
-//  if ( f->cs == 0x001b && f->esp == 0xbffffe58 && f->eax == 0x081b7001 ) PANIC("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
+  if ( f->cs == 0x001b && f->esp == 0xbffffe58 && f->eax == 0x081b7001 ) printf("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
   
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
       
       if (esp != NULL) {
           if (esp < PHYS_BASE - stack_sz_limit) force_exit();
-        if ( f->cs == 0x001b && f->esp == 0xbffffe58 && f->eax == 0x081b7001 ) printf("fault addr: 0x%08x,not_present:%d, write:%d \n", fault_addr, not_present, write);
           
           if ( (fault_addr >= esp && fault_addr <= PHYS_BASE) ||
               fault_addr == esp - 4 || fault_addr == esp - 32) {
