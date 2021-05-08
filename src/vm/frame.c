@@ -184,7 +184,7 @@ next_frame_to_evict(void *eip, size_t page_cnt)
         
         fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     }
-    
+    printf("frame1 vm: 0x%08x\n", 0);
     return ptov(compute_frame_entry_no(fte)*PGSIZE);
 }
 
