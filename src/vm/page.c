@@ -240,9 +240,8 @@ page_not_present_handler(void *addr, void *eip)
     if (va->state == ALLOCATED) force_exit();
     
     void *kpage = falloc_get_frame(page, eip, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
-            
+    if (vtop(kpage) == 0x00273000) PANIC("vm page: 0x%08x, eip: 0x%08x\n", addr, eip)
     if (va->state == VALID) {
-//        printf("kpage: 0x%08x, upage:0x%08x \n", kpage, page);
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
                 force_exit();
