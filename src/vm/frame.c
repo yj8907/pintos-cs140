@@ -174,18 +174,17 @@ next_frame_to_evict(void *eip, size_t page_cnt)
 {
     ASSERT(page_cnt == 1);
     struct thread *cur = thread_current();
-    printf("frame vm: 0x%08x\n", 0);
+    
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     while (pagedir_is_accessed(cur->pagedir, fte->virtual_page) ||
            pg_round_down(eip) == fte->virtual_page) {
-        printf("frame11 vm: 0x%08x\n", 0);
         fte = list_entry(list_pop_front(&frame_in_use_queue), struct frame_table_entry, elem);
         pagedir_set_accessed(cur->pagedir, fte->virtual_page, false);
         list_push_back(&frame_in_use_queue, &fte->elem);
         
         fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     }
-    printf("frame1 vm: 0x%08x\n", 0);
+    
     return ptov(compute_frame_entry_no(fte)*PGSIZE);
 }
 
