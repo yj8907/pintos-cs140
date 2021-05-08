@@ -10,6 +10,7 @@
 
 #include "frame.h"
 #include "threads/pte.h"
+#include "userprog/pagedir.h"
 #include "vm/page.h"
 #include "vm/swap.h"
 
@@ -56,7 +57,7 @@ is_tail (struct list_elem *elem)
 
 /* frame is accessed through virtual addressing */
 void*
-falloc_get_frame(void* vm_pg, enum palloc_flags flags)
+falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
 {
     static falloc_counter = 0;
     
@@ -64,7 +65,7 @@ falloc_get_frame(void* vm_pg, enum palloc_flags flags)
     if (page == NULL) {
         falloc_counter += 1;
 //        PANIC("null page: 0x%08x, mmap size: %d \n", vm_pg, hash_size(thread_current()->vm_mm->mmap));
-        void *new_frame = next_frame_to_evict(1);
+        void *new_frame = next_frame_to_evict(eip, 1);
         evict_frame(new_frame, 1);
         printf("falloc_get_frame: 0x%08x\n", vm_pg);
         page = palloc_get_page(flags);
@@ -167,13 +168,23 @@ load_frame(void *frame, size_t page_cnt)
     }
 }
 
-/* implment page replacement policy */
+/* implment page replacement policy: second chance and working page pinning */
 void*
-next_frame_to_evict(size_t page_cnt)
+next_frame_to_evict(void *eip, size_t page_cnt)
 {
     ASSERT(page_cnt == 1);
+    thread *cur = thread_current();
+    
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
-    printf("evict frame vm: 0x%08x\n", fte->virtual_page);
+    while (pagedir_is_accessed(cur->pagedir, fte->virtual_page) ||
+           pg_round_down(eip) == fte->virtual_page) {
+        fte = list_pop_front(&frame_in_use_queue);
+        pagedir_set_accessed(cur->pagedir, fte->virtual_page, false);
+        list_push_back(&frame_in_use_queue, &fte->elem);
+        
+        fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
+    }
+    
     return ptov(compute_frame_entry_no(fte)*PGSIZE);
 }
 
