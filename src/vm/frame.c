@@ -109,7 +109,7 @@ void falloc_free_frame(void *frame)
     ASSERT(*pde & PTE_P);
     uint32_t *pte = pde_get_pt (*pde) + pt_no(fte->virtual_page);
     ASSERT(*pte & PTE_P);
-    *pte = *pte & !PTE_P;
+    *pte = 0x0;
     
     palloc_free_page(frame);
     
