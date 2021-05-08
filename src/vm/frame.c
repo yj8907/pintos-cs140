@@ -173,9 +173,8 @@ void*
 next_frame_to_evict(void *eip, size_t page_cnt)
 {
     ASSERT(page_cnt == 1);
-    PANIC("frame vm: 0x%08x\n", 0);
     struct thread *cur = thread_current();
-    
+    PANIC("frame vm: 0x%08x\n", 0);
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     while (pagedir_is_accessed(cur->pagedir, fte->virtual_page) ||
            pg_round_down(eip) == fte->virtual_page) {
