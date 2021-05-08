@@ -18,7 +18,6 @@ test_main (void)
 
   /* Initialize to 0x5a. */
   msg ("initialize");
-  msg ("buffer memory: 0x%08x", buf);
   memset (buf, 0x5a, sizeof buf);
 
   /* Check that it's all 0x5a. */
