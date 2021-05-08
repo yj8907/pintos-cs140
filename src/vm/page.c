@@ -54,7 +54,7 @@ vm_mm_init(void)
     struct vm_mm_struct* vm_mm = malloc(sizeof(struct vm_mm_struct));
     
     if (vm_mm == NULL) {
-        evict_frame(next_frame_to_evict(1), 1);
+        evict_frame(next_frame_to_evict(NULL, 1), 1);
         vm_mm = malloc(sizeof(struct vm_mm_struct));
         ASSERT (vm_mm != NULL);
     }
