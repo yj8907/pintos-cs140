@@ -64,7 +64,6 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
     void *page = palloc_get_page(flags);
     if (page == NULL) {
         falloc_counter += 1;
-//        PANIC("null page: 0x%08x, mmap size: %d \n", vm_pg, hash_size(thread_current()->vm_mm->mmap));
         void *new_frame = next_frame_to_evict(eip, 1);
         evict_frame(new_frame, 1);
         page = palloc_get_page(flags);
@@ -179,7 +178,8 @@ next_frame_to_evict(void *eip, size_t page_cnt)
     while (pagedir_is_accessed(cur->pagedir, fte->virtual_page) ||
            pg_round_down(eip) == fte->virtual_page) {
         fte = list_entry(list_pop_front(&frame_in_use_queue), struct frame_table_entry, elem);
-        if (pg_round_down(eip) != fte->virtual_page) pagedir_set_accessed(cur->pagedir, fte->virtual_page, false);
+        if (pg_round_down(eip) != fte->virtual_page) {
+            pagedir_set_accessed(cur->pagedir, fte->virtual_page, false); }
         list_push_back(&frame_in_use_queue, &fte->elem);
         
         fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);

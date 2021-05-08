@@ -162,7 +162,7 @@ page_fault (struct intr_frame *f)
   uint32_t stack_sz_limit = 0x04000000;
         
 //  if ( f->cs == 0x001b && f->esp == 0xbffffe58 && f->eax == 0x081b7001 )
-    if (pg_round_down(f->eip) == 0x0804a000) printf("fault addr: 0x%08x,not_present:%d, write:%d eip: 0x%08x \n", fault_addr, not_present, write, f->eip);
+  printf("fault addr: 0x%08x,not_present:%d, write:%d eip: 0x%08x \n", fault_addr, not_present, write, f->eip);
   
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
