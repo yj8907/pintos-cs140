@@ -6,6 +6,7 @@
 #include "threads/thread.h"
 #include "userprog/syscall.h"
 #include "userprog/pagedir.h"
+#include "threads/pte.h"
 
 #ifdef VM
 #include "vm/page.h"
@@ -94,6 +95,11 @@ kill (struct intr_frame *f)
     case SEL_UCSEG:
       /* User's code segment, so it's a user exception, as we
          expected.  Kill the user process.  */
+    uint32_t *pde = thread_current()->pagedir + pd_no(f->eip);
+    ASSERT(*pde & PTE_P);
+    uint32_t *pte = pde_get_pt (*pde) + pt_no(f->eip);
+            printf("eip frame: 0x%08x\n", *pte);
+            
       printf ("%s: dying due to interrupt %#04x (%s).\n",
               thread_name (), f->vec_no, intr_name (f->vec_no));
       intr_dump_frame (f);
