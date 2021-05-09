@@ -110,7 +110,7 @@ void falloc_free_frame(void *frame)
     ASSERT(*pte & PTE_P);
     *pte = 0x0;
     
-    if (vtop(frame) == 0x00273000) PANIC("test falloc_free_frame, vm: 0x%08x\n", fte->virtual_page);
+//    if (vtop(frame) == 0x00273000) PANIC("test falloc_free_frame, vm: 0x%08x\n", fte->virtual_page);
     palloc_free_page(frame);
     
     fte->holder = NULL;
