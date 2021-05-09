@@ -213,7 +213,7 @@ page_fault (struct intr_frame *f)
   fault_addr,
   not_present ? "not present" : "rights violation",
   write ? "writing" : "reading",
-  user ? "user" : "kernel")
+        user ? "user" : "kernel");
   kill (f);
 }
 
