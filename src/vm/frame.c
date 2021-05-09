@@ -62,9 +62,10 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
     static falloc_counter = 0;
     
     void *page = palloc_get_page(flags);
+    void *new_frame;
     if (page == NULL) {
         falloc_counter += 1;
-        void *new_frame = next_frame_to_evict(eip, 1);
+        new_frame = next_frame_to_evict(eip, 1);
         evict_frame(new_frame, 1);
         page = palloc_get_page(flags);
         
