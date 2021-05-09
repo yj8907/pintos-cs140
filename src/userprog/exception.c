@@ -90,7 +90,7 @@ kill (struct intr_frame *f)
      
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
-    uint32_t *pde, *pte, *output;
+    uint32_t *pde, *pte, *output, *output1;
     
   switch (f->cs)
     {
@@ -101,7 +101,8 @@ kill (struct intr_frame *f)
       ASSERT(*pde & PTE_P);
       pte = pde_get_pt (*pde) + pt_no(f->eip);
       output = f->eip;
-      printf("eip frame: 0x%08x, output: 0x%08x \n", *pte, *output);
+      output1 = ptov(*pte);
+      printf("eip frame: 0x%08x, output: 0x%08x, output1: 0x%08x \n", *pte, *output, *output1);
             
       printf ("%s: dying due to interrupt %#04x (%s).\n",
               thread_name (), f->vec_no, intr_name (f->vec_no));
