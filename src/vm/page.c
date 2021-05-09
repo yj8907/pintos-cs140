@@ -17,7 +17,7 @@ static void
 vm_area_clear(struct hash_elem *e, void *aux)
 {
     struct vm_area *va = hash_entry(e, struct vm_area, h_elem);
-//    if (va->file != NULL) file_close(va->file);
+    if (va->file != NULL) file_close(va->file);
     free(va);
 }
 
@@ -82,7 +82,6 @@ vm_mm_destroy(struct vm_mm_struct *vm_mm)
         void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
         
         if (frame != NULL) {
-//            PANIC("thread: %s, frame: 0x%08x\n", thread_name(), frame);
             if (va->data_type != DISK_RW) {
                 falloc_free_frame(frame);
             } else if (va->data_type == DISK_RW) {
@@ -143,7 +142,6 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
                 
         if (file != NULL) {
             vm_area_entry->file = file_reopen(file); /* reopen file in case it is closed */
-//            vm_area_entry->file = file;
             vm_area_entry->file_pos = file_pos;
             file_pos += PGSIZE;
         }

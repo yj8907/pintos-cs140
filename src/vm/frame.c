@@ -79,12 +79,7 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
     int frame_no = compute_frame_number(page);
     struct frame_table_entry* fte = frame_table+frame_no;
     
-//    ASSERT(fte->holder == NULL);
-    if (fte->holder != NULL) {
-        printf("thread name: %s\n", (frame_table+frame_no)->holder->name);
-        printf("page: 0x%08x\n", page);
-        printf("frameno: %d\n", frame_no);
-    }
+    ASSERT(fte->holder == NULL);
         
     fte->holder = thread_current();
     fte->numRef = 1;
@@ -181,6 +176,7 @@ next_frame_to_evict(void *eip, size_t page_cnt)
     while (pagedir_is_accessed(cur->pagedir, fte->virtual_page) ||
            pagedir_is_accessed(cur->pagedir, ptov(compute_frame_entry_no(fte)*PGSIZE)) ||
            pg_round_down(eip) == fte->virtual_page ) {
+        
         fte = list_entry(list_pop_front(&frame_in_use_queue), struct frame_table_entry, elem);
         if (pg_round_down(eip) != fte->virtual_page) {
             pagedir_set_accessed(cur->pagedir, fte->virtual_page, false);
