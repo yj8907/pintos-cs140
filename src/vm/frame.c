@@ -65,7 +65,6 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
     if (page == NULL) {
         falloc_counter += 1;
         void *new_frame = next_frame_to_evict(eip, 1);
-        if (vtop(new_frame) == 0x00273000) PANIC("test falloc_free_frame, eip: 0x%08x\n", eip);
         evict_frame(new_frame, 1);
         page = palloc_get_page(flags);
         
@@ -146,7 +145,7 @@ evict_frame(void *frame, size_t page_cnt)
             file_write_at(va->file, va->vm_start, va->content_bytes, va->file_pos);
         vm_update_page(fte->holder, fte->virtual_page, ONDISK, 0);
     }
-    
+    if (vtop(frame) == 0x00273000) PANIC("test falloc_free_frame, eip: 0x%08x\n", eip);
     falloc_free_frame(frame);
 }
 
