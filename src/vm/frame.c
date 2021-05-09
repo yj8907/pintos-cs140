@@ -72,6 +72,7 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
         page = palloc_get_page(flags);
         
     }
+    if (!is_kernel_vaddr(new_frame)) PANIC("frame: 0x%08x\n", new_frame);
     if (vtop(new_frame) == 0x0030d000) printf("test1");
     if (page == NULL) PANIC("no new frame available: %d, vm_pg: 0x%08x \n",
                                     flags & PAL_USER, vm_pg);
@@ -80,6 +81,7 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
     
     int frame_no = compute_frame_number(page);
     struct frame_table_entry* fte = frame_table+frame_no;
+    if (!is_kernel_vaddr(new_frame)) PANIC("frame: 0x%08x\n", new_frame);
     if (vtop(new_frame) == 0x0030d000) printf("test2");
 //    ASSERT(fte->holder == NULL);
     if (fte->holder != NULL) {
@@ -87,6 +89,8 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
         printf("page: 0x%08x\n", page);
         printf("frameno: %d\n", frame_no);
     }
+    
+    if (!is_kernel_vaddr(new_frame)) PANIC("frame: 0x%08x\n", new_frame);
     if (vtop(new_frame) == 0x0030d000) printf("test3");
     fte->holder = thread_current();
     fte->numRef = 1;
