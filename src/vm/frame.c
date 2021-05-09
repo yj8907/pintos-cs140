@@ -164,6 +164,7 @@ load_frame(void *frame, size_t page_cnt)
     if (va->data_type == ANONYMOUS) {
         /* since virtual page has not been installed, need to use frame page */
         swap_read(va->swap_location, frame);
+        swap_free(va->swap_location);
     }
 }
 
