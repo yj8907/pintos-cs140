@@ -31,7 +31,7 @@ slot_to_sector(swap_slot_t slot)
     uint32_t slot_index = slot >> (SP_SHIFT + SP_AREABITS);
     block_sector_t sector_index = slot_index * nblock_pg;
     
-    if (sector_index >= swap_block_size) PANIC("slot: %d, swap_block_size:%d\n ", slot, swap_block_size);
+//    if (sector_index >= swap_block_size) PANIC("slot: %d, swap_block_size:%d\n ", slot, swap_block_size);
     
     ASSERT (sector_index < swap_block_size);
     return sector_index;

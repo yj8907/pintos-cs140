@@ -66,14 +66,11 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
     if (page == NULL) {
         falloc_counter += 1;
         new_frame = next_frame_to_evict(eip, 1);
-        if (!is_kernel_vaddr(new_frame)) PANIC("frame: 0x%08x\n", new_frame);
-        if (vtop(new_frame) == 0x0030d000) printf("test0");
         evict_frame(new_frame, 1);
         page = palloc_get_page(flags);
         
     }
-
-    if (new_frame != NULL && vtop(new_frame) == 0x0030d000) printf("test1");
+    
     if (page == NULL) PANIC("no new frame available: %d, vm_pg: 0x%08x \n",
                                     flags & PAL_USER, vm_pg);
     
@@ -81,23 +78,20 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
     
     int frame_no = compute_frame_number(page);
     struct frame_table_entry* fte = frame_table+frame_no;
-
-    if (new_frame != NULL && vtop(new_frame) == 0x0030d000) printf("test2");
+    
 //    ASSERT(fte->holder == NULL);
     if (fte->holder != NULL) {
         printf("thread name: %s\n", (frame_table+frame_no)->holder->name);
         printf("page: 0x%08x\n", page);
         printf("frameno: %d\n", frame_no);
     }
-    
-
-    if (new_frame != NULL && vtop(new_frame) == 0x0030d000) printf("test3");
+        
     fte->holder = thread_current();
     fte->numRef = 1;
     fte->virtual_page = vm_pg;
     
     list_push_back(&frame_in_use_queue, &fte->elem);
-    if (new_frame != NULL && vtop(new_frame) == 0x0030d000) printf("test4");
+    
     return page;
 }
 
@@ -117,7 +111,6 @@ void falloc_free_frame(void *frame)
     ASSERT(*pte & PTE_P);
     *pte = 0x0;
     
-//    if (vtop(frame) == 0x00273000) PANIC("test falloc_free_frame, vm: 0x%08x\n", fte->virtual_page);
     palloc_free_page(frame);
     
     fte->holder = NULL;
@@ -144,12 +137,13 @@ evict_frame(void *frame, size_t page_cnt)
     if (va->data_type != DISK_RW) {
         swap_slot_t swap_slot = swap_allocate();
         swap_write(swap_slot, fte->virtual_page);
-        if (vtop(frame) == 0x0030d000) printf("slot: %d", swap_slot);
+        
         vm_update_page(fte->holder, fte->virtual_page, ONDISK, swap_slot);
     } else if (va->data_type == DISK_RW) {
         ASSERT(va->file != NULL);
         if (pagedir_is_dirty(thread_current()->pagedir, va->vm_start))
             file_write_at(va->file, va->vm_start, va->content_bytes, va->file_pos);
+        
         vm_update_page(fte->holder, fte->virtual_page, ONDISK, 0);
     }
     falloc_free_frame(frame);
@@ -171,7 +165,6 @@ load_frame(void *frame, size_t page_cnt)
     ASSERT(va->data_type != DISK_RW);
     
     /* since virtual page has not been installed, need to use frame page */
-    if (vtop(frame) == 0x0030d000) printf("slot: %d", va->swap_location);
     swap_read(va->swap_location, frame);
     swap_free(va->swap_location);
     
@@ -198,7 +191,6 @@ next_frame_to_evict(void *eip, size_t page_cnt)
         fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     }
         
-    printf("eip:0x%08x, vm: 0x%08x, frame: 0x%08x\n", eip, fte->virtual_page, compute_frame_entry_no(fte)*PGSIZE);
     return ptov(compute_frame_entry_no(fte)*PGSIZE);
 }
 

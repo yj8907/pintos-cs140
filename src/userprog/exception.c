@@ -97,12 +97,12 @@ kill (struct intr_frame *f)
     case SEL_UCSEG:
       /* User's code segment, so it's a user exception, as we
          expected.  Kill the user process.  */
-      pde = thread_current()->pagedir + pd_no(f->eip);
-      ASSERT(*pde & PTE_P);
-      pte = pde_get_pt (*pde) + pt_no(f->eip);
-      output = f->eip;
-      output1 = ptov(*pte);
-      printf("eip frame: 0x%08x, output: 0x%08x, output1: 0x%08x \n", *pte, *output, *output1);
+//      pde = thread_current()->pagedir + pd_no(f->eip);
+//      ASSERT(*pde & PTE_P);
+//      pte = pde_get_pt (*pde) + pt_no(f->eip);
+//      output = f->eip;
+//      output1 = ptov(*pte);
+//      printf("eip frame: 0x%08x, output: 0x%08x, output1: 0x%08x \n", *pte, *output, *output1);
             
       intr_dump_frame (f);
       printf ("%s: dying due to interrupt %#04x (%s).\n",
@@ -171,9 +171,9 @@ page_fault (struct intr_frame *f)
 
   uint32_t stack_sz_limit = 0x04000000;
         
-    if ( f->cs == 0x001b && fault_addr==0x08049000 )
-      printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
-  if (!not_present) printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
+//    if ( f->cs == 0x001b && fault_addr==0x08049000 )
+//      printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
+  
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
       
@@ -188,8 +188,6 @@ page_fault (struct intr_frame *f)
       }
       
       page_not_present_handler(fault_addr, f->eip);
-      if ( f->cs == 0x001b && fault_addr==0x08049000 )
-          printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
       return;
   }
     
