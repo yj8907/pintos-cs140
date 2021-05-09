@@ -189,7 +189,7 @@ page_fault (struct intr_frame *f)
       
       page_not_present_handler(fault_addr, f->eip);
       if ( f->cs == 0x001b && fault_addr==0x08049000 )
-          printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
+          PANIC("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
       return;
   }
     
