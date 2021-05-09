@@ -173,7 +173,7 @@ page_fault (struct intr_frame *f)
         
     if ( f->cs == 0x001b && fault_addr==0x08049000 )
       printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
-  
+  if (present) printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
   if (not_present) {
       void *esp = user ? f->esp : thread_current()->vm_mm->esp;
       
