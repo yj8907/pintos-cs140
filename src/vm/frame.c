@@ -188,9 +188,9 @@ next_frame_to_evict(void *eip, size_t page_cnt)
     uint32_t *pde = fte->holder->pagedir + pd_no(eip);
     ASSERT(*pde & PTE_P);
     uint32_t *pte = pde_get_pt (*pde) + pt_no(eip);
-    if ( !(*pte & PTE_P)) PANIC("epi: 0x%08x\n", eip);
-    
-    if (*pte == compute_frame_entry_no(fte)*PGSIZE) PANIC("test");
+
+        if (*pte == compute_frame_entry_no(fte)*PGSIZE) PANIC("test");
+        
     printf("eip:0x%08x, vm: 0x%08x, frame: 0x%08x\n", eip, fte->virtual_page, compute_frame_entry_no(fte)*PGSIZE);
     return ptov(compute_frame_entry_no(fte)*PGSIZE);
 }
