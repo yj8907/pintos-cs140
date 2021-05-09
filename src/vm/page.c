@@ -128,6 +128,7 @@ vm_alloc_page(void *page, struct vm_mm_struct* vm_mm, size_t page_cnt,
     void *start_page = page;
     
     off_t file_pos = file != NULL ? file_tell(file) : 0;
+    if (pg_type == DISK_RDONLY) printf("pg: 0x%08x\n", page);
     
     for (int i = 0; i<page_cnt; i++){
         
