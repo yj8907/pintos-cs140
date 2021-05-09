@@ -100,7 +100,7 @@ kill (struct intr_frame *f)
       pde = thread_current()->pagedir + pd_no(f->eip);
       ASSERT(*pde & PTE_P);
       pte = pde_get_pt (*pde) + pt_no(f->eip);
-      output = ptov(*pte);
+      output = f->eip;
       printf("eip frame: 0x%08x, output: 0x%08x \n", *pte, *output);
             
       printf ("%s: dying due to interrupt %#04x (%s).\n",
