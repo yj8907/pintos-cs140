@@ -168,7 +168,6 @@ vm_free_page(void *page, struct vm_mm_struct *vm_mm)
     if (va == NULL) return;
     
     void *frame = vm_page_to_frame(thread_current()->pagedir, va->vm_start);
-    if (vtop(frame) == 0x00273000) PANIC("test vm_free_page, frame: 0x%08x\n", frame);
     if (frame != NULL) {
       if (va->data_type != DISK_RW) {
           falloc_free_frame(frame);
@@ -238,14 +237,15 @@ page_not_present_handler(void *addr, void *eip)
     void *page = pg_round_down(addr);
     struct vm_area *va = vm_area_lookup(thread_current()->vm_mm, page);
     
-    if (va == NULL) force_exit();
-    if (va->state == ALLOCATED) force_exit();
+    if (va == NULL) {printf("page_not_present_handler1: addr: 0x%08x", addr); force_exit();}
+    if (va->state == ALLOCATED) {printf("page_not_present_handler2: addr: 0x%08x", addr); force_exit();}
     
     void *kpage = falloc_get_frame(page, eip, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
 //    if (vtop(kpage) == 0x00273000 && pg_round_down(addr) != 0x0804a000) PANIC("vm page: 0x%08x, eip: 0x%08x\n", addr, eip);
     if (va->state == VALID) {
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
+                printf("page_not_present_handler3: addr: 0x%08x", addr)
                 force_exit();
             }
         }
@@ -259,7 +259,7 @@ page_not_present_handler(void *addr, void *eip)
         va->state = ALLOCATED;
     }
     
-    if (!install_page(page, kpage, va->protection == WRITE ? true : false)) force_exit();
+    if (!install_page(page, kpage, va->protection == WRITE ? true : false)) {printf("page_not_present_handler4: addr: 0x%08x", addr) force_exit();}
         
 }
 
