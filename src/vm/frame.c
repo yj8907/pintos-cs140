@@ -66,6 +66,7 @@ falloc_get_frame(void* vm_pg, void *eip, enum palloc_flags flags)
     if (page == NULL) {
         falloc_counter += 1;
         new_frame = next_frame_to_evict(eip, 1);
+        if (new_frame == 0x0030d000) printf("test0");
         evict_frame(new_frame, 1);
         page = palloc_get_page(flags);
         
