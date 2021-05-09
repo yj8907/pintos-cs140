@@ -176,7 +176,7 @@ next_frame_to_evict(void *eip, size_t page_cnt)
     
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     while (pagedir_is_accessed(cur->pagedir, fte->virtual_page) ||
-           pagedir_is_accessed(cur->pagedir, ptov(compute_frame_entry_no(fte)*PGSIZE))
+           pagedir_is_accessed(cur->pagedir, ptov(compute_frame_entry_no(fte)*PGSIZE)) ||
            pg_round_down(eip) == fte->virtual_page ) {
         fte = list_entry(list_pop_front(&frame_in_use_queue), struct frame_table_entry, elem);
         if (pg_round_down(eip) != fte->virtual_page) {
