@@ -181,7 +181,7 @@ next_frame_to_evict(void *eip, size_t page_cnt)
         fte = list_entry(list_pop_front(&frame_in_use_queue), struct frame_table_entry, elem);
         if (pg_round_down(eip) != fte->virtual_page) {
             pagedir_set_accessed(cur->pagedir, fte->virtual_page, false);
-            pagedir_set_accessed(cur->pagedir, ptov(compute_frame_entry_no(fte)*PGSIZE), false)
+            pagedir_set_accessed(cur->pagedir, ptov(compute_frame_entry_no(fte)*PGSIZE), false);
         }
         list_push_back(&frame_in_use_queue, &fte->elem);
         
