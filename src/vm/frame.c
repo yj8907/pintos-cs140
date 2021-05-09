@@ -142,7 +142,7 @@ evict_frame(void *frame, size_t page_cnt)
     } else if (va->data_type == DISK_RW) {
         ASSERT(va->file != NULL);
         if (pagedir_is_dirty(thread_current()->pagedir, va->vm_start))
-//            file_write_at(va->file, va->vm_start, va->content_bytes, va->file_pos);
+            file_write_at(va->file, va->vm_start, va->content_bytes, va->file_pos);
         vm_update_page(fte->holder, fte->virtual_page, ONDISK, 0);
     }
     falloc_free_frame(frame);
