@@ -176,7 +176,8 @@ next_frame_to_evict(void *eip, size_t page_cnt)
     
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     while (pagedir_is_accessed(cur->pagedir, fte->virtual_page) ||
-           pg_round_down(eip) == fte->virtual_page) {
+           pagedir_is_accessed(cur->pagedir, ptov(compute_frame_entry_no(fte)*PGSIZE))
+           pg_round_down(eip) == fte->virtual_page ) {
         fte = list_entry(list_pop_front(&frame_in_use_queue), struct frame_table_entry, elem);
         if (pg_round_down(eip) != fte->virtual_page) {
             pagedir_set_accessed(cur->pagedir, fte->virtual_page, false); }
@@ -184,12 +185,6 @@ next_frame_to_evict(void *eip, size_t page_cnt)
         
         fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     }
-    
-    uint32_t *pde = fte->holder->pagedir + pd_no(eip);
-    ASSERT(*pde & PTE_P);
-    uint32_t *pte = pde_get_pt (*pde) + pt_no(eip);
-
-        if (*pte == compute_frame_entry_no(fte)*PGSIZE) PANIC("test");
         
     printf("eip:0x%08x, vm: 0x%08x, frame: 0x%08x\n", eip, fte->virtual_page, compute_frame_entry_no(fte)*PGSIZE);
     return ptov(compute_frame_entry_no(fte)*PGSIZE);
