@@ -104,10 +104,10 @@ kill (struct intr_frame *f)
       output1 = ptov(*pte);
       printf("eip frame: 0x%08x, output: 0x%08x, output1: 0x%08x \n", *pte, *output, *output1);
             
+      intr_dump_frame (f);
       PANIC ("%s: dying due to interrupt %#04x (%s).\n",
               thread_name (), f->vec_no, intr_name (f->vec_no));
-      intr_dump_frame (f);
-      thread_exit (); 
+//      thread_exit ();
 
     case SEL_KCSEG:
       /* Kernel's code segment, which indicates a kernel bug.
