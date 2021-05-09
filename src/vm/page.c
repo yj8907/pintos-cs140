@@ -221,7 +221,7 @@ bool load_from_file(struct vm_area* va, void* kpage)
 {
     if (kpage == NULL || va == NULL)
       return false;
-    printf("kpage: 0x%08x\n", kpage);
+    
     ASSERT(va->content_bytes <= PGSIZE);
     /* Load this page. */
     if (file_read_at (va->file, kpage, va->content_bytes, va->file_pos) != (int) va->content_bytes) return false;

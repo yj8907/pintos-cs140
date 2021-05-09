@@ -104,7 +104,7 @@ kill (struct intr_frame *f)
       output1 = ptov(*pte);
       printf("eip frame: 0x%08x, output: 0x%08x, output1: 0x%08x \n", *pte, *output, *output1);
             
-      printf ("%s: dying due to interrupt %#04x (%s).\n",
+      PANIC ("%s: dying due to interrupt %#04x (%s).\n",
               thread_name (), f->vec_no, intr_name (f->vec_no));
       intr_dump_frame (f);
       thread_exit (); 
@@ -189,7 +189,7 @@ page_fault (struct intr_frame *f)
       
       page_not_present_handler(fault_addr, f->eip);
       if ( f->cs == 0x001b && fault_addr==0x08049000 )
-          PANIC("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
+          printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
       return;
   }
     
