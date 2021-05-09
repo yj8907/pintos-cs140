@@ -256,7 +256,7 @@ page_not_present_handler(void *addr, void *eip)
         if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test13\n");
         if (va->data_type != DISK_RW) {
          load_frame(kpage, 1);
-            if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test16\n");
+            if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test16, vm: 0x%08x\n", addr);
         }
         else {
             load_from_file(va, kpage);
