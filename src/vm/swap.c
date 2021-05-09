@@ -51,7 +51,7 @@ swap_init(void)
     swap_block_size = block_size(swap_block);
     
     nblock_pg = PGSIZE / BLOCK_SECTOR_SIZE;
-    swap_size = swap_block_size/nblock_pg;
+    swap_size = DIV_ROUND_DOWN(swap_block_size, nblock_pg);
         
     size_t bm_pages = DIV_ROUND_UP (bitmap_buf_size (swap_size), PGSIZE);
     void *used_map_base = palloc_get_multiple(PAL_ZERO, bm_pages);
@@ -96,7 +96,7 @@ swap_allocate(void)
     uint32_t swap_area = 0;
     
     if (slot_index != BITMAP_ERROR)
-        return slot_index << (SP_SHIFT + SP_AREABITS) + swap_area << SP_SHIFT;
+        return (slot_index << (SP_SHIFT + SP_AREABITS)) + (swap_area << SP_SHIFT);
     else
         PANIC("swap_allocate: out of slots");
 };
