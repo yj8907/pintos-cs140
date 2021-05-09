@@ -144,7 +144,7 @@ evict_frame(void *frame, size_t page_cnt)
     if (va->data_type != DISK_RW) {
         swap_slot_t swap_slot = swap_allocate();
         swap_write(swap_slot, fte->virtual_page);
-        
+        if (vtop(frame) == 0x0030d000) printf("slot: %d", swap_slot);
         vm_update_page(fte->holder, fte->virtual_page, ONDISK, swap_slot);
     } else if (va->data_type == DISK_RW) {
         ASSERT(va->file != NULL);
@@ -168,8 +168,9 @@ load_frame(void *frame, size_t page_cnt)
     struct vm_area *va = fetch_vm_area_for_frame(fte);
     ASSERT(va->state == ONDISK);
     
-    if (va->data_type == ANONYMOUS) {
+    if (va->data_type != DISK_RW) {
         /* since virtual page has not been installed, need to use frame page */
+        if (vtop(frame) == 0x0030d000) printf("slot: %d", va->swap_location);
         swap_read(va->swap_location, frame);
         swap_free(va->swap_location);
     }
