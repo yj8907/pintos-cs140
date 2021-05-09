@@ -245,7 +245,7 @@ page_not_present_handler(void *addr, void *eip)
     if (va->state == VALID) {
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
-                printf("page_not_present_handler3: addr: 0x%08x", addr)
+                printf("page_not_present_handler3: addr: 0x%08x", addr);
                 force_exit();
             }
         }
@@ -259,7 +259,7 @@ page_not_present_handler(void *addr, void *eip)
         va->state = ALLOCATED;
     }
     
-    if (!install_page(page, kpage, va->protection == WRITE ? true : false)) {printf("page_not_present_handler4: addr: 0x%08x", addr) force_exit();}
+    if (!install_page(page, kpage, va->protection == WRITE ? true : false)) {printf("page_not_present_handler4: addr: 0x%08x", addr); force_exit();}
         
 }
 
