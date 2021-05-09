@@ -565,6 +565,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
       /* Get a page of memory. */
 #ifdef VM
+         printf("upage: 0x%08x\n", upage);
         if (vm_alloc_page(upage, thread_current()->vm_mm, 1, PAL_USER, DISK_RDONLY, file, page_read_bytes, writable) == NULL)
             return false;
         ofs += page_read_bytes;
