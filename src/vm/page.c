@@ -262,7 +262,7 @@ page_not_present_handler(void *addr, void *eip)
     }
     if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test14\n");
     if (!install_page(page, kpage, va->protection == WRITE ? true : false)) {printf("page_not_present_handler4: addr: 0x%08x", addr); force_exit();}
-        
+    if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test15\n");
 }
 
 void
