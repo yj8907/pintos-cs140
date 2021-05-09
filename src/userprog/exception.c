@@ -171,7 +171,7 @@ page_fault (struct intr_frame *f)
 
   uint32_t stack_sz_limit = 0x04000000;
         
-    if ( f->cs == 0x001b && f->eip==0x804a002 )
+    if ( f->cs == 0x001b && f->eip==0x0804a002 )
       printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
   
   if (not_present) {
