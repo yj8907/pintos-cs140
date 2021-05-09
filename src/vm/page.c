@@ -245,6 +245,7 @@ page_not_present_handler(void *addr, void *eip)
     if (va->state == VALID) {
         if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test12\n");
         if (va->data_type != ANONYMOUS) {
+            printf("load_from_file1: 0x%08x, type: %d \n", addr, va->data_type);
             if (!load_from_file(va, kpage)) {
                 printf("page_not_present_handler3: addr: 0x%08x", addr);
                 force_exit();
@@ -259,6 +260,7 @@ page_not_present_handler(void *addr, void *eip)
             if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test16, vm: 0x%08x\n", addr);
         }
         else {
+            printf("load_from_file2: 0x%08x, type: %d \n", addr, va->data_type);
             load_from_file(va, kpage);
             if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test17\n");
         }
