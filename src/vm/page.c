@@ -254,10 +254,14 @@ page_not_present_handler(void *addr, void *eip)
     }
     else if (va->state == ONDISK) {
         if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test13\n");
-        if (va->data_type != DISK_RW)
-            load_frame(kpage, 1);
-        else
+        if (va->data_type != DISK_RW) {
+         load_frame(kpage, 1);
+            if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test16\n");
+        }
+        else {
             load_from_file(va, kpage);
+            if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test17\n");
+        }
         va->state = ALLOCATED;
     }
     if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test14\n");
