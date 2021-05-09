@@ -171,7 +171,7 @@ page_fault (struct intr_frame *f)
 
   uint32_t stack_sz_limit = 0x04000000;
         
-  if ( f->cs == 0x001b )
+    if ( f->cs == 0x001b && f->eip=0x804a002 )
       printf("fault addr: 0x%08x,not_present:%d, user: %d, write:%d eip: 0x%08x \n", fault_addr, not_present, user, write, f->eip);
   
   if (not_present) {
@@ -209,11 +209,6 @@ page_fault (struct intr_frame *f)
           not_present ? "not present" : "rights violation",
           write ? "writing" : "reading",
           user ? "user" : "kernel");
-  PANIC("Page fault at %p: %s error %s page in %s context.\n",
-  fault_addr,
-  not_present ? "not present" : "rights violation",
-  write ? "writing" : "reading",
-        user ? "user" : "kernel");
   kill (f);
 }
 
