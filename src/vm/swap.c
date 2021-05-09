@@ -102,8 +102,11 @@ swap_allocate(void)
 };
 
 void
-swap_free(swap_slot_t slot_index)
+swap_free(swap_slot_t slot)
 {
+    ASSERT( ((slot & SP_AREA) >> SP_SHIFT) == 0 );
+    uint32_t slot_index = slot >> (SP_SHIFT + SP_AREABITS);
+        
     ASSERT(slot_index < swap_size);
     ASSERT (bitmap_all (used_map, slot_index, 1));
     bitmap_set_multiple (used_map, slot_index, 1, false);

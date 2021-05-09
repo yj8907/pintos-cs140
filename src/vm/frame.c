@@ -166,14 +166,15 @@ load_frame(void *frame, size_t page_cnt)
     size_t frame_no = compute_frame_number(frame);
     struct frame_table_entry *fte = (frame_table+frame_no);
     struct vm_area *va = fetch_vm_area_for_frame(fte);
-    ASSERT(va->state == ONDISK);
     
-    if (va->data_type != DISK_RW) {
-        /* since virtual page has not been installed, need to use frame page */
-        if (vtop(frame) == 0x0030d000) printf("slot: %d", va->swap_location);
-        swap_read(va->swap_location, frame);
-        swap_free(va->swap_location);
-    }
+    ASSERT(va->state == ONDISK);
+    ASSERT(va->data_type != DISK_RW);
+    
+    /* since virtual page has not been installed, need to use frame page */
+    if (vtop(frame) == 0x0030d000) printf("slot: %d", va->swap_location);
+    swap_read(va->swap_location, frame);
+    swap_free(va->swap_location);
+    
 }
 
 /* implment page replacement policy: second chance and working page pinning */
