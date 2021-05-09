@@ -31,6 +31,8 @@ slot_to_sector(swap_slot_t slot)
     uint32_t slot_index = slot >> (SP_SHIFT + SP_AREABITS);
     block_sector_t sector_index = slot_index * nblock_pg;
     
+    if (sector_index >= swap_block_size) PANIC("slot: %d, swap_block_size:%d\n ", slot, swap_block_size);
+    
     ASSERT (sector_index < swap_block_size);
     return sector_index;
 }
@@ -51,7 +53,7 @@ swap_init(void)
     swap_block_size = block_size(swap_block);
     
     nblock_pg = PGSIZE / BLOCK_SECTOR_SIZE;
-    swap_size = DIV_ROUND_DOWN(swap_block_size, nblock_pg);
+    swap_size = swap_block_size/nblock_pg;
         
     size_t bm_pages = DIV_ROUND_UP (bitmap_buf_size (swap_size), PGSIZE);
     void *used_map_base = palloc_get_multiple(PAL_ZERO, bm_pages);
