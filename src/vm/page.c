@@ -240,8 +240,10 @@ page_not_present_handler(void *addr, void *eip)
     if (va->state == ALLOCATED) {printf("page_not_present_handler2: addr: 0x%08x", addr); force_exit();}
     
     void *kpage = falloc_get_frame(page, eip, is_user_vaddr(addr) ? PAL_USER | PAL_ZERO : PAL_ZERO);
-//    if (vtop(kpage) == 0x00273000 && pg_round_down(addr) != 0x0804a000) PANIC("vm page: 0x%08x, eip: 0x%08x\n", addr, eip);
+    if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test11\n");
+    
     if (va->state == VALID) {
+        if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test12\n");
         if (va->data_type != ANONYMOUS) {
             if (!load_from_file(va, kpage)) {
                 printf("page_not_present_handler3: addr: 0x%08x", addr);
@@ -251,13 +253,14 @@ page_not_present_handler(void *addr, void *eip)
         va->state = ALLOCATED;
     }
     else if (va->state == ONDISK) {
+        if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test13\n");
         if (va->data_type != DISK_RW)
             load_frame(kpage, 1);
         else
             load_from_file(va, kpage);
         va->state = ALLOCATED;
     }
-    
+    if (kpage != NULL && vtop(kpage) == 0x0030d000) printf("test14\n");
     if (!install_page(page, kpage, va->protection == WRITE ? true : false)) {printf("page_not_present_handler4: addr: 0x%08x", addr); force_exit();}
         
 }
