@@ -100,12 +100,8 @@ void falloc_free_frame(void *frame)
     ASSERT(fte->holder != NULL && fte->virtual_page != NULL);
     
     /* free the page and update pagedir */
-    uint32_t *pde = fte->holder->pagedir + pd_no(fte->virtual_page);
-    ASSERT(*pde & PTE_P);
-    uint32_t *pte = pde_get_pt (*pde) + pt_no(fte->virtual_page);
-    ASSERT(*pte & PTE_P);
-    *pte = 0x0;
-    
+    pagedir_clear_page(fte->holder->pagedir, fte->virtual_page);
+
     palloc_free_page(frame);
     
     fte->holder = NULL;
