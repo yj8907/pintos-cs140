@@ -10,11 +10,13 @@
 
 #include "frame.h"
 #include "threads/pte.h"
+#include "threads/synch.h"
 #include "userprog/pagedir.h"
 #include "vm/page.h"
 #include "vm/swap.h"
 
 static size_t frame_table_page_cnt;
+static struct lock frame_table_lock;
 static struct frame_table_entry *frame_table;
 static struct list frame_in_use_queue;
 
@@ -47,6 +49,7 @@ frame_init(void)
     frame_table = palloc_get_multiple(PAL_ASSERT | PAL_ZERO, frame_table_page_cnt);
     
     list_init (&frame_in_use_queue);
+    lock_init (&frame_table_lock);
 }
 
 static inline bool
@@ -168,6 +171,7 @@ next_frame_to_evict(void *eip, size_t page_cnt)
     ASSERT(page_cnt == 1);
     struct thread *cur = thread_current();
     
+    lock_acquire(&frame_table_lock);
     struct frame_table_entry *fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     while (pagedir_is_accessed(cur->pagedir, fte->virtual_page) ||
            pagedir_is_accessed(cur->pagedir, ptov(compute_frame_entry_no(fte)*PGSIZE)) ||
@@ -182,7 +186,9 @@ next_frame_to_evict(void *eip, size_t page_cnt)
         
         fte = list_entry(list_front(&frame_in_use_queue), struct frame_table_entry, elem);
     }
-        
+    
+    lock_release(&frame_table_lock);
+    
     return ptov(compute_frame_entry_no(fte)*PGSIZE);
 }
 
