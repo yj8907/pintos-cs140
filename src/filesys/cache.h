@@ -23,7 +23,7 @@ void cache_init(void);
 
 void *cache_allocate_sector(block_sector_t, cache_action);
 
-void cache_read(void *);
-void cache_write(void *);
+void cache_read(void *, void*, size_t, size_t);
+void cache_write(void *, void*, size_t, size_t);
 
 #endif /* cache_h */
