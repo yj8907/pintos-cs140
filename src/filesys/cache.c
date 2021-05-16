@@ -21,19 +21,20 @@
 static void *cache_base;
 static void *used_map;
 
-static size_t block_to_evict(void);
-static void evict_block(size_t);
+static void evict_block();
 
 static size_t fetch_new_cache_block(void);
 
-static void init_cache_block(size_t, size_t);
-static void setup_cache_block(size_t, size_t);
+static void init_cache_block(struct cache_entry*);
+static void setup_cache_block(struct cache_entry*, size_t, enum cache_action);
 
 static size_t cache_lookup(block_sector_t);
 static size_t compute_cache_index(void *);
 static void load_cache(void*);
 
 static list cache_in_use;
+static list_elem *clock_iter;
+
 static struct lock cache_lock;
 
 struct cache_entry {
@@ -43,8 +44,9 @@ struct cache_entry {
     bool dirty;
     bool loaded;
     int sector_no;
-    size_t cache_no;
-    uint32_t ref;
+    
+    uint32_t read_ref;
+    uint32_t write_ref;
     
     enum cache_action state;
     
@@ -59,11 +61,13 @@ void
 cache_init(void)
 {
     list_init (&cache_in_use);
+    clock_iter = NULL;
+    
     lock_init(&cache_lock);
     
     /* initialize cach table */
     cache_table = malloc(sizeof(struct cache_entry) * CACHE_NBLOCKS);
-    for (size_t i = 0; i < CACHE_NBLOCKS; i++) init_cache_block(i);
+    for (size_t i = 0; i < CACHE_NBLOCKS; i++) init_cache_block(cache_table+i);
     
     /* initialize cache */
     size_t cache_pages = DIV_ROUND_UP(BLOCK_SECTOR_SIZE * CACHE_NBLOCKS, PGSIZE);
@@ -85,8 +89,7 @@ compute_cache_index(void *cache)
 static void
 load_cache(void *cache)
 {
-    size_t cache_index = compute_cache_index(cache);
-    struct cache_entry* e = cache_table + cache_index;
+    struct cache_entry* e = cache_table + compute_cache_index(cache);
     
     /* read data into memory */
     if (!e->loaded) block_read (fs_device, e->sector_no, cache);
@@ -107,11 +110,18 @@ cache_allocate_sector(block_sector_t block, cache_action action)
             cache_index = -1;
             lock_release(&e->block_lock);
         } else {
+            
             if (action == WRITE) {
-                while (e->state != NOOP) cond_wait(&write_cv, &e->block_lock);
+                e->write_ref++;
+                if (e->state != NOOP || e->write_ref > 1) {
+                    while (e->state != NOOP) cond_wait(&write_cv, &e->block_lock);
+                }
             } else if (action == READ) {
-                while(e->state == WRITE) cond_wait(&read_cv, &e->block_lock);
-                e->ref++;
+                e->read_ref++;
+                if (e->write_ref > 0) {
+                    do { cond_wait(&read_cv, &e->block_lock);
+                    } while(e->state == WRITE);
+                }
             }
             
             e->state = action;
@@ -124,7 +134,7 @@ cache_allocate_sector(block_sector_t block, cache_action action)
     size_t cache_index = fetch_new_cache_block();
     
     /* update cache state */
-    setup_cache_block(cache_index, block, action);
+    setup_cache_block(cache_table+cache_index, block, action);
     
     return cache_base + cache_index*BLOCK_SECTOR_SIZE;
 }
@@ -134,12 +144,16 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
     load_cache(cache);
+    struct cache_entry* e = cache_table + cache_index;
     memcpy (buffer, cache + offset, size);
     
     lock_acquire(&e->block_lock);
-    e->ref--;
-    if (e->ref == 0) e->state = NOOP;
-    cond_signal(&e->write_cv, &e->block_lock);
+    e->read_ref--;
+    e->state = NOOP;
+    if (e->write_ref > 0)
+        cond_signal(&e->write_cv, &e->block_lock);
+    else
+        cond_signal(&e->read_cv, &e->block_lock);
     lock_release(&e->block_lock);
 }
 
@@ -148,11 +162,17 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
     load_cache(cache);
+    struct cache_entry* e = cache_table + cache_index;
     memcpy (cache+offset, buffer, size);
     
     lock_acquire(&e->block_lock);
+    e->write_ref--;
     e->state = NOOP;
-    cond_signal(&e->read_cv, &e->block_lock);
+    e->dirty = true;
+    if (e->read_ref > 0)
+        cond_signal(&e->read_cv, &e->block_lock);
+    else
+        cond_signal(&e->write_cv, &e->block_lock);
     lock_release(&e->block_lock);
 }
 
@@ -183,8 +203,7 @@ fetch_new_cache_block(void)
     lock_release (&cache_lock);
     
     if (cache_index == BITMAP_ERROR) {
-        size_t cache_block = block_to_evict();
-        evict_block(cache_block);
+        evict_block();
         
         lock_acquire (&cache_lock);
         size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
@@ -194,15 +213,14 @@ fetch_new_cache_block(void)
 }
 
 static void
-init_cache_block(size_t cache_index)
+init_cache_block(struct cache_entry *e)
 {
-    struct cache_entry *e = cache_table + cache_index;
     e->dirty = false;
     e->loaded = false;
     
-    e->cache_no = i;
     e->sector_no = -1;
-    e->ref = 0;
+    e->read_ref = 0;
+    e->write_ref = 0;
     
     e->state = NOOP;
     lock_init(&e->block_lock);
@@ -211,18 +229,49 @@ init_cache_block(size_t cache_index)
 }
 
 static void
-setup_cache_block(size_t cache_index, size_t block_sector, cache_action action)
+setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action action)
 {
-    struct cache_entry* e = cache_table + cache_index;
     lock_acquire(&e->block_lock);
     
     e->state = action;
     e->dirty = false;
-    e->cache_no = i;
-    e->sector_no = -1;
-    e->ref = 0;
+    e->loaded = false;
+    
+    e->sector_no = block_sector;
+    e->read_ref = 0;
+    e->write_ref = 0;
     
     if (action == READ) e->ref++;
     lock_release(&e->block_lock);
+}
+
+
+static void
+evict_block(size_t cache_index)
+{
+    struct cache_entry *e;
+    
+    /* acquire block to evict */
+    lock_acquire (&cache_lock);
+    while (true) {
+        e = list_entry(clock_iter, struct cache_entry, elem);
+        if (lock_try_acquire(&e->block_lock)){
+            if (e->read_ref == 0 && e->write_ref == 0) break;
+            lock_release(&e->block_lock);
+        }
+        
+        if (clock_iter == NULL)
+            clock_iter = list_front(&frame_in_use_queue)
+        else
+            clock_iter = list_next(clock_iter);
+    }
+    clock_iter = list_remove(clock_iter);
+    lock_release (&cache_lock);
+    
+    /* evict block */
+    if (e->dirty) block_write (fs_device, e->sector_no, cache_base+(e-cache_table)*BLOCK_SECTOR_SIZE);
+    setup_cache_block(e, -1, NOOP);
+    lock_release(&e->block_lock);
+    
 }
 
