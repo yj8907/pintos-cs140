@@ -6,7 +6,7 @@
 #include "filesys/free-map.h"
 #include "filesys/inode.h"
 #include "filesys/directory.h"
-#include "filesys/cache.h"
+//#include "filesys/cache.h"
 
 /* Partition that contains the file system. */
 struct block *fs_device;
