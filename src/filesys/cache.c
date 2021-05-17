@@ -116,12 +116,12 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
             if (action == CACHE_WRITE) {
                 e->write_ref++;
                 if (e->state != NOOP || e->write_ref > 1) {
-                    while (e->state != NOOP) cond_wait(&write_cv, &e->block_lock);
+                    while (e->state != NOOP) cond_wait(&e->write_cv, &e->block_lock);
                 }
             } else if (action == CACHE_READ) {
                 e->read_ref++;
                 if (e->write_ref > 0) {
-                    do { cond_wait(&read_cv, &e->block_lock);
+                    do { cond_wait(&e->read_cv, &e->block_lock);
                     } while(e->state == CACHE_WRITE);
                 }
             }
@@ -133,7 +133,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     }
     
     /* obtain new block */    
-    size_t cache_index = fetch_new_cache_block();
+    cache_index = fetch_new_cache_block();
     
     /* update cache state */
     setup_cache_block(cache_table+cache_index, block, action);
@@ -206,12 +206,15 @@ fetch_new_cache_block(void)
     
     if (cache_index == BITMAP_ERROR) {
         evict_block();
+        size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
+        ASSERT(cache_index != BITMAP_ERROR);
         
         lock_acquire (&cache_lock);
-        size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
+        list_push_back(&cache_in_use, &(cache_table+cache_index)->elem);
         lock_release (&cache_lock);
-        ASSERT(cache_index != BITMAP_ERROR);
     }
+    
+    return cache_index;
 }
 
 static void
@@ -243,7 +246,8 @@ setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action 
     e->read_ref = 0;
     e->write_ref = 0;
     
-    if (action == CACHE_READ) e->ref++;
+    if (action == CACHE_READ) e->read_ref++;
+    if (action == CACHE_WRITE) e->write_ref++;
     lock_release(&e->block_lock);
 }
 
@@ -263,7 +267,7 @@ evict_block(size_t cache_index)
         }
         
         if (clock_iter == NULL)
-            clock_iter = list_front(&frame_in_use_queue)
+            clock_iter = list_front(&cache_in_use);
         else
             clock_iter = list_next(clock_iter);
     }
@@ -271,9 +275,17 @@ evict_block(size_t cache_index)
     lock_release (&cache_lock);
     
     /* evict block */
-    if (e->dirty) block_write (fs_device, e->sector_no, cache_base+(e-cache_table)*BLOCK_SECTOR_SIZE);
+    /* write to disk if dirty */
+    size_t cache_index = e-cache_table;
+    if (e->dirty) block_write (fs_device, e->sector_no, cache_base+cache_index*BLOCK_SECTOR_SIZE);
+    memset(cache_base+cache_index*BLOCK_SECTOR_SIZE, 0, BLOCK_SECTOR_SIZE); /* set memory to all zeros*/
+    
     setup_cache_block(e, -1, NOOP);
     lock_release(&e->block_lock);
+    
+    /* free bitmap */
+    ASSERT (bitmap_all (used_map, cache_index, 1));
+    bitmap_set_multiple (used_map, cache_index, 1, false);
     
 }
 
