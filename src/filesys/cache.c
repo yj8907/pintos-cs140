@@ -19,25 +19,6 @@
 
 #include "cache.h"
 
-static void *cache_base;
-static void *used_map;
-
-static void evict_block();
-
-static size_t fetch_new_cache_block(void);
-
-static void init_cache_block(struct cache_entry*);
-static void setup_cache_block(struct cache_entry*, size_t, enum cache_action);
-
-static size_t cache_lookup(block_sector_t);
-static size_t compute_cache_index(void *);
-static struct cache_entry* load_cache(void*);
-
-static struct list cache_in_use;
-static struct list_elem *clock_iter;
-
-static struct lock cache_lock;
-
 struct cache_entry {
     struct list_elem elem;
     
@@ -55,6 +36,24 @@ struct cache_entry {
     struct condition read_cv;
     struct condition write_cv;
 };
+
+static void *cache_base;
+static void *used_map;
+
+static void evict_block();
+static size_t fetch_new_cache_block(void);
+
+static void init_cache_block(struct cache_entry*);
+static void setup_cache_block(struct cache_entry*, size_t, enum cache_action);
+
+static size_t cache_lookup(block_sector_t);
+static size_t compute_cache_index(void *);
+static struct cache_entry* load_cache(void*);
+
+static struct list cache_in_use;
+static struct list_elem *clock_iter;
+
+static struct lock cache_lock;
 
 static struct cache_entry *cache_table;
 
