@@ -218,7 +218,7 @@ fetch_new_cache_block(void)
 }
 
 static void
-init_cache_block(struct cache_entry* e);
+init_cache_block(struct cache_entry* e)
 {
     e->dirty = false;
     e->loaded = false;
