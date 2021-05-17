@@ -253,7 +253,7 @@ setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action 
 
 
 static void
-evict_block(size_t cache_index)
+evict_block()
 {
     struct cache_entry *e;
     
