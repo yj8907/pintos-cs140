@@ -57,6 +57,40 @@ struct cache_entry {
 
 static struct cache_entry *cache_table;
 
+static void
+init_cache_block(struct cache_entry* e)
+{
+    e->dirty = false;
+    e->loaded = false;
+    
+    e->sector_no = -1;
+    e->read_ref = 0;
+    e->write_ref = 0;
+    
+    e->state = NOOP;
+    lock_init(&e->block_lock);
+    cond_init(&e->read_cv);
+    cond_init(&e->write_cv);
+}
+
+static void
+setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action action)
+{
+    lock_acquire(&e->block_lock);
+    
+    e->state = action;
+    e->dirty = false;
+    e->loaded = false;
+    
+    e->sector_no = block_sector;
+    e->read_ref = 0;
+    e->write_ref = 0;
+    
+    if (action == CACHE_READ) e->read_ref++;
+    if (action == CACHE_WRITE) e->write_ref++;
+    lock_release(&e->block_lock);
+}
+
 void
 cache_init(void)
 {
@@ -215,40 +249,6 @@ fetch_new_cache_block(void)
     }
     
     return cache_index;
-}
-
-static void
-init_cache_block(struct cache_entry* e)
-{
-    e->dirty = false;
-    e->loaded = false;
-    
-    e->sector_no = -1;
-    e->read_ref = 0;
-    e->write_ref = 0;
-    
-    e->state = NOOP;
-    lock_init(&e->block_lock);
-    cond_init(&e->read_cv);
-    cond_init(&e->write_cv);
-}
-
-static void
-setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action action)
-{
-    lock_acquire(&e->block_lock);
-    
-    e->state = action;
-    e->dirty = false;
-    e->loaded = false;
-    
-    e->sector_no = block_sector;
-    e->read_ref = 0;
-    e->write_ref = 0;
-    
-    if (action == CACHE_READ) e->read_ref++;
-    if (action == CACHE_WRITE) e->write_ref++;
-    lock_release(&e->block_lock);
 }
 
 
