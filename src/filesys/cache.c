@@ -8,6 +8,7 @@
 #include <bitmap.h>
 #include <round.h>
 #include <list.h>
+#include <string.h>
 
 #include "lib/kernel/hash.h"
 #include "threads/vaddr.h"
