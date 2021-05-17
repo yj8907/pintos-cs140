@@ -30,10 +30,10 @@ static void setup_cache_block(struct cache_entry*, size_t, enum cache_action);
 
 static size_t cache_lookup(block_sector_t);
 static size_t compute_cache_index(void *);
-static void load_cache(void*);
+static struct cache_entry* load_cache(void*);
 
-static list cache_in_use;
-static list_elem *clock_iter;
+static struct list cache_in_use;
+static struct list_elem *clock_iter;
 
 static struct lock cache_lock;
 
@@ -53,7 +53,7 @@ struct cache_entry {
     struct lock block_lock;
     struct condition read_cv;
     struct condition write_cv;
-}
+};
 
 static struct cache_entry *cache_table;
 
@@ -86,17 +86,19 @@ compute_cache_index(void *cache)
     return (cache - cache_base) / BLOCK_SECTOR_SIZE;
 }
 
-static void
+static struct cache_entry*
 load_cache(void *cache)
 {
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     
     /* read data into memory */
     if (!e->loaded) block_read (fs_device, e->sector_no, cache);
+    
+    return e;
 }
 
 void*
-cache_allocate_sector(block_sector_t block, cache_action action)
+cache_allocate_sector(block_sector_t block, enum cache_action action)
 {
     size_t cache_index;
     cache_index = cache_lookup(block);
@@ -111,16 +113,16 @@ cache_allocate_sector(block_sector_t block, cache_action action)
             lock_release(&e->block_lock);
         } else {
             
-            if (action == WRITE) {
+            if (action == CACHE_WRITE) {
                 e->write_ref++;
                 if (e->state != NOOP || e->write_ref > 1) {
                     while (e->state != NOOP) cond_wait(&write_cv, &e->block_lock);
                 }
-            } else if (action == READ) {
+            } else if (action == CACHE_READ) {
                 e->read_ref++;
                 if (e->write_ref > 0) {
                     do { cond_wait(&read_cv, &e->block_lock);
-                    } while(e->state == WRITE);
+                    } while(e->state == CACHE_WRITE);
                 }
             }
             
@@ -143,11 +145,11 @@ void
 cache_read(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
-    load_cache(cache);
-    struct cache_entry* e = cache_table + cache_index;
+    struct cache_entry* e = load_cache(cache);
     memcpy (buffer, cache + offset, size);
     
     lock_acquire(&e->block_lock);
+    ASSERT(e->state == CACHE_READ);
     e->read_ref--;
     e->state = NOOP;
     if (e->write_ref > 0)
@@ -161,11 +163,11 @@ void
 cache_write(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
-    load_cache(cache);
-    struct cache_entry* e = cache_table + cache_index;
+    struct cache_entry* e = load_cache(cache);
     memcpy (cache+offset, buffer, size);
     
     lock_acquire(&e->block_lock);
+    ASSERT(e->state == CACHE_WRITE);
     e->write_ref--;
     e->state = NOOP;
     e->dirty = true;
@@ -241,7 +243,7 @@ setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action 
     e->read_ref = 0;
     e->write_ref = 0;
     
-    if (action == READ) e->ref++;
+    if (action == CACHE_READ) e->ref++;
     lock_release(&e->block_lock);
 }
 

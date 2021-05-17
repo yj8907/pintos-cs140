@@ -15,13 +15,13 @@
 enum cache_action
 {
     NOOP,
-    READ,
-    WRITE
+    CACHE_READ,
+    CACHE_WRITE
 };
 
 void cache_init(void);
 
-void *cache_allocate_sector(block_sector_t, cache_action);
+void *cache_allocate_sector(block_sector_t, enum cache_action);
 
 void cache_read(void *, void*, size_t, size_t);
 void cache_write(void *, void*, size_t, size_t);
