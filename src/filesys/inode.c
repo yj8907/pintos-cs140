@@ -5,6 +5,7 @@
 #include <string.h>
 #include "filesys/filesys.h"
 #include "filesys/free-map.h"
+#include "filesys/cache.h"
 #include "threads/malloc.h"
 
 /* Identifies an inode. */
