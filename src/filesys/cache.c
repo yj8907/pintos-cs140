@@ -175,8 +175,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     /* obtain new block */    
     cache_index = fetch_new_cache_block();
     printf("cache_allocate_sector ckpt2\n");
-    /* update cache state */
-    ASSERT(cache_index > -1);
+    /* update cache state */    
     setup_cache_block(cache_table+cache_index, block, action);
     
     return cache_base + cache_index*BLOCK_SECTOR_SIZE;
