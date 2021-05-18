@@ -244,20 +244,17 @@ static size_t
 fetch_new_cache_block(void)
 {
     /* obtain new block */
-    lock_acquire (&cache_lock);
     size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
-    lock_release (&cache_lock);
     
     if (cache_index == BITMAP_ERROR) {
         evict_block();
-        
-        lock_acquire (&cache_lock);
         size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
         ASSERT(cache_index != BITMAP_ERROR);
-                
-        list_push_back(&cache_in_use, &(cache_table+cache_index)->elem);
-        lock_release (&cache_lock);
     }
+    
+    lock_acquire (&cache_lock);
+    list_push_back(&cache_in_use, &(cache_table+cache_index)->elem);
+    lock_release (&cache_lock);
     
     return cache_index;
 }
@@ -270,6 +267,7 @@ evict_block()
     printf("evict_block ckpt1\n");
     /* acquire block to evict */
     lock_acquire (&cache_lock);
+    ASSERT(!list_empty(&cache_in_use));
     printf("evict_block ckpt2\n");
     while (true) {
         if (clock_iter == NULL)
