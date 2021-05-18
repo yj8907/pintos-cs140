@@ -79,7 +79,7 @@ setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action 
     bool lock_held = true;
     if (!lock_held_by_current_thread(&e->block_lock)) {
       lock_acquire(&e->block_lock);
-        lock_held = false;
+      lock_held = false;
     }
     
     e->state = action;
@@ -176,7 +176,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     cache_index = fetch_new_cache_block();
     printf("cache_allocate_sector ckpt2, %d\n", cache_index);
     /* update cache state */
-    if (cache_index < 0) printf(cache_index);
+    ASSERT(cache_index > -1);
     setup_cache_block(cache_table+cache_index, block, action);
     printf("cache_allocate_sector ckpt3\n");
     return cache_base + cache_index*BLOCK_SECTOR_SIZE;
@@ -252,7 +252,7 @@ fetch_new_cache_block(void)
     
     if (cache_index == BITMAP_ERROR) {
         evict_block();
-        size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
+        cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
         ASSERT(cache_index != BITMAP_ERROR);
     }
     
