@@ -272,16 +272,16 @@ evict_block()
     lock_acquire (&cache_lock);
     printf("evict_block ckpt2\n");
     while (true) {
+        if (clock_iter == NULL)
+            clock_iter = list_front(&cache_in_use);
+        else
+            clock_iter = list_next(clock_iter);
+        
         e = list_entry(clock_iter, struct cache_entry, elem);
         if (lock_try_acquire(&e->block_lock)){
             if (e->read_ref == 0 && e->write_ref == 0) break;
             lock_release(&e->block_lock);
         }
-        
-        if (clock_iter == NULL)
-            clock_iter = list_front(&cache_in_use);
-        else
-            clock_iter = list_next(clock_iter);
     }
     clock_iter = list_remove(clock_iter);
     lock_release (&cache_lock);
