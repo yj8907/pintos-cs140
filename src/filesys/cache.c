@@ -130,10 +130,12 @@ load_cache(void *cache)
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     ASSERT(e->sector_no > -1);
     /* read data into memory */
+    lock_acquire(&e->block_lock);
     if (!e->loaded) {
         block_read (fs_device, e->sector_no, cache);
         e->loaded = true;
     }
+    lock_release(&e->block_lock);
     
     return e;
 }
