@@ -194,7 +194,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     printf("cache_read ckpt1, loaded: %d\n", (cache_table + compute_cache_index(cache))->loaded);
     struct cache_entry* e = load_cache(cache);
     memcpy (buffer, cache + offset, size);
-    printf("cache_read ckpt2, loaded: %d\n", e->loaded);
+    printf("cache_read ckpt2, loaded: %d, sector: %d\n", e->loaded,e->sector_no);
     
     lock_acquire(&e->block_lock);
     printf("cache_read ckpt3\n");
