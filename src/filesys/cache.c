@@ -135,7 +135,7 @@ load_cache(void *cache)
     if (!e->loaded) {
         printf("loading block2: %d\n", e->sector_no);
         block_read (fs_device, e->sector_no, cache);
-        e->loaded = true;
+//        e->loaded = true;
     }
     lock_release(&e->block_lock);
     
