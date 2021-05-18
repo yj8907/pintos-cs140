@@ -124,7 +124,7 @@ static struct cache_entry*
 load_cache(void *cache)
 {
     struct cache_entry* e = cache_table + compute_cache_index(cache);
-    
+    ASSERT(e->sector_no > -1);
     /* read data into memory */
     if (!e->loaded) block_read (fs_device, e->sector_no, cache);
     
@@ -170,6 +170,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     cache_index = fetch_new_cache_block();
     
     /* update cache state */
+    ASSERT(cache_index > -1);
     setup_cache_block(cache_table+cache_index, block, action);
     
     return cache_base + cache_index*BLOCK_SECTOR_SIZE;
@@ -188,7 +189,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     e->state = NOOP;
     if (e->write_ref > 0)
         cond_signal(&e->write_cv, &e->block_lock);
-    else
+    else if (e->read_ref > 0)
         cond_signal(&e->read_cv, &e->block_lock);
     lock_release(&e->block_lock);
 }
@@ -207,7 +208,7 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
     e->dirty = true;
     if (e->read_ref > 0)
         cond_signal(&e->read_cv, &e->block_lock);
-    else
+    else if (e->write_ref > 0)
         cond_signal(&e->write_cv, &e->block_lock);
     lock_release(&e->block_lock);
 }
@@ -240,10 +241,11 @@ fetch_new_cache_block(void)
     
     if (cache_index == BITMAP_ERROR) {
         evict_block();
-        size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
-        ASSERT(cache_index != BITMAP_ERROR);
         
         lock_acquire (&cache_lock);
+        size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
+        ASSERT(cache_index != BITMAP_ERROR);
+                
         list_push_back(&cache_in_use, &(cache_table+cache_index)->elem);
         lock_release (&cache_lock);
     }
