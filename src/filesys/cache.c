@@ -76,7 +76,11 @@ init_cache_block(struct cache_entry* e)
 static void
 setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action action)
 {
-    if (!lock_try_acquire(&e->block_lock)) ASSERT(lock_held_by_current_thread(&e->block_lock));
+    bool lock_held = true;
+    if (!lock_held_by_current_thread(&e->block_lock)) {
+      lock_acquire(&e->block_lock);
+        lock_held = false;
+    }
     
     e->state = action;
     e->dirty = false;
@@ -88,7 +92,7 @@ setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action 
     
     if (action == CACHE_READ) e->read_ref++;
     if (action == CACHE_WRITE) e->write_ref++;
-    lock_release(&e->block_lock);
+    if (!lock_held) lock_release(&e->block_lock);
 }
 
 void
