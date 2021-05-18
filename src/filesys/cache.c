@@ -203,11 +203,13 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 void
 cache_write(void *cache, void* buffer, size_t offset, size_t size)
 {
+    printf("cache_write ckpt1\n");
     /* read data into memory */
     struct cache_entry* e = load_cache(cache);
     memcpy (cache+offset, buffer, size);
-    
+    printf("cache_write ckpt2\n");
     lock_acquire(&e->block_lock);
+    printf("cache_write ckpt3\n");
     ASSERT(e->state == CACHE_WRITE);
     e->write_ref--;
     e->state = NOOP;
@@ -217,6 +219,7 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
     else if (e->write_ref > 0)
         cond_signal(&e->write_cv, &e->block_lock);
     lock_release(&e->block_lock);
+    printf("cache_write ckpt4\n");
 }
 
 
@@ -264,9 +267,10 @@ static void
 evict_block()
 {
     struct cache_entry *e;
-    
+    printf("evict_block ckpt1\n");
     /* acquire block to evict */
     lock_acquire (&cache_lock);
+    printf("evict_block ckpt2\n");
     while (true) {
         e = list_entry(clock_iter, struct cache_entry, elem);
         if (lock_try_acquire(&e->block_lock)){
@@ -281,7 +285,7 @@ evict_block()
     }
     clock_iter = list_remove(clock_iter);
     lock_release (&cache_lock);
-    
+    printf("evict_block ckpt3\n");
     /* evict block */
     /* write to disk if dirty */
     size_t cache_index = e-cache_table;
@@ -290,7 +294,7 @@ evict_block()
     
     setup_cache_block(e, -1, NOOP);
     lock_release(&e->block_lock);
-    
+    printf("evict_block ckpt4\n");
     /* free bitmap */
     ASSERT (bitmap_all (used_map, cache_index, 1));
     bitmap_set_multiple (used_map, cache_index, 1, false);
