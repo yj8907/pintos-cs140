@@ -191,10 +191,10 @@ void
 cache_read(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
-//    printf("cache_read ckpt1\n");
+    printf("cache_read ckpt1\n");
     struct cache_entry* e = load_cache(cache);
     memcpy (buffer, cache + offset, size);
-//    printf("cache_read ckpt2\n");
+    printf("cache_read ckpt2\n");
     
     lock_acquire(&e->block_lock);
 //    printf("cache_read ckpt3\n");
