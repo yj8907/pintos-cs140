@@ -178,7 +178,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     /* update cache state */
     if (cache_index < 0) printf(cache_index);
     setup_cache_block(cache_table+cache_index, block, action);
-    
+    printf("cache_allocate_sector ckpt3\n");
     return cache_base + cache_index*BLOCK_SECTOR_SIZE;
 }
 
