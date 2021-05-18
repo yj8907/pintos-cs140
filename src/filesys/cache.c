@@ -194,10 +194,10 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     printf("cache_read ckpt1\n");
     struct cache_entry* e = load_cache(cache);
     memcpy (buffer, cache + offset, size);
-    printf("cache_read ckpt2\n");
+    printf("cache_read ckpt2, loaded: %d\n", e->loaded);
     
     lock_acquire(&e->block_lock);
-//    printf("cache_read ckpt3\n");
+    printf("cache_read ckpt3\n");
 //    if (e->state != CACHE_READ) PANIC("state: %d\n", e->state);
     ASSERT(e->state == CACHE_READ);
     
@@ -208,7 +208,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     else if (e->read_ref > 0)
         cond_signal(&e->read_cv, &e->block_lock);
     lock_release(&e->block_lock);
-//    printf("cache_read ckpt4\n");
+    printf("cache_read ckpt4\n");
 }
 
 void
