@@ -46,7 +46,7 @@ static size_t fetch_new_cache_block(void);
 static void init_cache_block(struct cache_entry*);
 static void setup_cache_block(struct cache_entry*, size_t, enum cache_action);
 
-static size_t cache_lookup(block_sector_t);
+static int cache_lookup(block_sector_t);
 static size_t compute_cache_index(void *);
 static struct cache_entry* load_cache(void*);
 
@@ -134,7 +134,7 @@ load_cache(void *cache)
 void*
 cache_allocate_sector(block_sector_t block, enum cache_action action)
 {
-    size_t cache_index;
+    int cache_index;
     cache_index = cache_lookup(block);
     
     if (cache_index != -1){
@@ -170,7 +170,6 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     cache_index = fetch_new_cache_block();
     
     /* update cache state */
-    ASSERT(cache_index > -1);
     setup_cache_block(cache_table+cache_index, block, action);
     
     return cache_base + cache_index*BLOCK_SECTOR_SIZE;
@@ -214,7 +213,7 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
 }
 
 
-static size_t
+static int
 cache_lookup(block_sector_t block)
 {
     int cache_index = -1;
