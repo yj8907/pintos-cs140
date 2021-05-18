@@ -174,7 +174,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     
     /* obtain new block */    
     cache_index = fetch_new_cache_block();
-    printf("cache_allocate_sector ckpt2\n");
+    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
     /* update cache state */
     if (cache_index < 0) printf(cache_index);
     setup_cache_block(cache_table+cache_index, block, action);
