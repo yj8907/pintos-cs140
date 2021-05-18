@@ -130,7 +130,10 @@ load_cache(void *cache)
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     ASSERT(e->sector_no > -1);
     /* read data into memory */
-    if (!e->loaded) block_read (fs_device, e->sector_no, cache);
+    if (!e->loaded) {
+        block_read (fs_device, e->sector_no, cache);
+        e->loaded = true;
+    }
     
     return e;
 }
@@ -193,7 +196,9 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     
     lock_acquire(&e->block_lock);
 //    printf("cache_read ckpt3\n");
-    ASSERT(e->state == CACHE_READ);
+    if (e->state != CACHE_READ) printf("state: %d\n", e->state);
+//    ASSERT(e->state == CACHE_READ);
+    
     e->read_ref--;
     e->state = NOOP;
     if (e->write_ref > 0)
