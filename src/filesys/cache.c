@@ -76,7 +76,7 @@ init_cache_block(struct cache_entry* e)
 static void
 setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action action)
 {
-    lock_acquire(&e->block_lock);
+    if (!lock_try_acquire(&e->block_lock)) ASSERT(lock_held_by_current_thread(&e->block_lock));
     
     e->state = action;
     e->dirty = false;
@@ -286,7 +286,7 @@ evict_block()
     printf("evict_block ckpt3\n");
     /* evict block */
     /* write to disk if dirty */
-    size_t cache_index = e-cache_table;
+    size_t cache_index = e - cache_table;
     if (e->dirty) block_write (fs_device, e->sector_no, cache_base+cache_index*BLOCK_SECTOR_SIZE);
     memset(cache_base+cache_index*BLOCK_SECTOR_SIZE, 0, BLOCK_SECTOR_SIZE); /* set memory to all zeros*/
     
