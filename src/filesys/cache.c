@@ -131,8 +131,9 @@ load_cache(void *cache)
     ASSERT(e->sector_no > -1);
     /* read data into memory */
     lock_acquire(&e->block_lock);
+    printf("loading block1: %d\n", e->sector_no);
     if (!e->loaded) {
-        printf("loading block: %d\n", e->sector_no);
+        printf("loading block2: %d\n", e->sector_no);
         block_read (fs_device, e->sector_no, cache);
         e->loaded = true;
     }
