@@ -141,7 +141,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     int cache_index;
     cache_index = cache_lookup(block);
     
-    printf("cache_allocate_sector ckpt1\n");
+//    printf("cache_allocate_sector ckpt1\n");
     
     if (cache_index != -1){
         struct cache_entry* e = cache_table + cache_index;
@@ -174,11 +174,11 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     
     /* obtain new block */    
     cache_index = fetch_new_cache_block();
-    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
+//    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
     /* update cache state */
     ASSERT(cache_index > -1);
     setup_cache_block(cache_table+cache_index, block, action);
-    printf("cache_allocate_sector ckpt3\n");
+//    printf("cache_allocate_sector ckpt3\n");
     return cache_base + cache_index*BLOCK_SECTOR_SIZE;
 }
 
@@ -186,13 +186,13 @@ void
 cache_read(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
-    printf("cache_read ckpt1\n");
+//    printf("cache_read ckpt1\n");
     struct cache_entry* e = load_cache(cache);
     memcpy (buffer, cache + offset, size);
-    printf("cache_read ckpt2\n");
+//    printf("cache_read ckpt2\n");
     
     lock_acquire(&e->block_lock);
-    printf("cache_read ckpt3\n");
+//    printf("cache_read ckpt3\n");
     ASSERT(e->state == CACHE_READ);
     e->read_ref--;
     e->state = NOOP;
@@ -201,19 +201,19 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     else if (e->read_ref > 0)
         cond_signal(&e->read_cv, &e->block_lock);
     lock_release(&e->block_lock);
-    printf("cache_read ckpt4\n");
+//    printf("cache_read ckpt4\n");
 }
 
 void
 cache_write(void *cache, void* buffer, size_t offset, size_t size)
 {
-    printf("cache_write ckpt1\n");
+//    printf("cache_write ckpt1\n");
     /* read data into memory */
     struct cache_entry* e = load_cache(cache);
     memcpy (cache+offset, buffer, size);
-    printf("cache_write ckpt2\n");
+//    printf("cache_write ckpt2\n");
     lock_acquire(&e->block_lock);
-    printf("cache_write ckpt3\n");
+//    printf("cache_write ckpt3\n");
     ASSERT(e->state == CACHE_WRITE);
     e->write_ref--;
     e->state = NOOP;
@@ -223,7 +223,7 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
     else if (e->write_ref > 0)
         cond_signal(&e->write_cv, &e->block_lock);
     lock_release(&e->block_lock);
-    printf("cache_write ckpt4\n");
+//    printf("cache_write ckpt4\n");
 }
 
 
@@ -268,11 +268,11 @@ static void
 evict_block()
 {
     struct cache_entry *e;
-    printf("evict_block ckpt1\n");
+//    printf("evict_block ckpt1\n");
     /* acquire block to evict */
     lock_acquire (&cache_lock);
     ASSERT(!list_empty(&cache_in_use));
-    printf("evict_block ckpt2\n");
+//    printf("evict_block ckpt2\n");
     while (true) {
         if (clock_iter == NULL) clock_iter = list_front(&cache_in_use);
                     
@@ -285,7 +285,7 @@ evict_block()
     }
     clock_iter = list_remove(clock_iter);
     lock_release (&cache_lock);
-    printf("evict_block ckpt3\n");
+//    printf("evict_block ckpt3\n");
     /* evict block */
     /* write to disk if dirty */
     size_t cache_index = e - cache_table;
@@ -294,7 +294,7 @@ evict_block()
     
     setup_cache_block(e, -1, NOOP);
     lock_release(&e->block_lock);
-    printf("evict_block ckpt4\n");
+//    printf("evict_block ckpt4\n");
     /* free bitmap */
     ASSERT (bitmap_all (used_map, cache_index, 1));
     bitmap_set_multiple (used_map, cache_index, 1, false);
