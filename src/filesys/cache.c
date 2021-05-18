@@ -137,7 +137,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     int cache_index;
     cache_index = cache_lookup(block);
     
-    printf("cache_allocate_sector ckpt1");
+    printf("cache_allocate_sector ckpt1\n");
     
     if (cache_index != -1){
         struct cache_entry* e = cache_table + cache_index;
@@ -170,7 +170,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     
     /* obtain new block */    
     cache_index = fetch_new_cache_block();
-    printf("cache_allocate_sector ckpt2");
+    printf("cache_allocate_sector ckpt2\n");
     /* update cache state */
     ASSERT(cache_index > -1);
     setup_cache_block(cache_table+cache_index, block, action);
