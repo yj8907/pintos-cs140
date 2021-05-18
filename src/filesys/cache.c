@@ -196,7 +196,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     
     lock_acquire(&e->block_lock);
 //    printf("cache_read ckpt3\n");
-    if (e->state != CACHE_READ) printf("state: %d\n", e->state);
+    if (e->state != CACHE_READ) PANIC("state: %d\n", e->state);
 //    ASSERT(e->state == CACHE_READ);
     
     e->read_ref--;
