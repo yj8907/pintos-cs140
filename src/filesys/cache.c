@@ -40,14 +40,14 @@ static void *cache_base;
 static void *used_map;
 
 static void evict_block();
-static void fetch_new_cache_block(void);
+static void fetch_new_cache_block(block_sector_t, enum cache_action);
 
 static void init_cache_block(struct cache_entry*);
 static void setup_cache_block(struct cache_entry*, size_t, enum cache_action);
 
 static int cache_lookup(block_sector_t);
 static size_t compute_cache_index(void *);
-static void *cache_fetch_sector(size_t);
+static void *cache_fetch_sector(block_sector_t, size_t, enum cache_action);
 
 static struct list cache_in_use;
 static struct list_elem *clock_iter;
@@ -123,7 +123,7 @@ compute_cache_index(void *cache)
 
 
 static void *
-cache_fetch_sector(size_t cache_index, enum cache_action action)
+cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action action)
 {
     struct cache_entry* e = cache_table + cache_index;
             
@@ -164,7 +164,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
 //    printf("cache_allocate_sector ckpt1\n");
     
     if (cache_index != -1){
-        void *cache = cache_fetch_sector(cache_index, action);
+        void *cache = cache_fetch_sector(block, cache_index, action);
         if (cache != NULL) return cache;
     }
     
