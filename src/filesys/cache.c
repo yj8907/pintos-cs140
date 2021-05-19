@@ -200,6 +200,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     memcpy (buffer, cache + offset, size);
     printf("cache_read ckpt2, loaded: %d, sector: %d\n", e->loaded,e->sector_no);
     
+    if (lock_held_by_current_thread(&e->block_lock)) PANIC("test");
     lock_acquire(&e->block_lock);
     printf("cache_read ckpt3\n");
     if (e->state != CACHE_READ) PANIC("state: %d\n", e->state);
