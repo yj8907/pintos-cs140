@@ -165,7 +165,10 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     
     if (cache_index != -1){
         void *cache = cache_fetch_sector(block, cache_index, action);
-        if (cache != NULL) return cache;
+        if (cache != NULL) {
+            block_read (fs_device, block, cache);
+            return cache;
+        }
     }
     
     printf("cache_allocate_sector ckpt2, %d\n", cache_index);
