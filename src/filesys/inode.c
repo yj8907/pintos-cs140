@@ -289,7 +289,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
         break;
 
       cache = cache_allocate_sector(sector_idx, CACHE_WRITE);
-      cache_write(cache, buffer+bytes_read, sector_ofs, chunk_size);
+      cache_write(cache, buffer+bytes_written, sector_ofs, chunk_size);
         
 //      if (sector_ofs == 0 && chunk_size == BLOCK_SECTOR_SIZE)
 //        {
