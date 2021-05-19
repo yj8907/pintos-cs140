@@ -165,10 +165,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     
     if (cache_index != -1){
         void *cache = cache_fetch_sector(block, cache_index, action);
-        if (cache != NULL) {
-            block_read (fs_device, block, cache);
-            return cache;
-        }
+        if (cache != NULL) return cache;
     }
     
     printf("cache_allocate_sector ckpt2, %d\n", cache_index);
@@ -255,7 +252,7 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
     lock_acquire (&cache_lock);
     /* check again if cache has been allocated for the block */
     int cache_check_idx = cache_lookup(block);
-    if (cache_check_idx != -1) {
+    while (cache_check_idx != -1) {
         lock_release (&cache_lock);
         cache = cache_fetch_sector(block, cache_index, action);
         if (cache != NULL) {
@@ -263,6 +260,7 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
             return cache;
         }
         lock_acquire (&cache_lock);
+        cache_check_idx = cache_lookup(block);
     }
     printf("fetch_new_cache_block ckpt3\n");
     /* update cache state */
