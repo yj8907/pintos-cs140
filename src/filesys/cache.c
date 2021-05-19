@@ -132,14 +132,14 @@ load_cache(void *cache)
     /* read data into memory */
 //    printf("loading block0: %d\n", e->sector_no);
         
-//    lock_acquire(&e->block_lock);
 //    printf("loading block1: %d\n", e->sector_no);
     if (!e->loaded) {
 //        printf("loading block2: %d\n", e->sector_no);
         block_read (fs_device, e->sector_no, cache);
+        lock_acquire(&e->block_lock);
 //        e->loaded = true;
+        lock_release(&e->block_lock);
     }
-//    lock_release(&e->block_lock);
     
     return e;
 }
@@ -205,7 +205,6 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     ASSERT(e->state == CACHE_READ);
     
     e->read_ref--;
-    
     if (e->read_ref == 0) e->state = NOOP;
         
     if (e->write_ref > 0)
