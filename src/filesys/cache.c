@@ -200,13 +200,13 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 void
 cache_write(void *cache, void* buffer, size_t offset, size_t size)
 {
-//    printf("cache_write ckpt1\n");
+    printf("cache_write ckpt1\n");
     /* read data into memory */
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (cache+offset, buffer, size);
-//    printf("cache_write ckpt2\n");
+    printf("cache_write ckpt2\n");
     lock_acquire(&e->block_lock);
-//    printf("cache_write ckpt3\n");
+    printf("cache_write ckpt3\n");
     ASSERT(e->state == CACHE_WRITE);
     e->write_ref--;
     e->state = NOOP;
@@ -216,7 +216,7 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
     else if (e->write_ref > 0)
         cond_signal(&e->write_cv, &e->block_lock);
     lock_release(&e->block_lock);
-//    printf("cache_write ckpt4\n");
+    printf("cache_write ckpt4\n");
 }
 
 
