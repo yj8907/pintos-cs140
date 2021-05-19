@@ -40,7 +40,7 @@ static void *cache_base;
 static void *used_map;
 
 static void evict_block();
-static void fetch_new_cache_block(block_sector_t, enum cache_action);
+static void* fetch_new_cache_block(block_sector_t, enum cache_action);
 
 static void init_cache_block(struct cache_entry*);
 static void setup_cache_block(struct cache_entry*, size_t, enum cache_action);
@@ -235,7 +235,7 @@ cache_lookup(block_sector_t block)
     return cache_index;
 }
 
-static void
+static void*
 fetch_new_cache_block(block_sector_t block, enum cache_action action)
 {
     void *cache = NULL;
