@@ -130,6 +130,7 @@ load_cache(void *cache)
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     ASSERT(e->sector_no > -1);
     /* read data into memory */
+    printf("loading block0: %d\n", e->sector_no);
     lock_acquire(&e->block_lock);
     printf("loading block1: %d\n", e->sector_no);
     if (!e->loaded) {
