@@ -140,10 +140,12 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
             }
         } else if (action == CACHE_READ) {
             e->read_ref++;
+            printf("cache_fetch_sector ckpt1");
             if (e->write_ref > 0) {
                 do { cond_wait(&e->read_cv, &e->block_lock);
                 } while(e->state == CACHE_WRITE);
             }
+            printf("cache_fetch_sector ckpt2");
         }
         
         e->state = action;
@@ -177,10 +179,10 @@ void
 cache_read(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
-    printf("cache_read ckpt1");
+//    printf("cache_read ckpt1");
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (buffer, cache + offset, size);
-    printf("cache_read ckpt2");
+//    printf("cache_read ckpt2");
             
     lock_acquire(&e->block_lock);
     printf("cache_read ckpt3\n");
