@@ -168,9 +168,9 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
         if (cache != NULL) return cache;
     }
     
+    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
     /* obtain new block */    
     return fetch_new_cache_block(block, action);
-    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
 }
 
 void
