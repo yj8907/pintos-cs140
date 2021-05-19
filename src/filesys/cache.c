@@ -161,7 +161,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     cache_index = cache_lookup(block);
     lock_release (&cache_lock);
     
-//    printf("cache_allocate_sector ckpt1\n");
+    printf("cache_allocate_sector ckpt1\n");
     
     if (cache_index != -1){
         void *cache = cache_fetch_sector(block, cache_index, action);
@@ -170,8 +170,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     
     /* obtain new block */    
     return fetch_new_cache_block(block, action);
-//    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
-//    printf("cache_allocate_sector ckpt3\n");
+    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
 }
 
 void
@@ -242,13 +241,14 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
     
     /* obtain new block */
     size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
+    printf("fetch_new_cache_block ckpt1\n");
     
     if (cache_index == BITMAP_ERROR) {
         evict_block();
         cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
         ASSERT(cache_index != BITMAP_ERROR);
     }
-    
+    printf("fetch_new_cache_block ckpt2\n");
     lock_acquire (&cache_lock);
     /* check again if cache has been allocated for the block */
     int cache_check_idx = cache_lookup(block);
@@ -261,6 +261,7 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
         }
         lock_acquire (&cache_lock);
     }
+    printf("fetch_new_cache_block ckpt3\n");
     /* update cache state */
     setup_cache_block(cache_table+cache_index, block, action);
     list_push_back(&cache_in_use, &(cache_table+cache_index)->elem);
@@ -268,7 +269,7 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
     
     cache = cache_base + BLOCK_SECTOR_SIZE*cache_index;
     block_read (fs_device, (cache_table+cache_index)->sector_no, cache);
-    
+    printf("fetch_new_cache_block ckpt4\n");
     return cache;
 }
 
