@@ -140,12 +140,12 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
             }
         } else if (action == CACHE_READ) {
             e->read_ref++;
-            printf("cache_fetch_sector ckpt1");
+            printf("cache_fetch_sector ckpt1\n");
             if (e->write_ref > 0) {
                 do { cond_wait(&e->read_cv, &e->block_lock);
                 } while(e->state == CACHE_WRITE);
             }
-            printf("cache_fetch_sector ckpt2");
+            printf("cache_fetch_sector ckpt2\n");
         }
         
         e->state = action;
@@ -163,14 +163,14 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     cache_index = cache_lookup(block);
     lock_release (&cache_lock);
     
-    printf("cache_allocate_sector ckpt1\n");
+//    printf("cache_allocate_sector ckpt1\n");
     
     if (cache_index != -1){
         void *cache = cache_fetch_sector(block, cache_index, action);
         if (cache != NULL) return cache;
     }
     
-    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
+//    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
     /* obtain new block */    
     return fetch_new_cache_block(block, action);
 }
@@ -182,7 +182,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 //    printf("cache_read ckpt1");
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (buffer, cache + offset, size);
-//    printf("cache_read ckpt2");
+    printf("cache_read ckpt2");
             
     lock_acquire(&e->block_lock);
     printf("cache_read ckpt3\n");
