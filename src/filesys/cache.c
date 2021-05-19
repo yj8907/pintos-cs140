@@ -161,14 +161,14 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     cache_index = cache_lookup(block);
     lock_release (&cache_lock);
     
-//    printf("cache_allocate_sector ckpt1\n");
+    printf("cache_allocate_sector ckpt1\n");
     
     if (cache_index != -1){
         void *cache = cache_fetch_sector(block, cache_index, action);
         if (cache != NULL) return cache;
     }
     
-//    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
+    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
     /* obtain new block */    
     return fetch_new_cache_block(block, action);
 }
@@ -177,13 +177,13 @@ void
 cache_read(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
-//    printf("cache_read ckpt1, loaded: %d\n", (cache_table + compute_cache_index(cache))->loaded);
+    printf("cache_read ckpt1");
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (buffer, cache + offset, size);
-//    printf("cache_read ckpt2, loaded: %d, sector: %d\n", e->loaded,e->sector_no);
+    printf("cache_read ckpt2");
             
     lock_acquire(&e->block_lock);
-//    printf("cache_read ckpt3\n");
+    printf("cache_read ckpt3\n");
     ASSERT(e->state == CACHE_READ);
     
     e->read_ref--;
@@ -194,7 +194,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     else if (e->read_ref > 0)
         cond_signal(&e->read_cv, &e->block_lock);
     lock_release(&e->block_lock);
-//    printf("cache_read ckpt4\n");
+    printf("cache_read ckpt4\n");
 }
 
 void
