@@ -182,10 +182,10 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 //    printf("cache_read ckpt1");
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (buffer, cache + offset, size);
-    printf("cache_read ckpt2");
+//    printf("cache_read ckpt2");
             
     lock_acquire(&e->block_lock);
-    printf("cache_read ckpt3\n");
+//    printf("cache_read ckpt3\n");
     ASSERT(e->state == CACHE_READ);
     
     e->read_ref--;
