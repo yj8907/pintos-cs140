@@ -140,12 +140,12 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
             }
         } else if (action == CACHE_READ) {
             e->read_ref++;
-            printf("cache_fetch_sector ckpt1\n");
+//            printf("cache_fetch_sector ckpt1\n");
             if (e->write_ref > 0) {
                 do { cond_wait(&e->read_cv, &e->block_lock);
                 } while(e->state == CACHE_WRITE);
             }
-            printf("cache_fetch_sector ckpt2\n");
+//            printf("cache_fetch_sector ckpt2\n");
         }
         
         e->state = action;
@@ -182,10 +182,10 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 //    printf("cache_read ckpt1");
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (buffer, cache + offset, size);
-    printf("cache_read ckpt2");
+//    printf("cache_read ckpt2");
             
     lock_acquire(&e->block_lock);
-    printf("cache_read ckpt3\n");
+//    printf("cache_read ckpt3\n");
     ASSERT(e->state == CACHE_READ);
     
     e->read_ref--;
@@ -196,19 +196,19 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     else if (e->read_ref > 0)
         cond_signal(&e->read_cv, &e->block_lock);
     lock_release(&e->block_lock);
-    printf("cache_read ckpt4\n");
+//    printf("cache_read ckpt4\n");
 }
 
 void
 cache_write(void *cache, void* buffer, size_t offset, size_t size)
 {
-    printf("cache_write ckpt1\n");
+//    printf("cache_write ckpt1\n");
     /* read data into memory */
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (cache+offset, buffer, size);
-    printf("cache_write ckpt2\n");
+//    printf("cache_write ckpt2\n");
     lock_acquire(&e->block_lock);
-    printf("cache_write ckpt3\n");
+//    printf("cache_write ckpt3\n");
     ASSERT(e->state == CACHE_WRITE);
     e->write_ref--;
     e->state = NOOP;
@@ -218,7 +218,7 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
     else if (e->write_ref > 0)
         cond_signal(&e->write_cv, &e->block_lock);
     lock_release(&e->block_lock);
-    printf("cache_write ckpt4\n");
+//    printf("cache_write ckpt4\n");
 }
 
 
