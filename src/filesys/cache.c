@@ -281,6 +281,8 @@ static void
 evict_block()
 {
     bool dirty = false;
+    block_sector_t sector_no;
+    
     struct cache_entry *e;
 //    printf("evict_block ckpt1\n");
     /* acquire block to evict */
@@ -304,10 +306,11 @@ evict_block()
     /* write to disk if dirty */
     size_t cache_index = e - cache_table;
     dirty = e->dirty;
+    sector_no = e->sector_no;
     setup_cache_block(e, -1, NOOP);
     lock_release(&e->block_lock);
     
-    if (dirty) block_write (fs_device, e->sector_no, cache_base+cache_index*BLOCK_SECTOR_SIZE);
+    if (dirty) block_write (fs_device, sector_no, cache_base+cache_index*BLOCK_SECTOR_SIZE);
     memset(cache_base+cache_index*BLOCK_SECTOR_SIZE, 0, BLOCK_SECTOR_SIZE); /* set memory to all zeros*/
     
 //    printf("evict_block ckpt4\n");
