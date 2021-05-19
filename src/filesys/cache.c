@@ -132,6 +132,7 @@ load_cache(void *cache)
     /* read data into memory */
     printf("loading block0: %d\n", e->sector_no);
     
+    if (lock_held_by_current_thread(&e->block_lock)) PANIC("test");
     lock_acquire(&e->block_lock);
     printf("loading block1: %d\n", e->sector_no);
     if (!e->loaded) {
@@ -155,6 +156,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
     if (cache_index != -1){
         struct cache_entry* e = cache_table + cache_index;
         
+        if (lock_held_by_current_thread(&e->block_lock)) PANIC("test");
         lock_acquire(&e->block_lock);
         
         if (e->sector_no != block) {
@@ -200,6 +202,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     memcpy (buffer, cache + offset, size);
     printf("cache_read ckpt2, loaded: %d, sector: %d\n", e->loaded,e->sector_no);
         
+    if (lock_held_by_current_thread(&e->block_lock)) PANIC("test");
     lock_acquire(&e->block_lock);
     printf("cache_read ckpt3\n");
     if (e->state != CACHE_READ) PANIC("state: %d\n", e->state);
@@ -243,6 +246,7 @@ cache_lookup(block_sector_t block)
 {
     int cache_index = -1;
     
+    if (lock_held_by_current_thread(&cache_lock)) PANIC("test");
     lock_acquire (&cache_lock);
     for (int i = 0; i < CACHE_NBLOCKS; i++){
         if ((cache_table+i)->sector_no == block) {
@@ -266,7 +270,7 @@ fetch_new_cache_block(void)
         cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
         ASSERT(cache_index != BITMAP_ERROR);
     }
-    
+    if (lock_held_by_current_thread(&cache_lock)) PANIC("test");
     lock_acquire (&cache_lock);
     list_push_back(&cache_in_use, &(cache_table+cache_index)->elem);
     lock_release (&cache_lock);
@@ -281,6 +285,7 @@ evict_block()
     struct cache_entry *e;
 //    printf("evict_block ckpt1\n");
     /* acquire block to evict */
+    if (lock_held_by_current_thread(&cache_lock)) PANIC("test");
     lock_acquire (&cache_lock);
     ASSERT(!list_empty(&cache_in_use));
 //    printf("evict_block ckpt2\n");
