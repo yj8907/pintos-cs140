@@ -303,7 +303,7 @@ evict_block()
     /* evict block */
     /* write to disk if dirty */
     size_t cache_index = e - cache_table;
-    dirty = e->dirty
+    dirty = e->dirty;
     setup_cache_block(e, -1, NOOP);
     lock_release(&e->block_lock);
     
