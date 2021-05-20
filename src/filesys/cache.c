@@ -179,10 +179,10 @@ void
 cache_read(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
-    printf("cache_read ckpt1\n");
+//    printf("cache_read ckpt1\n");
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (buffer, cache + offset, size);
-    printf("cache_read ckpt2\n");
+//    printf("cache_read ckpt2\n");
             
     lock_acquire(&e->block_lock);
     printf("cache_read ckpt3\n");
@@ -315,7 +315,7 @@ evict_block()
     lock_release(&e->block_lock);
     
     if (dirty) block_write (fs_device, sector_no, cache_base+cache_index*BLOCK_SECTOR_SIZE);
-    memset(cache_base+cache_index*BLOCK_SECTOR_SIZE, 0, BLOCK_SECTOR_SIZE); /* set memory to all zeros*/
+//    memset(cache_base+cache_index*BLOCK_SECTOR_SIZE, 0, BLOCK_SECTOR_SIZE); /* set memory to all zeros*/
     
 //    printf("evict_block ckpt4\n");
     /* free bitmap */
