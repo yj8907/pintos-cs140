@@ -292,7 +292,7 @@ static void sys_wait(uint32_t *eax, char** argv)
     
     tid_t child_tid = *(int*)argv[0];
     int ret = process_wait(child_tid);
-    printf("waiting: %d for %d\n", ret, child_tid);
+    
     memcpy(eax, &ret, sizeof(ret));
 };
 

@@ -187,6 +187,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     lock_acquire(&e->block_lock);
 //    printf("cache_read ckpt3\n");
     ASSERT(e->state == CACHE_READ);
+    ASSERT(e->read_ref > 0);
     
     e->read_ref--;
     if (e->read_ref == 0) e->state = NOOP;
@@ -211,6 +212,8 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
     lock_acquire(&e->block_lock);
 //    printf("cache_write ckpt3\n");
     ASSERT(e->state == CACHE_WRITE);
+    ASSERT(e->write_ref > 0);
+    
     e->write_ref--;
     e->state = NOOP;
     e->dirty = true;
