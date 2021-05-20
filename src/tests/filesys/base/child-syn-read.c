@@ -22,11 +22,11 @@ main (int argc, const char *argv[])
 
   test_name = "child-syn-read";
   quiet = true;
-  
-    printf("child %d start\n", child_idx, i);
+      
   CHECK (argc == 2, "argc must be 2, actually %d", argc);
   child_idx = atoi (argv[1]);
 
+    printf("child %d start\n", child_idx, i);
   random_init (0);
   random_bytes (buf, sizeof buf);
 
