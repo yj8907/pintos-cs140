@@ -268,7 +268,7 @@ static void sys_exec(uint32_t *eax, char** argv)
     /* if process_create fails */
     memcpy(eax, &ret, sizeof(ret));
     if (child_tid == TID_ERROR) return;
-    printf("exec: %s for id: %d\n", cmd_line, child_tid);
+    printf("execute: %s for id: %d\n", cmd_line, child_tid);
     /* fetch child thread tcb and wait for it to load sucessfully */
     struct thread* cur = thread_current();
     struct list_elem *e = list_front(&cur->child_list);
