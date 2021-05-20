@@ -373,9 +373,9 @@ sys_read(uint32_t *eax, char** argv)
     int bytes_read = 0;
     if (fd_no != 0 ){
         struct file* fp = fetch_file(fd_no);
-        sema_down(&filesys_sema);
+//        sema_down(&filesys_sema);
         bytes_read = fp == NULL ? -1 : file_read(fp, buffer, size);
-        sema_up(&filesys_sema);
+//        sema_up(&filesys_sema);
     } else {
         while(bytes_read < size) {
             uint8_t key = input_getc();
@@ -402,9 +402,9 @@ sys_write(uint32_t *eax, char** argv)
       putbuf(buffer, size);
       bytes_write = size;
     } else if ( (fp = fetch_file(fd_no)) != NULL ) {
-        sema_down(&filesys_sema);
+//        sema_down(&filesys_sema);
         bytes_write = file_write(fp, buffer, size);
-        sema_up(&filesys_sema);
+//        sema_up(&filesys_sema);
     }
     memcpy(eax, &bytes_write, sizeof(bytes_write));
 };
