@@ -32,10 +32,10 @@ main (int argc, const char *argv[])
   CHECK ((fd = open (file_name)) > 1, "open \"%s\"", file_name);
   for (i = 0; i < sizeof buf; i++) 
     {
+        printf("child %d iter: %d\n", child_idx, i);
       char c;
       CHECK (read (fd, &c, 1) > 0, "read \"%s\"", file_name);
       compare_bytes (&c, buf + i, 1, i, file_name);
-      printf("child %d iter: %d\n", child_idx, i);
     }
   close (fd);
 
