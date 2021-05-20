@@ -260,7 +260,7 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
     int cache_check_idx = cache_lookup(block);
     while (cache_check_idx != -1) {
         lock_release (&cache_lock);
-        cache = cache_fetch_sector(block, cache_index, action);
+        cache = cache_fetch_sector(block, cache_check_idx, action);
         if (cache != NULL) {
             bitmap_set_multiple (used_map, cache_index, 1, false);
             return cache;
