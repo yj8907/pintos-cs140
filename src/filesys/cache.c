@@ -291,7 +291,7 @@ evict_block()
     ASSERT(!list_empty(&cache_in_use));
 //    printf("evict_block ckpt2\n");
     while (true) {
-        if (clock_iter == NULL) clock_iter = list_front(&cache_in_use);
+        if (clock_iter == NULL || is_tail(clock_iter)) clock_iter = list_front(&cache_in_use);
                     
         e = list_entry(clock_iter, struct cache_entry, elem);
         if (lock_try_acquire(&e->block_lock)){
