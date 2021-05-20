@@ -170,7 +170,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
         if (cache != NULL) return cache;
     }
     
-//    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
+    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
     /* obtain new block */    
     return fetch_new_cache_block(block, action);
 }
@@ -179,10 +179,10 @@ void
 cache_read(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
-    printf("cache_read ckpt1");
+    printf("cache_read ckpt1\n");
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (buffer, cache + offset, size);
-    printf("cache_read ckpt2");
+    printf("cache_read ckpt2\n");
             
     lock_acquire(&e->block_lock);
     printf("cache_read ckpt3\n");
