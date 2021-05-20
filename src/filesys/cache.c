@@ -267,7 +267,6 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
         }
         lock_acquire (&cache_lock);
         cache_check_idx = cache_lookup(block);
-        printf("cache_check_idx");
     }
 //    printf("fetch_new_cache_block ckpt3\n");
     /* update cache state */
