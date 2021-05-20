@@ -170,7 +170,7 @@ cache_allocate_sector(block_sector_t block, enum cache_action action)
         if (cache != NULL) return cache;
     }
     
-    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
+//    printf("cache_allocate_sector ckpt2, %d\n", cache_index);
     /* obtain new block */    
     return fetch_new_cache_block(block, action);
 }
@@ -185,7 +185,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 //    printf("cache_read ckpt2\n");
             
     lock_acquire(&e->block_lock);
-    printf("cache_read ckpt3\n");
+//    printf("cache_read ckpt3\n");
     ASSERT(e->state == CACHE_READ);
     ASSERT(e->read_ref > 0);
     
@@ -198,7 +198,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
         cond_signal(&e->read_cv, &e->block_lock);
         
     lock_release(&e->block_lock);
-    printf("cache_read ckpt4\n");
+//    printf("cache_read ckpt4\n");
 }
 
 void
@@ -267,6 +267,7 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
         }
         lock_acquire (&cache_lock);
         cache_check_idx = cache_lookup(block);
+        printf("cache_check_idx");
     }
 //    printf("fetch_new_cache_block ckpt3\n");
     /* update cache state */
@@ -315,7 +316,7 @@ evict_block()
     lock_release(&e->block_lock);
     
     if (dirty) block_write (fs_device, sector_no, cache_base+cache_index*BLOCK_SECTOR_SIZE);
-//    memset(cache_base+cache_index*BLOCK_SECTOR_SIZE, 0, BLOCK_SECTOR_SIZE); /* set memory to all zeros*/
+    memset(cache_base+cache_index*BLOCK_SECTOR_SIZE, 0, BLOCK_SECTOR_SIZE); /* set memory to all zeros*/
     
 //    printf("evict_block ckpt4\n");
     /* free bitmap */
