@@ -11,14 +11,21 @@
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
 
+#define NUM_DIRECT 16
+#define NUM_INDIRECT 32
+#define NUM_DOUBLE_INDIRECT 4
+
 /* On-disk inode.
    Must be exactly BLOCK_SECTOR_SIZE bytes long. */
 struct inode_disk
   {
-    block_sector_t start;               /* First data sector. */
+//    block_sector_t start;               /* First data sector. */
     off_t length;                       /* File size in bytes. */
     unsigned magic;                     /* Magic number. */
-    uint32_t unused[125];               /* Not used. */
+    uint32_t direct_blocks[NUM_DIRECT];
+    uint32_t indirect_single_blocks[NUM_DIRECT];
+    uint32_t direct_blocks[NUM_DIRECT];
+    uint32_t unused[74];               /* Not used. */
   };
 
 /* Returns the number of sectors to allocate for an inode SIZE
@@ -85,23 +92,11 @@ inode_create (block_sector_t sector, off_t length)
   disk_inode = calloc (1, sizeof *disk_inode);
   if (disk_inode != NULL)
     {
-      size_t sectors = bytes_to_sectors (length);
       disk_inode->length = length;
       disk_inode->magic = INODE_MAGIC;
-      if (free_map_allocate (sectors, &disk_inode->start)) 
-        {
-          block_write (fs_device, sector, disk_inode);
-          if (sectors > 0) 
-            {
-              static char zeros[BLOCK_SECTOR_SIZE];
-              size_t i;
-              
-              for (i = 0; i < sectors; i++) 
-                block_write (fs_device, disk_inode->start + i, zeros);
-            }
-          success = true; 
-        } 
+      block_write (fs_device, sector, disk_inode);
       free (disk_inode);
+      success = true;
     }
   return success;
 }
