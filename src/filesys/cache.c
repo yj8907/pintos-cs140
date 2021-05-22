@@ -193,16 +193,14 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     if (e->read_ref == 0) e->state = NOOP;
         
     if (e->write_ref > 0) {
-        PANIC("test1\n");
         cond_signal(&e->write_cv, &e->block_lock);
     }
     else if (e->read_ref > 0) {
-        PANIC("test2\n");
         cond_signal(&e->read_cv, &e->block_lock);
     }
         
     lock_release(&e->block_lock);
-    PANIC("cache_read ckpt4\n");
+//    PANIC("cache_read ckpt4\n");
 }
 
 void
