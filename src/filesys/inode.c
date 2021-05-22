@@ -303,9 +303,10 @@ inode_free_map_release(struct inode *inode)
                 }
             }
         }
-    }
+    };
     
-    done:
+  done:
+    return;
     
 }
 
