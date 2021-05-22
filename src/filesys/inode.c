@@ -65,7 +65,7 @@ inode_read_index(block_sector_t block, size_t offset, uint32_t *sector, bool all
         
         cache = cache_allocate_sector(block, CACHE_WRITE);
         block_sector_t sector_read = cache_index_write(cache, sector, offset);
-        
+        PANIC("pos: %d\n", sector_read);
         if (sector_read == *sector) {
             static char zeros[BLOCK_SECTOR_SIZE];
             void *inode_cache = cache_allocate_sector(*sector, CACHE_WRITE);
@@ -75,7 +75,7 @@ inode_read_index(block_sector_t block, size_t offset, uint32_t *sector, bool all
             *sector = sector_read;
         }
     }
-    PANIC("pos: %d\n", *sector);
+    
     if (allocate) ASSERT(*sector != 0);
     
 }
