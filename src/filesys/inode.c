@@ -14,6 +14,7 @@
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
 
+#define UINT8_MAX 255
 #define INODE_META_SIZE 8
 #define NUM_DIRECT 16
 #define NUM_INDIRECT 32
@@ -167,7 +168,7 @@ void
 inode_init (void) 
 {
   list_init (&open_inodes);
-  memset(size_maxes, BITMAP_ERROR, BLOCK_SECTOR_SIZE);
+  memset(size_maxes, UINT8_MAX, BLOCK_SECTOR_SIZE);
   memset(zeros, 0, BLOCK_SECTOR_SIZE);
 }
 
@@ -192,7 +193,7 @@ inode_create (block_sector_t sector, off_t length)
   disk_inode = calloc (1, sizeof *disk_inode);
   if (disk_inode != NULL)
     {
-      memset(disk_inode, size_maxes, sizeof *disk_inode);
+      memset(disk_inode, UINT8_MAX, sizeof *disk_inode);
       disk_inode->length = length;
       disk_inode->magic = INODE_MAGIC;
       block_write (fs_device, sector, disk_inode);
