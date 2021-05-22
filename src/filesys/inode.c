@@ -410,7 +410,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     
   if (inode->deny_write_cnt)
     return 0;
-  PANIC("write_test");
+  PANIC("write_test: new: %d, old: %d\n", offset+size, inode_length(inode));
   if (offset + size > inode_length(inode)) {
       lock_acquire(&inode->inode_lock);
       if (offset + size > inode_length(inode)) {
@@ -473,8 +473,8 @@ inode_allow_write (struct inode *inode)
 off_t
 inode_length (const struct inode *inode)
 {
-  off_t *length;
+  void *length;
   void *cache = cache_allocate_sector(inode->sector, CACHE_READ);
   cache_read(cache, length, 0, ENTRY_SIZE);
-  return *length;
+  return *(off_t*)length;
 }
