@@ -389,7 +389,7 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
       offset += chunk_size;
       bytes_read += chunk_size;
     }
-    PANiC("read_test");
+    PANIC("read_test");
 //  free (bounce);
     
   return bytes_read;
@@ -447,7 +447,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       bytes_written += chunk_size;
     }
 //  free (bounce);
-   PANiC("write_test");
+   PANIC("write_test");
   return bytes_written;
 }
 
