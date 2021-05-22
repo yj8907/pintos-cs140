@@ -59,7 +59,7 @@ inode_read_index(block_sector_t block, size_t offset, uint32_t *sector, bool all
 {
     void *cache = cache_allocate_sector(block, CACHE_READ);
     cache_read(cache, sector, offset, ENTRY_SIZE);
-    
+    PANIC("pos: %d\n", offset);
     if (*sector == 0 && allocate) {
         ASSERT(free_map_allocate (1, sector));
         
@@ -94,7 +94,7 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
     uint32_t sector;
     uint32_t offset;
     uint32_t index_sector;
-    PANIC("pos: %d\n", pos);
+    
     if (pos < NUM_DIRECT * BLOCK_SECTOR_SIZE) {
         index_pos = pos / BLOCK_SECTOR_SIZE;
         offset = INODE_META_SIZE+index_pos*ENTRY_SIZE;
