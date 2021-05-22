@@ -68,7 +68,7 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
     
     if (*sector == BITMAP_ERROR && allocate) {
         free_map_allocate (1, sector);
-        
+        PANIC("sector: %d, %d\n", *sector, BITMAP_ERROR);
         cache = cache_allocate_sector(block, CACHE_WRITE);
         block_sector_t sector_read = cache_index_write(cache, sector, offset);
         
