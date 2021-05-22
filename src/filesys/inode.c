@@ -74,7 +74,7 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector, bo
             free_map_release(*sector, 1);
             *sector = sector_read;
         }
-        PANIC("pos: %d\n", sector_read);
+        PANIC("pos: %d\n", *sector);
     }
     
     if (allocate) ASSERT(*sector != 0);
