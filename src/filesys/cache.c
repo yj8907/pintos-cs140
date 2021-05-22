@@ -182,23 +182,27 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 //    printf("cache_read ckpt1\n");
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (buffer, cache + offset, size);
-    printf("cache_read ckpt2\n");
+//    printf("cache_read ckpt2\n");
             
     lock_acquire(&e->block_lock);
-    PANIC("cache_read ckpt3\n");
+//    printf("cache_read ckpt3\n");
     ASSERT(e->state == CACHE_READ);
     ASSERT(e->read_ref > 0);
     
     e->read_ref--;
     if (e->read_ref == 0) e->state = NOOP;
         
-    if (e->write_ref > 0)
+    if (e->write_ref > 0) {
+        PANIC("test1\n");
         cond_signal(&e->write_cv, &e->block_lock);
-    else if (e->read_ref > 0)
+    }
+    else if (e->read_ref > 0) {
+        PANIC("test2\n");
         cond_signal(&e->read_cv, &e->block_lock);
+    }
         
     lock_release(&e->block_lock);
-//    printf("cache_read ckpt4\n");
+    PANIC("cache_read ckpt4\n");
 }
 
 void
