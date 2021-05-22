@@ -55,14 +55,15 @@ struct inode
   };
 
 static void
-inode_read_index(block_sector_t block, size_t offset, uint32_t *sector, bool allocate)
+inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector, bool allocate)
 {
     void *cache = cache_allocate_sector(block, CACHE_READ);
     cache_read(cache, sector, offset, ENTRY_SIZE);
     
     if (*sector == 0 && allocate) {
-        ASSERT(free_map_allocate (1, sector));
         PANIC("pos: %d\n", *sector);
+        ASSERT(free_map_allocate (1, sector));
+        
         cache = cache_allocate_sector(block, CACHE_WRITE);
         block_sector_t sector_read = cache_index_write(cache, sector, offset);
         
@@ -91,7 +92,7 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
     ASSERT (inode != NULL);
           
     uint32_t index_pos;
-    uint32_t sector;
+    block_sector_t sector;
     uint32_t offset;
     uint32_t index_sector;
     
