@@ -192,7 +192,7 @@ inode_create (block_sector_t sector, off_t length)
   disk_inode = calloc (1, sizeof *disk_inode);
   if (disk_inode != NULL)
     {
-      memset(disk_inode, 1, sizeof *disk_inode);
+      memset(disk_inode, size_maxes, sizeof *disk_inode);
       disk_inode->length = length;
       disk_inode->magic = INODE_MAGIC;
       block_write (fs_device, sector, disk_inode);
