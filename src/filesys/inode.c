@@ -410,7 +410,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     
   if (inode->deny_write_cnt)
     return 0;
-//  PANIC("write_test: new: %d, sector: %d\n", offset+size, inode_length(inode));
+    
   if (offset + size > inode_length(inode)) {
       lock_acquire(&inode->inode_lock);
       if (offset + size > inode_length(inode)) {
@@ -421,6 +421,8 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       lock_release(&inode->inode_lock);
   }
    
+    PANIC("write_test\n");
+    
   while (size > 0) 
     {
       /* Sector to write, starting byte offset within sector. */
@@ -476,6 +478,5 @@ inode_length (const struct inode *inode)
   off_t length = 0;
   void *cache = cache_allocate_sector(inode->sector, CACHE_READ);
   cache_read(cache, &length, 0, sizeof(length));
-  PANIC("len:%d\n", length);
   return length;
 }
