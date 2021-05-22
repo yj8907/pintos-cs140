@@ -97,6 +97,10 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
     uint32_t offset;
     uint32_t index_sector;
     
+    block_sector_t sector_tmp = 0;
+    free_map_allocate (1, &sector_tmp);
+    PANIC("pos1: %d\n", sector_tmp);
+    
     if (pos < NUM_DIRECT * BLOCK_SECTOR_SIZE) {
         index_pos = pos / BLOCK_SECTOR_SIZE;
         offset = INODE_META_SIZE+index_pos*ENTRY_SIZE;
