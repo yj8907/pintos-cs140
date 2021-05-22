@@ -36,7 +36,7 @@ struct inode_disk
     uint32_t unused[74];               /* Not used. */
   };
 
-static char ones[BLOCK_SECTOR_SIZE];
+static char size_maxes[BLOCK_SECTOR_SIZE];
 static char zeros[BLOCK_SECTOR_SIZE];
 
 /* Returns the number of sectors to allocate for an inode SIZE
@@ -75,7 +75,7 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
         if (sector_read == *sector) {
             void *inode_cache = cache_allocate_sector(*sector, CACHE_WRITE);
             if (index_block)
-                cache_write(inode_cache, &ones, 0, BLOCK_SECTOR_SIZE);
+                cache_write(inode_cache, &size_maxes, 0, BLOCK_SECTOR_SIZE);
             else
                 cache_write(inode_cache, &zeros, 0, BLOCK_SECTOR_SIZE);
         } else {
@@ -167,7 +167,7 @@ void
 inode_init (void) 
 {
   list_init (&open_inodes);
-  memset(ones, 1, BLOCK_SECTOR_SIZE);
+  memset(ones, BITMAP_ERROR, BLOCK_SECTOR_SIZE);
   memset(zeros, 0, BLOCK_SECTOR_SIZE);
 }
 
