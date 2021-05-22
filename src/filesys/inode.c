@@ -61,9 +61,8 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector, bo
     cache_read(cache, sector, offset, ENTRY_SIZE);
     
     if (*sector == 0 && allocate) {
-        PANIC("pos: %d\n", *sector);
         ASSERT(free_map_allocate (1, sector) == true);
-        
+        PANIC("pos: %d\n", *sector);
         cache = cache_allocate_sector(block, CACHE_WRITE);
         block_sector_t sector_read = cache_index_write(cache, sector, offset);
         
