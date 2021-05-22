@@ -64,7 +64,7 @@ inode_read_index(block_sector_t block, size_t offset, uint32_t *sector, bool all
         ASSERT(free_map_allocate (1, sector));
         
         cache = cache_allocate_sector(block, CACHE_WRITE);
-        block_sector_t sector_read = cache_index_write(cache, sector, offset, ENTRY_SIZE);
+        block_sector_t sector_read = cache_index_write(cache, sector, offset);
         
         if (sector_read == *sector) {
             static char zeros[BLOCK_SECTOR_SIZE];
@@ -409,10 +409,13 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
   if (inode->deny_write_cnt)
     return 0;
  
-  if (offset + size > inode->length) {
+  if (offset + size > inode_length(inode)) {
       lock_acquire(&inode->inode_lock);
-      if (offset + size > inode->length)
-          inode->length = offset + size;
+      if (offset + size > inode_length(inode)) {
+          size_t new_length = offset + size;
+          void *cache = cache_allocate_sector(inode->sector, CACHE_WRITE);
+          cache_write(cache, &new_length, 0, ENTRY_SIZE);
+      }
       lock_release(&inode->inode_lock);
   }
     
@@ -469,5 +472,8 @@ inode_allow_write (struct inode *inode)
 off_t
 inode_length (const struct inode *inode)
 {
-  return inode->data.length;
+  off_t *length;
+  void *cache = cache_allocate_sector(inode->sector, CACHE_READ);
+  cache_read(cache, length, 0, ENTRY_SIZE);
+  return *length;
 }

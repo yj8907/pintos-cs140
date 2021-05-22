@@ -25,6 +25,6 @@ void *cache_allocate_sector(block_sector_t, enum cache_action);
 
 void cache_read(void *, void*, size_t, size_t);
 void cache_write(void *, void*, size_t, size_t);
-block_sector_t cache_index_write(void *, uint32_t*, size_t, size_t);
+block_sector_t cache_index_write(void *, uint32_t*, size_t);
 
 #endif /* cache_h */

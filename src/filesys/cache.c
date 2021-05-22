@@ -226,9 +226,9 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
 }
 
 block_sector_t
-cache_index_write(void *cache, uint32_t* sector, size_t offset, size_t size)
+cache_index_write(void *cache, uint32_t* sector, size_t offset)
 {
-    ASSERT(size == 4);
+    size_t size = 4;
     if (*(uint32_t*)(cache+offset) != 0) return *(uint32_t*)(cache+offset);
     
     cache_write(cache, sector, offset, size);
