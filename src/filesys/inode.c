@@ -477,5 +477,5 @@ inode_length (const struct inode *inode)
   void *cache = cache_allocate_sector(inode->sector, CACHE_READ);
   cache_read(cache, &length, 0, sizeof(length));
     PANIC("len: %d\n", *(off_t*)length);
-  return *(off_t*)length;
+  return length;
 }
