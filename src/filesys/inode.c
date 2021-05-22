@@ -410,7 +410,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     
   if (inode->deny_write_cnt)
     return 0;
-  PANIC("write_test: new: %d, old: %d\n", offset+size, inode_length(inode));
+  PANIC("write_test: new: %d, old\n", offset+size);
   if (offset + size > inode_length(inode)) {
       lock_acquire(&inode->inode_lock);
       if (offset + size > inode_length(inode)) {
