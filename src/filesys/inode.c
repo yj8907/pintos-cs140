@@ -29,8 +29,8 @@ struct inode_disk
     off_t length;                       /* File size in bytes. */
     unsigned magic;                     /* Magic number. */
     uint32_t direct_blocks[NUM_DIRECT];
-    uint32_t indirect_single_blocks[NUM_DIRECT];
-    uint32_t indirect_double_blocks[NUM_DIRECT];
+    uint32_t indirect_single_blocks[NUM_INDIRECT];
+    uint32_t indirect_double_blocks[NUM_DOUBLE_INDIRECT];
     uint32_t unused[74];               /* Not used. */
   };
 
