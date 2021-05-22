@@ -7,13 +7,19 @@
 #include "filesys/free-map.h"
 #include "filesys/cache.h"
 #include "threads/malloc.h"
+#include "threads/synch.h"
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
 
+#define INODE_META_SIZE 8
 #define NUM_DIRECT 16
 #define NUM_INDIRECT 32
 #define NUM_DOUBLE_INDIRECT 4
+
+#define ENTRY_SIZE 4
+#define NUM_ENTRY_INDIRECT_SINGLE (BLOCK_SECTOR_SIZE/ENTRY_SIZE)
+#define NUM_ENTRY_INDIRECT_DOUBLE (NUM_ENTRY_INDIRECT_SINGLE * NUM_ENTRY_INDIRECT_SINGLE)
 
 /* On-disk inode.
    Must be exactly BLOCK_SECTOR_SIZE bytes long. */
@@ -24,7 +30,7 @@ struct inode_disk
     unsigned magic;                     /* Magic number. */
     uint32_t direct_blocks[NUM_DIRECT];
     uint32_t indirect_single_blocks[NUM_DIRECT];
-    uint32_t direct_blocks[NUM_DIRECT];
+    uint32_t indirect_double_blocks[NUM_DIRECT];
     uint32_t unused[74];               /* Not used. */
   };
 
@@ -44,22 +50,105 @@ struct inode
     int open_cnt;                       /* Number of openers. */
     bool removed;                       /* True if deleted, false otherwise. */
     int deny_write_cnt;                 /* 0: writes ok, >0: deny writes. */
-    struct inode_disk data;             /* Inode content. */
+    struct inode_disk *data;             /* Inode content. */
+    struct lock inode_lock;
   };
+
+static void
+inode_read_index(block_sector_t block, size_t offset, uint32_t *sector, bool allocate)
+{
+    void *cache = cache_allocate_sector(inode->sector, CACHE_READ);
+    cache_read(cache, sector, offset, ENTRY_SIZE);
+    
+    if (*sector == 0 && allocate) {
+        ASSERT(free_map_allocate (1, sector));
+        
+        cache = cache_allocate_sector(block, CACHE_WRITE);
+        block_sector_t sector_read = cache_index_write(cache, sector, offset, ENTRY_SIZE);
+        
+        if (sector_read == *sector) {
+            static char zeros[BLOCK_SECTOR_SIZE];
+            void *inode_cache = cache_allocate_sector(*sector, CACHE_WRITE);
+            cache_write(inode_cache, &zeros, 0, BLOCK_SECTOR_SIZE);
+        } else {
+            free_map_release(*sector, 1);
+            *sector = sector_read;
+        }
+    }
+    
+    if (allocate) ASSERT(*sector != 0);
+    
+}
 
 /* Returns the block device sector that contains byte offset POS
    within INODE.
+   Allocate new block if the position has not been assigned a block.
    Returns -1 if INODE does not contain data for a byte at offset
    POS. */
+/* dynamic allocate new sector */
 static block_sector_t
-byte_to_sector (const struct inode *inode, off_t pos) 
-{
-  ASSERT (inode != NULL);
-  if (pos < inode->data.length)
-    return inode->data.start + pos / BLOCK_SECTOR_SIZE;
-  else
-    return -1;
+byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
+    ASSERT (inode != NULL);
+          
+    uint32_t index_pos;
+    uint32_t *sector;
+    uint32_t offset;
+    uint32_t index_sector;
+    
+    if (pos < NUM_DIRECT * BLOCK_SECTOR_SIZE) {
+        index_pos = pos / BLOCK_SECTOR_SIZE;
+        offset = INODE_META_SIZE+index_pos*ENTRY_SIZE;
+        index_sector = inode->sector;
+        inode_read_index(index_sector, offset, sector, allocate);
+        
+        if (*sector == 0) return -1;
+        return *sector;
+        
+    } else if ( (pos -= NUM_DIRECT * BLOCK_SECTOR_SIZE) <
+               NUM_INDIRECT * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE) {
+        
+        index_pos = pos / (NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE);
+        offset = INODE_META_SIZE+(NUM_DIRECT+index_pos)*ENTRY_SIZE;
+        index_sector = inode->sector;
+        inode_read_index(index_sector, offset, sector, allocate);
+        if (*sector == 0 ) return -1;
+        
+        index_sector = *sector;
+        pos -= index_pos * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE;
+        index_pos = pos/BLOCK_SECTOR_SIZE;
+        offset = index_pos*ENTRY_SIZE;
+        inode_read_index(index_sector, offset, sector, allocate);
+        if ( *sector == 0 ) return -1;
+        
+        return *sector;
+        
+    } else if ( (pos -= NUM_INDIRECT * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE)
+               < NUM_DOUBLE_INDIRECT * NUM_ENTRY_INDIRECT_DOUBLE * BLOCK_SECTOR_SIZE) {
+        
+        index_pos = pos / (NUM_ENTRY_INDIRECT_DOUBLE * BLOCK_SECTOR_SIZE);
+        offset = INODE_META_SIZE+(NUM_DIRECT+NUM_INDIRECT+index_pos)*ENTRY_SIZE;
+        index_sector = inode->sector;
+        inode_read_index(index_sector, offset, sector, allocate);
+        if (*sector == 0 ) return -1;
+        
+        index_sector = *sector;
+        pos -= index_pos * NUM_ENTRY_INDIRECT_DOUBLE * BLOCK_SECTOR_SIZE;
+        index_pos = pos/(NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE);
+        offset = index_pos*ENTRY_SIZE;
+        inode_read_index(index_sector, offset, sector, allocate);
+        if ( *sector == 0 ) return -1;
+        
+        index_sector = *sector;
+        pos -= index_pos * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE;
+        index_pos = pos/ BLOCK_SECTOR_SIZE;
+        offset = index_pos*ENTRY_SIZE;
+        inode_read_index(index_sector, offset, sector, allocate);
+        if ( *sector == 0 ) return -1;
+        
+        return *sector;
+    }
 }
+
 
 /* List of open inodes, so that opening a single inode twice
    returns the same `struct inode'. */
@@ -88,7 +177,8 @@ inode_create (block_sector_t sector, off_t length)
   /* If this assertion fails, the inode structure is not exactly
      one sector in size, and you should fix that. */
   ASSERT (sizeof *disk_inode == BLOCK_SECTOR_SIZE);
-
+  ASSERT ((void*)disk_inode->direct_blocks - (void*)disk_inode == INODE_META_SIZE);
+    
   disk_inode = calloc (1, sizeof *disk_inode);
   if (disk_inode != NULL)
     {
@@ -134,6 +224,7 @@ inode_open (block_sector_t sector)
   inode->deny_write_cnt = 0;
   inode->removed = false;
   block_read (fs_device, inode->sector, &inode->data);
+  lock_init(&inode->inode_lock);
   return inode;
 }
 
@@ -216,10 +307,14 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
       int chunk_size = size < min_left ? size : min_left;
       if (chunk_size <= 0)
         break;
-      
-      cache = cache_allocate_sector(sector_idx, CACHE_READ);
-      cache_read(cache, buffer+bytes_read, sector_ofs, chunk_size);
         
+      if (sector_idx != -1) {
+          cache = cache_allocate_sector(sector_idx, CACHE_READ);
+          cache_read(cache, buffer+bytes_read, sector_ofs, chunk_size);
+      } else {
+          memset(buffer+bytes_read, chunk_size, 0);
+      }
+              
       /* Advance. */
       size -= chunk_size;
       offset += chunk_size;
@@ -267,7 +362,6 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       cache = cache_allocate_sector(sector_idx, CACHE_WRITE);
       cache_write(cache, buffer+bytes_written, sector_ofs, chunk_size);
         
-
       /* Advance. */
       size -= chunk_size;
       offset += chunk_size;

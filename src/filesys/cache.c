@@ -225,6 +225,15 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
 //    printf("cache_write ckpt4\n");
 }
 
+block_sector_t
+cache_index_write(void *cache, uint32_t* sector, size_t offset, size_t size)
+{
+    ASSERT(size == 4);
+    if (*(uint32_t*)(cache+offset) != 0) return *(uint32_t*)(cache+offset);
+    
+    cache_write(cache, sector, offset, size);
+    return *sector;
+}
 
 static int
 cache_lookup(block_sector_t block)
