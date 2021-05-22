@@ -167,7 +167,7 @@ void
 inode_init (void) 
 {
   list_init (&open_inodes);
-  memset(ones, BITMAP_ERROR, BLOCK_SECTOR_SIZE);
+  memset(size_maxes, BITMAP_ERROR, BLOCK_SECTOR_SIZE);
   memset(zeros, 0, BLOCK_SECTOR_SIZE);
 }
 
