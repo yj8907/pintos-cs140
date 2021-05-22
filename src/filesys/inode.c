@@ -91,7 +91,7 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
     ASSERT (inode != NULL);
           
     uint32_t index_pos;
-    uint32_t *sector;
+    uint32_t sector;
     uint32_t offset;
     uint32_t index_sector;
     
@@ -99,10 +99,10 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
         index_pos = pos / BLOCK_SECTOR_SIZE;
         offset = INODE_META_SIZE+index_pos*ENTRY_SIZE;
         index_sector = inode->sector;
-        inode_read_index(index_sector, offset, sector, allocate);
+        inode_read_index(index_sector, offset, &sector, allocate);
         
-        if (*sector == 0) return -1;
-        return *sector;
+        if (sector == 0) return -1;
+        return sector;
         
     } else if ( (pos -= NUM_DIRECT * BLOCK_SECTOR_SIZE) <
                NUM_INDIRECT * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE) {
@@ -110,17 +110,17 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
         index_pos = pos / (NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE);
         offset = INODE_META_SIZE+(NUM_DIRECT+index_pos)*ENTRY_SIZE;
         index_sector = inode->sector;
-        inode_read_index(index_sector, offset, sector, allocate);
-        if (*sector == 0 ) return -1;
+        inode_read_index(index_sector, offset, &sector, allocate);
+        if (sector == 0 ) return -1;
         
-        index_sector = *sector;
+        index_sector = sector;
         pos -= index_pos * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE;
         index_pos = pos/BLOCK_SECTOR_SIZE;
         offset = index_pos*ENTRY_SIZE;
-        inode_read_index(index_sector, offset, sector, allocate);
-        if ( *sector == 0 ) return -1;
+        inode_read_index(index_sector, offset, &sector, allocate);
+        if (sector == 0 ) return -1;
         
-        return *sector;
+        return sector;
         
     } else if ( (pos -= NUM_INDIRECT * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE)
                < NUM_DOUBLE_INDIRECT * NUM_ENTRY_INDIRECT_DOUBLE * BLOCK_SECTOR_SIZE) {
@@ -128,24 +128,24 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
         index_pos = pos / (NUM_ENTRY_INDIRECT_DOUBLE * BLOCK_SECTOR_SIZE);
         offset = INODE_META_SIZE+(NUM_DIRECT+NUM_INDIRECT+index_pos)*ENTRY_SIZE;
         index_sector = inode->sector;
-        inode_read_index(index_sector, offset, sector, allocate);
-        if (*sector == 0 ) return -1;
+        inode_read_index(index_sector, offset, &sector, allocate);
+        if (sector == 0 ) return -1;
         
-        index_sector = *sector;
+        index_sector = sector;
         pos -= index_pos * NUM_ENTRY_INDIRECT_DOUBLE * BLOCK_SECTOR_SIZE;
         index_pos = pos/(NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE);
         offset = index_pos*ENTRY_SIZE;
-        inode_read_index(index_sector, offset, sector, allocate);
-        if ( *sector == 0 ) return -1;
+        inode_read_index(index_sector, offset, &sector, allocate);
+        if (sector == 0 ) return -1;
         
-        index_sector = *sector;
+        index_sector = sector;
         pos -= index_pos * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE;
         index_pos = pos/ BLOCK_SECTOR_SIZE;
         offset = index_pos*ENTRY_SIZE;
-        inode_read_index(index_sector, offset, sector, allocate);
-        if ( *sector == 0 ) return -1;
+        inode_read_index(index_sector, offset, &sector, allocate);
+        if (sector == 0) return -1;
         
-        return *sector;
+        return sector;
     }
 }
 
@@ -420,13 +420,12 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       }
       lock_release(&inode->inode_lock);
   }
-   
-    PANIC("write_test\n");
     
   while (size > 0) 
     {
       /* Sector to write, starting byte offset within sector. */
       block_sector_t sector_idx = byte_to_sector (inode, offset, true);
+      PANIC("write_test\n");
       int sector_ofs = offset % BLOCK_SECTOR_SIZE;
 
       /* Bytes left in inode, bytes left in sector, lesser of the two. */
