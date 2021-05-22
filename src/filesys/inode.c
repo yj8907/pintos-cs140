@@ -94,7 +94,7 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
     uint32_t sector;
     uint32_t offset;
     uint32_t index_sector;
-    
+    PANIC("pos: %d\n", pos);
     if (pos < NUM_DIRECT * BLOCK_SECTOR_SIZE) {
         index_pos = pos / BLOCK_SECTOR_SIZE;
         offset = INODE_META_SIZE+index_pos*ENTRY_SIZE;
@@ -425,7 +425,6 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     {
       /* Sector to write, starting byte offset within sector. */
       block_sector_t sector_idx = byte_to_sector (inode, offset, true);
-      PANIC("write_test\n");
       int sector_ofs = offset % BLOCK_SECTOR_SIZE;
 
       /* Bytes left in inode, bytes left in sector, lesser of the two. */
