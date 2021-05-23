@@ -170,26 +170,49 @@ compare_bytes (const void *read_data_, const void *expected_data_, size_t size,
   if (!memcmp (read_data, expected_data, size))
     return;
   
-  for (i = 0; i < size; i++)
-    if (read_data[i] != expected_data[i])
-      break;
-  for (j = i + 1; j < size; j++)
-    if (read_data[j] == expected_data[j])
-      break;
+    for (i = 0; i < size; i++) {
+        if (read_data[i] != expected_data[i]) {
+            for (j = i + 1; j < size; j++)
+              if (read_data[j] == expected_data[j])
+                break;
 
-  quiet = false;
-  msg ("%zu bytes read starting at offset %zu in \"%s\" differ "
-       "from expected.", j - i, ofs + i, file_name);
-  show_cnt = j - i;
-  if (j - i > 64) 
-    {
-      show_cnt = 64;
-      msg ("Showing first differing %zu bytes.", show_cnt);
+            quiet = false;
+            msg ("%zu bytes read starting at offset %zu in \"%s\" differ "
+                 "from expected.", j - i, ofs + i, file_name);
+            show_cnt = j - i;
+            if (j - i > 64)
+              {
+                show_cnt = 64;
+                msg ("Showing first differing %zu bytes.", show_cnt);
+              }
+            msg ("Data actually read:");
+            hex_dump (ofs + i, read_data + i, show_cnt, true);
+            msg ("Expected data:");
+            hex_dump (ofs + i, expected_data + i, show_cnt, true);
+        }
+        i = j;
     }
-  msg ("Data actually read:");
-  hex_dump (ofs + i, read_data + i, show_cnt, true);
-  msg ("Expected data:");
-  hex_dump (ofs + i, expected_data + i, show_cnt, true);
-  fail ("%zu bytes read starting at offset %zu in \"%s\" differ "
-        "from expected", j - i, ofs + i, file_name);
+    
+//    for (i = 0; i < size; i++)
+//    if (read_data[i] != expected_data[i])
+//      break;
+//  for (j = i + 1; j < size; j++)
+//    if (read_data[j] == expected_data[j])
+//      break;
+//
+//  quiet = false;
+//  msg ("%zu bytes read starting at offset %zu in \"%s\" differ "
+//       "from expected.", j - i, ofs + i, file_name);
+//  show_cnt = j - i;
+//  if (j - i > 64)
+//    {
+//      show_cnt = 64;
+//      msg ("Showing first differing %zu bytes.", show_cnt);
+//    }
+//  msg ("Data actually read:");
+//  hex_dump (ofs + i, read_data + i, show_cnt, true);
+//  msg ("Expected data:");
+//  hex_dump (ofs + i, expected_data + i, show_cnt, true);
+//  fail ("%zu bytes read starting at offset %zu in \"%s\" differ "
+//        "from expected", j - i, ofs + i, file_name);
 }
