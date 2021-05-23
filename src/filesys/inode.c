@@ -86,7 +86,7 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
     }
     
     if (allocate) ASSERT(*sector != BITMAP_ERROR);
-    
+    PANIC("sector1: %d, %d\n", *sector, offset);
 }
 
 /* Returns the block device sector that contains byte offset POS
