@@ -12,6 +12,7 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
+#include "filesys/filesys.h"
 #include "devices/timer.h"
 #ifdef USERPROG
 #include "userprog/process.h"
@@ -859,6 +860,12 @@ init_thread (struct thread *t, const char *name, int priority)
       }
   }
   #endif
+  
+  /* set up thread current working directory */
+  if (strcmp(name, "main") == 0)
+      t->pwd = inode_open(ROOT_DIR_SECTOR);
+  else
+      t->pwd = thread_current()->pwd;
     
   t->magic = THREAD_MAGIC;
   list_init(&t->thread_wait_list);

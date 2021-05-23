@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include "threads/synch.h"
 #include "filesys/file.h"
+#include "filesys/inode.h"
 #include "userprog/syscall.h"
 
 #ifdef VM
@@ -141,7 +142,7 @@ struct thread
       
     struct list_elem lastrun_elem; /* list element to record threads run during last second */
     
-      
+    struct inode* pwd;
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
