@@ -170,7 +170,7 @@ compare_bytes (const void *read_data_, const void *expected_data_, size_t size,
   if (!memcmp (read_data, expected_data, size))
     return;
   
-    for (i = 0; i < size; i++) {
+    while(i < size) {
         if (read_data[i] != expected_data[i]) {
             for (j = i + 1; j < size; j++)
               if (read_data[j] == expected_data[j])
@@ -189,8 +189,9 @@ compare_bytes (const void *read_data_, const void *expected_data_, size_t size,
             hex_dump (ofs + i, read_data + i, show_cnt, true);
             msg ("Expected data:");
             hex_dump (ofs + i, expected_data + i, show_cnt, true);
+            i = j;
         }
-        i = j;
+        i++;
     }
     
 //    for (i = 0; i < size; i++)
