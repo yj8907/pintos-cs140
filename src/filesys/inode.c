@@ -490,7 +490,7 @@ off_t
 inode_length (const struct inode *inode)
 {
   off_t length = 0;
-  off_t offset = offsetof (struct inode, &(struct inode)->length);
+  off_t offset = offsetof (struct inode, (struct inode).length);
     
   void *cache = cache_allocate_sector(inode->sector, CACHE_READ);
   cache_read(cache, &length, offset, sizeof(length));
