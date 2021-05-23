@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include "threads/synch.h"
 #include "filesys/file.h"
-#include "filesys/inode.h"
 #include "userprog/syscall.h"
 
 #ifdef VM
@@ -40,6 +39,8 @@ typedef int tid_t;
 #define DQ 14
 
 #ifdef USERPROG
+
+struct inode;
 
 struct thread_control_block {
     tid_t tid;

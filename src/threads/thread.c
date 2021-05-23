@@ -413,7 +413,7 @@ thread_create (const char *name, int priority,
   t->tcb->tid = tid;
     
 #ifdef FILESYS
-      t->pwd = thread_current()->pwd;
+  t->pwd = thread_current()->pwd;
 #endif
     
   #ifdef VM
