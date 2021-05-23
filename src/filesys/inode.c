@@ -72,7 +72,7 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
 
         cache = cache_allocate_sector(block, CACHE_WRITE);
         block_sector_t sector_read = cache_index_write(cache, sector, offset);
-        
+        PANIC("sector1: %d, %d, %d\n", *sector, sector_read,  offset);
         if (sector_read == *sector) {
             void *inode_cache = cache_allocate_sector(*sector, CACHE_WRITE);
             if (index_block)
