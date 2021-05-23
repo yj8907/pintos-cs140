@@ -35,7 +35,7 @@ struct inode_disk
     uint32_t indirect_single_blocks[NUM_INDIRECT];
     uint32_t indirect_double_blocks[NUM_DOUBLE_INDIRECT];
     bool isdir;
-    uint8_t unused[3];
+    uint8_t unused1[3];
     uint32_t unused[73];               /* Not used. */
   };
 
