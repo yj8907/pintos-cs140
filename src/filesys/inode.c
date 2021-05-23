@@ -433,7 +433,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       }
       lock_release(&inode->inode_lock);
   }
-    
+  if (inode->sector == 0) PANIC("test");
   while (size > 0) 
     {
       /* Sector to write, starting byte offset within sector. */
