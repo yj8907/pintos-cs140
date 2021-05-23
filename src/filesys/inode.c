@@ -180,7 +180,7 @@ inode_init (void)
    Returns true if successful.
    Returns false if memory or disk allocation fails. */
 bool
-inode_create (block_sector_t sector, off_t length)
+inode_create (block_sector_t sector, off_t length, bool isdir)
 {
   struct inode_disk *disk_inode = NULL;
   bool success = false;
@@ -198,6 +198,7 @@ inode_create (block_sector_t sector, off_t length)
       memset(disk_inode, UINT8_MAX, sizeof *disk_inode);
       disk_inode->length = length;
       disk_inode->magic = INODE_MAGIC;
+      disk_inode->isdir = isdir;
       block_write (fs_device, sector, disk_inode);
       free (disk_inode);
       success = true;
