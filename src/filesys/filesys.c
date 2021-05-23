@@ -103,7 +103,7 @@ do_format (void)
   free_map_create ();
   if (!dir_create (ROOT_DIR_SECTOR, 16))
     PANIC ("root directory creation failed");
-  inode_setdir(ROOT_DIR_SECTOR, true);
+//  inode_setdir(ROOT_DIR_SECTOR, true);
   free_map_close ();
   printf ("done.\n");
 }
