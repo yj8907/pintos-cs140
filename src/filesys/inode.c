@@ -122,14 +122,14 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
         index_sector = inode->sector;
         inode_read_index(index_sector, offset, &sector, allocate, true);
         if (sector == BITMAP_ERROR ) return -1;
-        printf("sector21: %d\n",sector);
+//        printf("sector21: %d\n",sector);
         index_sector = sector;
         pos -= index_pos * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE;
         index_pos = pos/BLOCK_SECTOR_SIZE;
         offset = index_pos*ENTRY_SIZE;
         inode_read_index(index_sector, offset, &sector, allocate, false);
         if (sector == BITMAP_ERROR) return -1;
-        printf("sector22: %d\n",sector);
+//        printf("sector22: %d\n",sector);
         return sector;
         
     } else if ( (pos -= NUM_INDIRECT * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE)
@@ -140,21 +140,21 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
         index_sector = inode->sector;
         inode_read_index(index_sector, offset, &sector, allocate, true);
         if (sector == BITMAP_ERROR) return -1;
-        printf("sector31: %d\n",sector);
+//        printf("sector31: %d\n",sector);
         index_sector = sector;
         pos -= index_pos * NUM_ENTRY_INDIRECT_DOUBLE * BLOCK_SECTOR_SIZE;
         index_pos = pos/(NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE);
         offset = index_pos*ENTRY_SIZE;
         inode_read_index(index_sector, offset, &sector, allocate, true);
         if (sector == BITMAP_ERROR) return -1;
-        printf("sector32: %d\n",sector);
+//        printf("sector32: %d\n",sector);
         index_sector = sector;
         pos -= index_pos * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE;
         index_pos = pos/ BLOCK_SECTOR_SIZE;
         offset = index_pos*ENTRY_SIZE;
         inode_read_index(index_sector, offset, &sector, allocate, false);
         if (sector == BITMAP_ERROR) return -1;
-        printf("sector33: %d\n",sector);
+//        printf("sector33: %d\n",sector);
         return sector;
     }
 }
