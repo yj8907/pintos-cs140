@@ -100,7 +100,7 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
     ASSERT (inode != NULL);
           
     uint32_t index_pos;
-    block_sector_t sector;
+    block_sector_t sector = 0;
     uint32_t offset;
     uint32_t index_sector;
     
