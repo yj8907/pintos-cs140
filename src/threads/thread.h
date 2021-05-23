@@ -141,8 +141,7 @@ struct thread
     struct list_elem wait_elem;
       
     struct list_elem lastrun_elem; /* list element to record threads run during last second */
-    
-    struct inode* pwd;
+        
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
@@ -158,6 +157,10 @@ struct thread
     int mmap_no;
       
     struct list mmap_list;
+#endif
+      
+#ifdef FILESYS
+    struct inode* pwd;
 #endif
       
     /* Owned by thread.c. */

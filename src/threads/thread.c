@@ -12,7 +12,6 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
-#include "filesys/filesys.h"
 #include "devices/timer.h"
 #ifdef USERPROG
 #include "userprog/process.h"
@@ -412,6 +411,10 @@ thread_create (const char *name, int priority,
   if (init_thread (t, name, priority) == -1) return TID_ERROR;
   tid = t->tid = allocate_tid ();
   t->tcb->tid = tid;
+    
+#ifdef FILESYS
+      t->pwd = thread_current()->pwd;
+#endif
     
   #ifdef VM
   t->vm_mm = vm_mm_init();
@@ -860,13 +863,7 @@ init_thread (struct thread *t, const char *name, int priority)
       }
   }
   #endif
-  
-  /* set up thread current working directory */
-  if (strcmp(name, "main") == 0)
-      t->pwd = inode_open(ROOT_DIR_SECTOR);
-  else
-      t->pwd = thread_current()->pwd;
-    
+        
   t->magic = THREAD_MAGIC;
   list_init(&t->thread_wait_list);
     
