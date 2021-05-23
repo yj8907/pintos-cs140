@@ -32,7 +32,7 @@ filesys_init (bool format)
     do_format ();
 
   free_map_open ();
-//  thread_current()->pwd = inode_open(ROOT_DIR_SECTOR);
+  thread_current()->pwd = inode_open(ROOT_DIR_SECTOR);
 }
 
 /* Shuts down the file system module, writing any unwritten data
@@ -103,7 +103,6 @@ do_format (void)
   free_map_create ();
   if (!dir_create (ROOT_DIR_SECTOR, 16))
     PANIC ("root directory creation failed");
-//  inode_setdir(ROOT_DIR_SECTOR, true);
   free_map_close ();
   printf ("done.\n");
 }
