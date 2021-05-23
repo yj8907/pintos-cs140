@@ -493,3 +493,14 @@ inode_length (const struct inode *inode)
   cache_read(cache, &length, 0, sizeof(length));
   return length;
 }
+
+/* Returns whether inode is directory. */
+bool
+inode_isdir(const struct inode *inode)
+{
+    bool isdir;
+    off_t offset = INODE_META_SIZE + (NUM_DIRECT+NUM_INDIRECT+NUM_DOUBLE_INDIRECT) * ENTRY_SIZE;
+    void *cache = cache_allocate_sector(inode->sector, CACHE_READ);
+    cache_read(cache, &isdir, offset, sizeof(isdir));
+    return isdir;
+}
