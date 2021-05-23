@@ -34,7 +34,9 @@ struct inode_disk
     uint32_t direct_blocks[NUM_DIRECT];
     uint32_t indirect_single_blocks[NUM_INDIRECT];
     uint32_t indirect_double_blocks[NUM_DOUBLE_INDIRECT];
-    uint32_t unused[74];               /* Not used. */
+    bool isdir;
+    uint8_t unused[3];
+    uint32_t unused[73];               /* Not used. */
   };
 
 static char size_maxes[BLOCK_SECTOR_SIZE];
@@ -72,7 +74,7 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
 
         cache = cache_allocate_sector(block, CACHE_WRITE);
         block_sector_t sector_read = cache_index_write(cache, sector, offset);
-//        PANIC("sector1: %d, %d, %d\n", *sector, sector_read,  offset);
+
         if (sector_read == *sector) {
             void *inode_cache = cache_allocate_sector(*sector, CACHE_WRITE);
             if (index_block)
@@ -86,7 +88,7 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
     }
     
     if (allocate) ASSERT(*sector != BITMAP_ERROR);
-//    PANIC("sector1: %d, %d\n", *sector, offset);
+
 }
 
 /* Returns the block device sector that contains byte offset POS
