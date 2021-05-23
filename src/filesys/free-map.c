@@ -25,10 +25,10 @@ free_map_init (void)
    sectors were available or if the free_map file could not be
    written. */
 bool
-free_map_allocate (size_t cnt, block_sector_t *sectorp)
+free_map_allocate (size_t cnt, block_sector_t *sectorp, bool write_freemap)
 {
   block_sector_t sector = bitmap_scan_and_flip (free_map, 0, cnt, false);
-  if (sector != BITMAP_ERROR
+  if (sector != BITMAP_ERROR && write_freemap
       && free_map_file != NULL
       && !bitmap_write (free_map, free_map_file))
     {

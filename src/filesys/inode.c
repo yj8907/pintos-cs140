@@ -62,17 +62,17 @@ struct inode
 
 static void
 inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
-                 bool allocate, bool index_block)
+                 bool allocate, bool index_block, bool write_freemap)
 {
     void *cache = cache_allocate_sector(block, CACHE_READ);
     cache_read(cache, sector, offset, ENTRY_SIZE);
 
     if (*sector == BITMAP_ERROR && allocate) {
-        free_map_allocate (1, sector);
+        free_map_allocate (1, sector, write_freemap);
 
         cache = cache_allocate_sector(block, CACHE_WRITE);
         block_sector_t sector_read = cache_index_write(cache, sector, offset);
-//        PANIC("sector1: %d, %d, %d\n", *sector, sector_read,  offset);
+        PANIC("sector1: %d, %d, %d\n", *sector, sector_read,  offset);
         if (sector_read == *sector) {
             void *inode_cache = cache_allocate_sector(*sector, CACHE_WRITE);
             if (index_block)
@@ -108,7 +108,7 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
         index_pos = pos / BLOCK_SECTOR_SIZE;
         offset = INODE_META_SIZE+index_pos*ENTRY_SIZE;
         index_sector = inode->sector;
-        inode_read_index(index_sector, offset, &sector, allocate, false);
+        inode_read_index(index_sector, offset, &sector, allocate, false, inode->sector == FREE_MAP_SECTOR);
         PANIC("byte_to_sector: %d, sector1: %d\n",index_sector, sector);
         if (sector == BITMAP_ERROR) return -1;
         return sector;
@@ -119,14 +119,14 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
         index_pos = pos / (NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE);
         offset = INODE_META_SIZE+(NUM_DIRECT+index_pos)*ENTRY_SIZE;
         index_sector = inode->sector;
-        inode_read_index(index_sector, offset, &sector, allocate, true);
+        inode_read_index(index_sector, offset, &sector, allocate, true, inode->sector == FREE_MAP_SECTOR);
         if (sector == BITMAP_ERROR ) return -1;
 //        printf("sector21: %d\n",sector);
         index_sector = sector;
         pos -= index_pos * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE;
         index_pos = pos/BLOCK_SECTOR_SIZE;
         offset = index_pos*ENTRY_SIZE;
-        inode_read_index(index_sector, offset, &sector, allocate, false);
+        inode_read_index(index_sector, offset, &sector, allocate, false, inode->sector == FREE_MAP_SECTOR);
         if (sector == BITMAP_ERROR) return -1;
 //        printf("sector22: %d\n",sector);
         return sector;
@@ -137,21 +137,21 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
         index_pos = pos / (NUM_ENTRY_INDIRECT_DOUBLE * BLOCK_SECTOR_SIZE);
         offset = INODE_META_SIZE+(NUM_DIRECT+NUM_INDIRECT+index_pos)*ENTRY_SIZE;
         index_sector = inode->sector;
-        inode_read_index(index_sector, offset, &sector, allocate, true);
+        inode_read_index(index_sector, offset, &sector, allocate, true, inode->sector == FREE_MAP_SECTOR);
         if (sector == BITMAP_ERROR) return -1;
 //        printf("sector31: %d\n",sector);
         index_sector = sector;
         pos -= index_pos * NUM_ENTRY_INDIRECT_DOUBLE * BLOCK_SECTOR_SIZE;
         index_pos = pos/(NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE);
         offset = index_pos*ENTRY_SIZE;
-        inode_read_index(index_sector, offset, &sector, allocate, true);
+        inode_read_index(index_sector, offset, &sector, allocate, true, inode->sector == FREE_MAP_SECTOR);
         if (sector == BITMAP_ERROR) return -1;
 //        printf("sector32: %d\n",sector);
         index_sector = sector;
         pos -= index_pos * NUM_ENTRY_INDIRECT_SINGLE * BLOCK_SECTOR_SIZE;
         index_pos = pos/ BLOCK_SECTOR_SIZE;
         offset = index_pos*ENTRY_SIZE;
-        inode_read_index(index_sector, offset, &sector, allocate, false);
+        inode_read_index(index_sector, offset, &sector, allocate, false, inode->sector == FREE_MAP_SECTOR);
         if (sector == BITMAP_ERROR) return -1;
 //        printf("sector33: %d\n",sector);
         return sector;
