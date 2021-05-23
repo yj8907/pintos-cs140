@@ -393,7 +393,7 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
           cache = cache_allocate_sector(sector_idx, CACHE_READ);
           cache_read(cache, buffer+bytes_read, sector_ofs, chunk_size);
       } else {
-          memset(buffer+bytes_read, chunk_size, 0);
+          memset(buffer+bytes_read, 0, chunk_size);
       }
               
       /* Advance. */
