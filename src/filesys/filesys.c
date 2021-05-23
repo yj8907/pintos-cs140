@@ -32,7 +32,7 @@ filesys_init (bool format)
     do_format ();
 
   free_map_open ();
-  thread_current()->pwd = inode_open(ROOT_DIR_SECTOR);
+//  thread_current()->pwd = inode_open(ROOT_DIR_SECTOR);
 }
 
 /* Shuts down the file system module, writing any unwritten data
