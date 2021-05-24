@@ -234,3 +234,10 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
     }
   return false;
 }
+
+struct inode*
+dir_inode(struct dir*)
+{
+    return dir->inode;
+}
+

@@ -92,7 +92,7 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
         goto done;
     }
 
-    PANIC("sector: %d\n", inode_sector(curr_dir->inode));
+    PANIC("sector: %d\n", inode_sector(dir_inode(curr_dir)));
     *dir = malloc(sizeof(curr_dir));
     memcpy(*dir, curr_dir, sizeof(curr_dir));
     *local_name = malloc(strlen(filename)+1);
