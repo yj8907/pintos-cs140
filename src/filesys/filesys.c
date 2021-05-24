@@ -85,12 +85,11 @@ parse_filepath(const char *name, char **local_name)
     
     if (filename == NULL || curr_dir == NULL ||
         (next_filename = strtok_r(NULL, pathsep, &saveptr)) != NULL) {
-        if (curr_dir == NULL) PANIC("test:%s\n", name);
         if(curr_dir != NULL) dir_close(curr_dir);
         curr_dir = NULL;
         goto done;
     }
-    
+//    if (curr_dir == NULL) PANIC("test:%s\n", name);
     *local_name = malloc(strlen(filename)+1);
     memcpy(*local_name, filename, strlen(filename)+1);
     goto done;
@@ -112,7 +111,7 @@ filesys_create (const char *name, off_t initial_size)
   char *filename;
     
   dir = parse_filepath(name, &filename);
-      
+  if (dir == NULL) PANIC("test:%s\n", name);
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector, true)
                   && inode_create (inode_sector, initial_size, false)
