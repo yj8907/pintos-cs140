@@ -91,7 +91,7 @@ parse_filepath(const char *name, char **local_name)
     }
 //    if (curr_dir == NULL) PANIC("test:%s\n", name);
     *local_name = malloc(strlen(filename)+1);
-    memcpy(*local_name, filename, strlen(filename)+1);
+    strlcpy(*local_name, filename, strlen(filename)+1);
     goto done;
     
     done:
