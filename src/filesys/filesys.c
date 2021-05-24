@@ -77,11 +77,11 @@ parse_filepath(const char *name, char **local_name)
       }
       else {
           inode_close(dir_inode);
-          PANIC("test:%s\n", name);
           curr_dir = NULL;
           break;
       }
       filename = strtok_r(NULL, pathsep, &saveptr);
+        PANIC("test:%s\n", name);
     }
     
     if (filename == NULL || curr_dir == NULL ||
