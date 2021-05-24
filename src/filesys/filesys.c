@@ -71,6 +71,7 @@ parse_filepath(const char *name, char **local_name)
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
       
+      PANIC("test:%s\n", name);
       dir_close(curr_dir);
       if (inode_isdir(dir_inode)) {
         curr_dir = dir_open(dir_inode);
@@ -82,7 +83,7 @@ parse_filepath(const char *name, char **local_name)
       }
       filename = strtok_r(NULL, pathsep, &saveptr);
     }
-        
+    
     if (filename == NULL || curr_dir == NULL ||
         (next_filename = strtok_r(NULL, pathsep, &saveptr)) != NULL) {
         if(curr_dir != NULL) dir_close(curr_dir);
