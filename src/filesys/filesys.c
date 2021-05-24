@@ -56,8 +56,9 @@ parse_filepath(const char *name, char **local_name)
     char *fullname, *filename, *saveptr, *next_filename;
     fullname = malloc(strlen(name) + 1);
     strlcpy(fullname, name, strlen(name) + 1);
-    if (strcmp(name, "") == 0) PANIC("name: %s",  name);
+    
     filename = strtok_r(fullname, pathsep, &saveptr);
+    if (strcmp(name, "") == 0) PANIC("name: %s",  filename);
     if (strcmp(filename, "") == 0 && strcmp(name, "") != 0) {
       curr_dir = dir_open_root ();
       filename = strtok_r(NULL, pathsep, &saveptr);
