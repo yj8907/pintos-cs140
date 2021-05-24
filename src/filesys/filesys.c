@@ -58,15 +58,15 @@ parse_filepath(const char *name, char **local_name)
     strlcpy(fullname, name, strlen(name) + 1);
     
     filename = strtok_r(fullname, pathsep, &saveptr);
-    if (strcmp(name, "") == 0) PANIC("name: %s",  filename);
-    if (strcmp(filename, "") == 0 && strcmp(name, "") != 0) {
+    if (filename != NULL && strcmp(filename, "") == 0) {
       curr_dir = dir_open_root ();
       filename = strtok_r(NULL, pathsep, &saveptr);
     }
     else {
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
+      if (filename == NULL) filename = "";
     }
-    
+    if (strcmp(name, "") == 0) PANIC("name: %s\n", filename);
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
