@@ -85,7 +85,7 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
     
     char *next_filename = strtok_r(fullname, "/", &saveptr);
     if (next_filename != NULL) {
-        dir_close(curr_dir); goto done
+        dir_close(curr_dir); goto done;
     }
     
     *dir = malloc(sizeof(curr_dir));
