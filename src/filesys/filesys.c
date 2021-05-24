@@ -108,7 +108,7 @@ filesys_create (const char *name, off_t initial_size)
 {
   block_sector_t inode_sector = 0;
   struct dir *dir;
-  char *filename;
+  char *filename = NULL;
   bool success = false;
   
   dir = parse_filepath(name, &filename);
