@@ -78,18 +78,17 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
           curr_dir = NULL;
           break;
       }
-      filename = strtok_r(fullname, "/", &saveptr);
+      filename = strtok_r(NULL, "/", &saveptr);
     }
-    
-    PANIC("name: %s", filename);
     
     if (filename == NULL || curr_dir == NULL) goto done;
     
-    char *next_filename = strtok_r(fullname, "/", &saveptr);
+    char *next_filename = strtok_r(NULL, "/", &saveptr);
     if (next_filename != NULL) {
         dir_close(curr_dir); goto done;
     }
         
+    PANIC("name: %s", filename);
     *dir = malloc(sizeof(curr_dir));
     memcpy(*dir, curr_dir, sizeof(curr_dir));
     *local_name = malloc(strlen(filename)+1);
