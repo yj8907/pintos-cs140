@@ -115,11 +115,10 @@ filesys_create (const char *name, off_t initial_size)
   if (dir != NULL)  success = ( free_map_allocate (1, &inode_sector, true)
                   && inode_create (inode_sector, initial_size, false)
                   && dir_add (dir, filename, inode_sector));
-  if (dir == NULL) PANIC("test:%s\n", name);
-    
+      
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
-  
+  if (dir == NULL) PANIC("test:%s\n", name);
   if (dir != NULL) dir_close (dir);
   if (filename != NULL) free(filename);
   return success;
