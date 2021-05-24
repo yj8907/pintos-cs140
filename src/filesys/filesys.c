@@ -32,6 +32,7 @@ filesys_init (bool format)
     do_format ();
 
   free_map_open ();
+  /* initial main thread pwd as root dir */
   thread_current()->pwd = inode_open(ROOT_DIR_SECTOR);
 }
 
@@ -43,6 +44,60 @@ filesys_done (void)
   free_map_close ();
 }
 
+
+static void
+parse_filepath(const char *name, char **local_name, struct dir **dir)
+{
+    struct dir *curr_dir;
+    struct inode *dir_inode;
+    
+    char *fullname, *filename, *saveptr;
+    fullname = malloc(strlen(name) + 1);
+    strlcpy(fullname, name, strlen(name) + 1);
+      
+    filename = strtok_r(fullname, "/", &saveptr);
+    if (strcmp(filename, "") == 0) {
+      curr_dir = dir_open_root ();
+      filename = strtok_r(fullname, "/", &saveptr);
+    }
+    else {
+      curr_dir = dir_open(inode_open(thread_current()->pwd->sector));
+    }
+
+    /* search subdirectories */
+    while(filename != NULL && curr_dir != NULL){
+      if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
+      
+      dir_close(curr_dir);
+      if (inode_isdir(dir_inode)) {
+        curr_dir = dir_open(dir_inode);
+      }
+      else {
+          inode_close(dir_inode);
+          curr_dir = NULL;
+          break;
+      }
+      filename = strtok_r(fullname, "/", &saveptr);
+    }
+    
+    if (filename == NULL || curr_dir == NULL) goto done;
+    
+    char *next_filename = strtok_r(fullname, "/", &saveptr);
+    if (next_filename != NULL) {
+        dir_close(curr_dir); goto done
+    }
+    
+    *dir = malloc(sizeof(curr_dir));
+    memcpy(*dir, curr_dir, sizeof(curr_dir));
+    *local_name = malloc(strlen(filename)+1);
+    memcpy(*local_name, filename, strlen(filename)+1);
+    goto done;
+    
+    done:
+      free(fullname);
+      return;
+}
+
 /* Creates a file named NAME with the given INITIAL_SIZE.
    Returns true if successful, false otherwise.
    Fails if a file named NAME already exists,
@@ -51,16 +106,21 @@ bool
 filesys_create (const char *name, off_t initial_size) 
 {
   block_sector_t inode_sector = 0;
-  struct dir *dir = dir_open_root ();
+  struct dir *dir;
+  char *filename;
+    
+  parse_filepath(name, &dir, &filename);
+       
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector, true)
                   && inode_create (inode_sector, initial_size, false)
-                  && dir_add (dir, name, inode_sector));
+                  && dir_add (dir, filename, inode_sector));
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
   dir_close (dir);
-
+  free(filename);
   return success;
+    
 }
 
 /* Opens the file with the given NAME.
