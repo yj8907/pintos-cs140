@@ -62,7 +62,7 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
       filename = strtok_r(fullname, "/", &saveptr);
     }
     else {
-      curr_dir = dir_open(inode_open(thread_current()->pwd->sector));
+      curr_dir = dir_open(inode_reopen(thread_current()->pwd));
     }
 
     /* search subdirectories */
