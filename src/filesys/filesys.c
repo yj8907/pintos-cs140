@@ -81,15 +81,9 @@ parse_filepath(const char *name, char **local_name)
       }
       filename = strtok_r(NULL, "/", &saveptr);
     }
-    
-    if (filename == NULL || curr_dir == NULL) {
-        if(curr_dir != NULL) dir_close(curr_dir);
-        curr_dir = NULL;
-        goto done;
-    }
-    
-    next_filename = strtok_r(NULL, "/", &saveptr);
-    if (next_filename != NULL) {
+        
+    if (filename == NULL || curr_dir == NULL ||
+        (next_filename = strtok_r(NULL, "/", &saveptr)) != NULL) {
         if(curr_dir != NULL) dir_close(curr_dir);
         curr_dir = NULL;
         goto done;
