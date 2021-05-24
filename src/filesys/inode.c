@@ -516,7 +516,7 @@ inode_setdir(const struct inode *inode, bool isdir)
 }
 
 block_sector_t
-inode_sector(const struct inode *inode)
+inode_get_sector(const struct inode *inode)
 {
     return inode->sector;
 }

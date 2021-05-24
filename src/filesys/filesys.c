@@ -117,7 +117,7 @@ filesys_create (const char *name, off_t initial_size)
   char *filename;
     
   dir = parse_filepath(name, &filename);
-  PANIC("sector: %d\n", inode_sector(dir_get_inode(dir)));
+  PANIC("sector: %d\n", inode_get_sector(dir_get_inode(dir)));
     
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector, true)
