@@ -59,7 +59,7 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
     filename = strtok_r(fullname, "/", &saveptr);
     if (strcmp(filename, "") == 0) {
       curr_dir = dir_open_root ();
-      filename = strtok_r(fullname, "/", &saveptr);
+      filename = strtok_r(NULL, "/", &saveptr);
     }
     else {
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
@@ -92,8 +92,8 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
         goto done;
     }
 
-    struct inode* tmp = dir_inode(curr_dir);
-    PANIC("sector: %d\n", inode_sector(dir_inode(curr_dir)));
+    struct inode* tmp = dir_get_inode(curr_dir);
+    PANIC("sector: %d\n", inode_sector(dir_get_inode(curr_dir)));
     *dir = malloc(sizeof(curr_dir));
     memcpy(*dir, curr_dir, sizeof(curr_dir));
     *local_name = malloc(strlen(filename)+1);

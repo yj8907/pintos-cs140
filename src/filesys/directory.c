@@ -236,7 +236,7 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
 }
 
 struct inode*
-dir_inode(struct dir*)
+dir_get_inode(struct dir*)
 {
     return dir->inode;
 }
