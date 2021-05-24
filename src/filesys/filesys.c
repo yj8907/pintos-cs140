@@ -66,7 +66,7 @@ parse_filepath(const char *name, char **local_name)
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
       if (filename == NULL) filename = "";
     }
-    if (strcmp(name, "") == 0) PANIC("name: %s\n", filename);
+    
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
