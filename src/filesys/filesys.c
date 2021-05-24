@@ -52,6 +52,8 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
     struct dir *curr_dir;
     struct inode *dir_inode;
     
+    PANIC("name: %s", name);
+    
     char *fullname, *filename, *saveptr;
     fullname = malloc(strlen(name) + 1);
     strlcpy(fullname, name, strlen(name) + 1);
@@ -65,7 +67,6 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
     }
     
-    PANIC("dir: %d", sizeof(curr_dir));
     
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
