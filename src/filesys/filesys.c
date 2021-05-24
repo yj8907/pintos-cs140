@@ -49,6 +49,7 @@ filesys_done (void)
 static struct dir*
 parse_filepath(const char *name, char **local_name)
 {
+    char *pathsep = "/";
     struct dir *curr_dir;
     struct inode *dir_inode;
         
@@ -56,16 +57,16 @@ parse_filepath(const char *name, char **local_name)
     fullname = malloc(strlen(name) + 1);
     strlcpy(fullname, name, strlen(name) + 1);
       
-    filename = strtok_r(fullname, "/", &saveptr);
+    filename = strtok_r(fullname, pathsep, &saveptr);
     if (strcmp(filename, "") == 0) {
       curr_dir = dir_open_root ();
-      next_filename = strtok_r(NULL, "/", &saveptr);
+      next_filename = strtok_r(NULL, pathsep, &saveptr);
       if (next_filename != NULL) filename = next_filename;
     }
     else {
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
     }
-            
+    PANIC("name: %s",  filename);
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
@@ -79,16 +80,16 @@ parse_filepath(const char *name, char **local_name)
           curr_dir = NULL;
           break;
       }
-      filename = strtok_r(NULL, "/", &saveptr);
+      filename = strtok_r(NULL, pathsep, &saveptr);
     }
         
     if (filename == NULL || curr_dir == NULL ||
-        (next_filename = strtok_r(NULL, "/", &saveptr)) != NULL) {
+        (next_filename = strtok_r(NULL, pathsep, &saveptr)) != NULL) {
         if(curr_dir != NULL) dir_close(curr_dir);
         curr_dir = NULL;
         goto done;
     }
-
+    
     *local_name = malloc(strlen(filename)+1);
     memcpy(*local_name, filename, strlen(filename)+1);
     goto done;
