@@ -64,7 +64,9 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
     else {
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
     }
-
+    
+    PANIC("dir: %d", sizeof(curr_dir));
+    
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
@@ -87,8 +89,7 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
     if (next_filename != NULL) {
         dir_close(curr_dir); goto done;
     }
-    
-    PANIC("dir: %d", sizeof(curr_dir));
+        
     *dir = malloc(sizeof(curr_dir));
     memcpy(*dir, curr_dir, sizeof(curr_dir));
     *local_name = malloc(strlen(filename)+1);
