@@ -72,12 +72,12 @@ parse_filepath(const char *name, char **local_name)
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
             
       dir_close(curr_dir);
-      PANIC("test:%s, isdir: %d ?\n", name, inode_isdir(dir_inode));
       if (inode_isdir(dir_inode)) {
         curr_dir = dir_open(dir_inode);
       }
       else {
           inode_close(dir_inode);
+          PANIC("test:%s, isdir: %d ?\n", name, inode_isdir(dir_inode));
           curr_dir = NULL;
           break;
       }
