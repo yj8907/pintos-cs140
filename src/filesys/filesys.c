@@ -52,14 +52,15 @@ parse_filepath(const char *name, char **local_name)
     struct dir *curr_dir;
     struct inode *dir_inode;
         
-    char *fullname, *filename, *saveptr;
+    char *fullname, *filename, *saveptr, *next_filename;
     fullname = malloc(strlen(name) + 1);
     strlcpy(fullname, name, strlen(name) + 1);
       
     filename = strtok_r(fullname, "/", &saveptr);
     if (strcmp(filename, "") == 0) {
       curr_dir = dir_open_root ();
-      filename = strtok_r(NULL, "/", &saveptr);
+      next_filename = strtok_r(NULL, "/", &saveptr);
+      if (next_filename != NULL) filename = next_filename;
     }
     else {
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
@@ -87,7 +88,7 @@ parse_filepath(const char *name, char **local_name)
         goto done;
     }
     
-    char *next_filename = strtok_r(NULL, "/", &saveptr);
+    next_filename = strtok_r(NULL, "/", &saveptr);
     if (next_filename != NULL) {
         if(curr_dir != NULL) dir_close(curr_dir);
         curr_dir = NULL;
