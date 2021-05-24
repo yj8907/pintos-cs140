@@ -64,9 +64,7 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
     else {
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
     }
-    
-    PANIC("name: %d", sizeof(curr_dir));
-    
+            
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
@@ -82,6 +80,8 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
       }
       filename = strtok_r(fullname, "/", &saveptr);
     }
+    
+    PANIC("name: %s", filename);
     
     if (filename == NULL || curr_dir == NULL) goto done;
     
