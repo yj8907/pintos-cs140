@@ -81,11 +81,15 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
       filename = strtok_r(NULL, "/", &saveptr);
     }
     
-    if (filename == NULL || curr_dir == NULL) goto done;
+    if (filename == NULL || curr_dir == NULL) {
+        if(curr_dir != NULL) dir_close(curr_dir);
+        goto done;
+    }
     
     char *next_filename = strtok_r(NULL, "/", &saveptr);
     if (next_filename != NULL) {
-        dir_close(curr_dir); goto done;
+        if(curr_dir != NULL) dir_close(curr_dir);
+        goto done;
     }
 
     *dir = malloc(sizeof(curr_dir));
