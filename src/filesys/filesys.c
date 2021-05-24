@@ -46,7 +46,7 @@ filesys_done (void)
 }
 
 
-static void
+static struct dir*
 parse_filepath(const char *name, char **local_name)
 {
     struct dir *curr_dir;
