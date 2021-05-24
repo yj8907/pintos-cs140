@@ -82,9 +82,10 @@ parse_filepath(const char *name, char **local_name)
       }
       filename = strtok_r(NULL, pathsep, &saveptr);
     }
-    if (curr_dir == NULL) PANIC("test:%s\n", name);
+    
     if (filename == NULL || curr_dir == NULL ||
         (next_filename = strtok_r(NULL, pathsep, &saveptr)) != NULL) {
+        if (curr_dir == NULL) PANIC("test:%s\n", name);
         if(curr_dir != NULL) dir_close(curr_dir);
         curr_dir = NULL;
         goto done;
