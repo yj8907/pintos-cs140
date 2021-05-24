@@ -92,6 +92,7 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
         goto done;
     }
 
+    struct inode* tmp = dir_inode(curr_dir);
     PANIC("sector: %d\n", inode_sector(dir_inode(curr_dir)));
     *dir = malloc(sizeof(curr_dir));
     memcpy(*dir, curr_dir, sizeof(curr_dir));
