@@ -77,7 +77,7 @@ parse_filepath(const char *name, char **local_name)
       }
       else {
           inode_close(dir_inode);
-          PANIC("test:%s, isdir: %d ?\n", name, inode_isdir(dir_inode));
+          PANIC("test:%s\n", name);
           curr_dir = NULL;
           break;
       }
