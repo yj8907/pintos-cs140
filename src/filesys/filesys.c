@@ -87,8 +87,7 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
     if (next_filename != NULL) {
         dir_close(curr_dir); goto done;
     }
-        
-    PANIC("name: %s", filename);
+
     *dir = malloc(sizeof(curr_dir));
     memcpy(*dir, curr_dir, sizeof(curr_dir));
     *local_name = malloc(strlen(filename)+1);
