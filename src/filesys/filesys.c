@@ -64,7 +64,8 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
     else {
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
     }
-    PANIC("name: %s", name);
+    
+    PANIC("name: %d", sizeof(curr_dir));
     
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
