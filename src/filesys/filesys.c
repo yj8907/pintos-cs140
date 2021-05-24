@@ -47,7 +47,7 @@ filesys_done (void)
 
 
 static void
-parse_filepath(const char *name, char **local_name, struct dir **dir)
+parse_filepath(const char *name, char **local_name)
 {
     struct dir *curr_dir;
     struct inode *dir_inode;
@@ -83,24 +83,26 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
     
     if (filename == NULL || curr_dir == NULL) {
         if(curr_dir != NULL) dir_close(curr_dir);
+        curr_dir = NULL;
         goto done;
     }
     
     char *next_filename = strtok_r(NULL, "/", &saveptr);
     if (next_filename != NULL) {
         if(curr_dir != NULL) dir_close(curr_dir);
+        curr_dir = NULL;
         goto done;
     }
 
-    *dir = malloc(sizeof(curr_dir));
-    memcpy(*dir, curr_dir, sizeof(curr_dir));
+//    *dir = malloc(sizeof(curr_dir));
+//    memcpy(*dir, curr_dir, sizeof(curr_dir));
     *local_name = malloc(strlen(filename)+1);
     memcpy(*local_name, filename, strlen(filename)+1);
     goto done;
     
     done:
       free(fullname);
-      return;
+      return curr_dir;
 }
 
 /* Creates a file named NAME with the given INITIAL_SIZE.
@@ -114,7 +116,7 @@ filesys_create (const char *name, off_t initial_size)
   struct dir *dir;
   char *filename;
     
-  parse_filepath(name, &dir, &filename);
+  dir = parse_filepath(name, &filename);
   PANIC("sector: %d\n", inode_sector(dir_get_inode(dir)));
     
   bool success = (dir != NULL
