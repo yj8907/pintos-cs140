@@ -94,9 +94,6 @@ parse_filepath(const char *name, char **local_name, struct dir **dir)
 
     *dir = malloc(sizeof(curr_dir));
     memcpy(*dir, curr_dir, sizeof(curr_dir));
-    
-    PANIC("sector: %d\n", inode_sector(dir_get_inode(*dir)));
-    
     *local_name = malloc(strlen(filename)+1);
     memcpy(*local_name, filename, strlen(filename)+1);
     goto done;
@@ -118,8 +115,8 @@ filesys_create (const char *name, off_t initial_size)
   char *filename;
     
   parse_filepath(name, &dir, &filename);
-  
-  PANIC("test");
+      
+  PANIC("sector: %d\n", inode_sector(dir_get_inode(dir)));
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector, true)
                   && inode_create (inode_sector, initial_size, false)
