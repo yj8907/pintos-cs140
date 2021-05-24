@@ -72,6 +72,7 @@ parse_filepath(const char *name, char **local_name)
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
             
       dir_close(curr_dir);
+      PANIC("test:%s\n", name);
       if (inode_isdir(dir_inode)) {
         curr_dir = dir_open(dir_inode);
       }
@@ -80,7 +81,6 @@ parse_filepath(const char *name, char **local_name)
           curr_dir = NULL;
           break;
       }
-      PANIC("test:%s\n", name);
       filename = strtok_r(NULL, pathsep, &saveptr);
     }
     
