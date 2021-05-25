@@ -575,3 +575,18 @@ sys_mkdir(uint32_t *eax, char** argv)
     file_close(dir_file);
     return;
 }
+
+static void sys_readdir(uint32_t *eax, char** argv)
+{
+    
+}
+
+static void sys_isdir(uint32_t *eax, char** argv)
+{
+    
+}
+
+static void sys_inumber(uint32_t *eax, char** argv)
+{
+    
+}
