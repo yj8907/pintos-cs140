@@ -11,6 +11,7 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 #include "filesys/file.h"
+#include "filesys/inode.h"
 #include "threads/palloc.h"
 #include "threads/malloc.h"
 
@@ -74,6 +75,26 @@ static void sys_close(uint32_t *eax, char** argv);
 
 static void sys_mmap(uint32_t *eax, char** argv);
 static void sys_munmap(uint32_t *eax, char** argv);
+
+static void sys_chdir(uint32_t *eax, char** argv);
+static void sys_mkdir(uint32_t *eax, char** argv);
+static void sys_readdir(uint32_t *eax, char** argv);
+static void sys_isdir(uint32_t *eax, char** argv);
+static void sys_inumber(uint32_t *eax, char** argv);
+
+static char*
+trim_dir_path(const char* name)
+{
+    char *dirname = name;
+    size_t name_size = strlen(name);
+        
+    if (!strcmp(name+name_size-1, "/")) name_size--;
+    dirname = malloc(name_size+1);
+    strlcpy(dirname, name, name_size);
+    strlcpy(dirname+name_size, "\0", 1);
+    
+    return dirname;
+}
 
 void
 force_exit(void)
@@ -230,6 +251,23 @@ syscall_handler (struct intr_frame *f)
           break;
       case SYS_MUNMAP:
           sys_munmap(eax, argv);
+          break;
+      case SYS_CHDIR:
+          sys_chdir(eax, argv);
+          break;
+      case SYS_MKDIR:
+          sys_mkdir(eax, argv);
+          break;
+      case SYS_READDIR:
+          argc = 2;
+          load_arguments(argc, args, argv);
+          sys_readdir(eax, argv);
+          break;
+      case SYS_ISDIR:
+          sys_isdir(eax, argv);
+          break;
+      case SYS_INUMBER:
+          sys_inumber(eax, argv);
           break;
           
       default:
@@ -490,3 +528,48 @@ sys_munmap(uint32_t *eax, char** argv)
     
 };
 
+
+static void
+sys_chdir(uint32_t *eax, char** argv)
+{
+    const char* input_dirname = *(char**)argv[0];
+    validate_filename(input_dirname);
+    char *dirname = trim_dir_path(input_dirname);
+    
+    bool success = false;
+        
+    struct inode* dir_inode;
+    struct file *dir_file = filesys_open(dirname);
+    if (dir_file != NULL) dir_inode = file_get_inode(dir_file);
+    if (inode_isdir(dir_inode)) {
+        thread_current()->pwd = dir_inode;
+        success = true;
+    }
+    
+    memcpy(eax, &success, sizeof(success));    
+};
+
+
+static void
+sys_mkdir(uint32_t *eax, char** argv)
+{
+    const char* input_dirname = *(char**)argv[0];
+    validate_filename(input_dirname);
+    
+    char *dirname = trim_dir_path(input_dirname);
+    bool success = false;
+    
+    /* empty dir name is not allowed */
+    if (strcmp(dirname, "") != 0)
+        success = filesys_create(dirname);
+    memcpy(eax, &success, sizeof(success));
+    if (!success) return;
+    
+    struct file *dir_file = filesys_open(dirname);
+    ASSERT(dir_file != NULL);
+    
+    struct inode* dir_inode = file_get_inode(dir_file);
+    inode_setdir(dir_inode, true);
+    file_close(dir_file);
+    return;
+}
