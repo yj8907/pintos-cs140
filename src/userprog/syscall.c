@@ -87,8 +87,8 @@ trim_dir_path(const char* name)
 {
     char *dirname = name;
     size_t name_size = strlen(name);
-        
-    if (!strcmp(name+name_size-1, "/")) name_size--;
+    
+    if (strcmp(name, "/") != 0 && strcmp(name+name_size-1, "/") == 0)  name_size--;
     dirname = malloc(name_size+1);
     strlcpy(dirname, name, name_size);
     strlcpy(dirname+name_size, "\0", 1);
@@ -542,11 +542,13 @@ sys_chdir(uint32_t *eax, char** argv)
     struct file *dir_file = filesys_open(dirname);
     if (dir_file != NULL) dir_inode = file_get_inode(dir_file);
     if (inode_isdir(dir_inode)) {
-        thread_current()->pwd = dir_inode;
+        inode_close(thread_current()->pwd);
+        thread_current()->pwd = inode_reopen(dir_inode);
         success = true;
     }
+    file_close(dir_file);
     
-    memcpy(eax, &success, sizeof(success));    
+    memcpy(eax, &success, sizeof(success));
 };
 
 
@@ -560,8 +562,8 @@ sys_mkdir(uint32_t *eax, char** argv)
     bool success = false;
     
     /* empty dir name is not allowed */
-    if (strcmp(dirname, "") != 0)
-        success = filesys_create(dirname);
+    if (strcmp(dirname, "") != 0 && strcmp(dirname, "/") != 0)
+        success = filesys_create(dirname, 0);
     memcpy(eax, &success, sizeof(success));
     if (!success) return;
     
