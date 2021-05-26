@@ -572,8 +572,9 @@ sys_mkdir(uint32_t *eax, char** argv)
     
     struct inode* dir_inode = file_get_inode(dir_file);
     inode_setdir(dir_inode, true);
+    PANIC("dir:%d\n", inode_isdir(dir_inode));
     file_close(dir_file);
-    PANIC("test:%s\n", dirname);
+    
     return;
 }
 
