@@ -357,7 +357,7 @@ static void sys_remove(uint32_t *eax, char** argv)
     sema_down(&filesys_sema);
     int ret = filesys_remove(filename) ? 1 : 0;
     sema_up(&filesys_sema);
-    
+    PANIC("ret: %d\n", ret);
     memcpy(eax, &ret, sizeof(ret));
 };
 
