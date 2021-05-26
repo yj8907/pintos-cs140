@@ -69,6 +69,7 @@ parse_filepath(const char *name, char **local_name, bool create)
     
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
+      if (strcmp(name, "b")==0) PANIC("test:%s\n", filename);
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
     
       prev_filename = filename;
@@ -89,7 +90,7 @@ parse_filepath(const char *name, char **local_name, bool create)
         curr_dir = NULL;
         goto done;
     }
-    if (strcmp(name, "b")==0) PANIC("test:%s\n", filename);
+    
     if (create) ASSERT(filename != NULL);
     /* to allow to open directory as file */
     if (!create && dir_inode != NULL && prev_dir != curr_dir) { /* file is actually directory */
