@@ -79,7 +79,7 @@ parse_filepath(const char *name, char **local_name, bool create)
       dir_inode = NULL;
       filename = strtok_r(NULL, pathsep, &saveptr);
     }
-    
+    PANIC("test:%s\n", filename);
     next_filename = strtok_r(NULL, pathsep, &saveptr);
     if (next_filename != NULL || (create && dir_inode != NULL)) {
         dir_close(curr_dir);
