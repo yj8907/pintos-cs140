@@ -149,7 +149,7 @@ filesys_open (const char *name)
   bool success = false;
   dir = parse_filepath(name, &filename, false);
   
-//  if (filename == NULL) PANIC("test:%s\n", name);
+  if (strcmp(name, "b")==0) PANIC("test:%s\n", name);
     
   struct inode *inode = NULL;
   if (dir != NULL && filename != NULL)
