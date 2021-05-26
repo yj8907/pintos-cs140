@@ -84,7 +84,6 @@ parse_filepath(const char *name, char **local_name, bool create)
       }
     }
     
-    if (create && dir_inode != NULL) PANIC("test:%s\n",name);
     next_filename = strtok_r(NULL, pathsep, &saveptr);
     if (next_filename != NULL || (create && dir_inode != NULL) ||  (!create && dir_inode == NULL)) {
         if (curr_dir != NULL) dir_close(curr_dir);
@@ -107,6 +106,7 @@ parse_filepath(const char *name, char **local_name, bool create)
     goto done;
         
     done:
+      if (create && dir_inode != NULL) PANIC("test:%s\n",name);
       free(fullname);
       return curr_dir;
 }
