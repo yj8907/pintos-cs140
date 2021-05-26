@@ -88,11 +88,11 @@ trim_dir_path(const char* name)
     char *dirname = name;
     size_t name_size = strlen(name);
     
-    if (strcmp(name, "/") != 0 && strcmp(name+name_size-1, "/") == 0)  name_size--;
+    if (strcmp(name, "/") != 0 && strcmp(name+name_size-1, "/") == 0) name_size--;
     dirname = malloc(name_size+1);
     strlcpy(dirname, name, name_size);
     strlcpy(dirname+name_size, "\0", 1);
-    
+    PANIC("test:%s\n", dirname);
     return dirname;
 }
 
