@@ -77,35 +77,33 @@ parse_filepath(const char *name, char **local_name, bool create)
         curr_dir = dir_open(dir_inode);
       else
         break;
-      dir_inode = NULL;
+        
       filename = strtok_r(NULL, pathsep, &saveptr);
-      if (filename != NULL) dir_close(prev_dir);
+      if (filename != NULL) {
+          dir_close(prev_dir); prev_dir = NULL;
+      }
     }
     
     next_filename = strtok_r(NULL, pathsep, &saveptr);
-    if (next_filename != NULL || (create && dir_inode != NULL)) {
+    if (next_filename != NULL || (create && dir_inode != NULL) ||  (!create && dir_inode == NULL)) {
         dir_close(curr_dir);
         inode_close(dir_inode);
         curr_dir = NULL;
+        if (create && prev_dir != NULL) dir_close(prev_dir);
         goto done;
     }
-    
-    if (create) ASSERT(filename != NULL);
+        
     /* to allow to open directory as file */
-    if (!create && filename == NULL && prev_dir != curr_dir) { /* file is actually directory */
+    if (!create && filename == NULL) { /* file is actually directory */
         dir_close(curr_dir);
         curr_dir = prev_dir;
         filename = prev_filename;
     }
     
-//    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", inode_get_inumber(dir_get_inode(curr_dir)));
-//    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", dir_inode == NULL);
-    
-    if (filename != NULL) {
-        *local_name = malloc(strlen(filename)+1);
-        strlcpy(*local_name, filename, strlen(filename)+1);
-        goto done;
-    }
+    ASSERT(filename != NULL);
+    *local_name = malloc(strlen(filename)+1);
+    strlcpy(*local_name, filename, strlen(filename)+1);
+    goto done;
         
     done:
       free(fullname);
