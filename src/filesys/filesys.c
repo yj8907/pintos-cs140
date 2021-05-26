@@ -173,7 +173,7 @@ filesys_remove (const char *name)
     success = true;
   }
   dir_close (dir); 
-
+  PANIC("test:%d\n",  success);
   return success;
 }
 
