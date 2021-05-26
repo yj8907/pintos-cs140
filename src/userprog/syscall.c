@@ -541,7 +541,7 @@ sys_chdir(uint32_t *eax, char** argv)
     struct file *dir_file = filesys_open(dirname);
     if (dir_file != NULL) dir_inode = file_get_inode(dir_file);
     
-            if (strcmp(input_dirname, "a")==0) printf("test1:%s\n", dirname);
+            if (strcmp(input_dirname, "a")==0) printf("test1:%d\n", dir_inode == NULL);
     
     if (inode_isdir(dir_inode)) {
         inode_close(thread_current()->pwd);
