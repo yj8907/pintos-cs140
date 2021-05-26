@@ -93,6 +93,7 @@ parse_filepath(const char *name, char **local_name, bool create)
     if (filename != NULL) {
         *local_name = malloc(strlen(filename)+1);
         strlcpy(*local_name, filename, strlen(filename)+1);
+        PANIC("test:%s\n", filename);
         goto done;
     }
     
