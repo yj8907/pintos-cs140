@@ -90,16 +90,17 @@ parse_filepath(const char *name, char **local_name, bool create)
         goto done;
     }
     
-    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", inode_get_inumber(dir_get_inode(curr_dir)));
-    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", dir_inode == NULL);
-    
     if (create) ASSERT(filename != NULL);
     /* to allow to open directory as file */
-    if (!create && dir_inode != NULL && prev_dir != curr_dir) { /* file is actually directory */
+    if (!create && dir_inode == NULL && prev_dir != curr_dir) { /* file is actually directory */
         dir_close(curr_dir);
         curr_dir = prev_dir;
         filename = prev_filename;
     }
+    
+    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", inode_get_inumber(dir_get_inode(curr_dir)));
+    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", dir_inode == NULL);
+    
     if (filename != NULL) {
         *local_name = malloc(strlen(filename)+1);
         strlcpy(*local_name, filename, strlen(filename)+1);
