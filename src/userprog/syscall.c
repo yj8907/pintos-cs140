@@ -557,7 +557,7 @@ sys_mkdir(uint32_t *eax, char** argv)
 {
     const char* input_dirname = *(char**)argv[0];
     validate_filename(input_dirname);
-    
+    PANIC("name:%s\n", input_dirname);
     char *dirname = trim_dir_path(input_dirname);
     bool success = false;
     
