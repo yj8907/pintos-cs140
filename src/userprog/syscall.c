@@ -547,7 +547,6 @@ sys_chdir(uint32_t *eax, char** argv)
     }
     
     file_close(dir_file);
-    PANIC("test %s\n",dirname);
     memcpy(eax, &success, sizeof(success));
 };
 
