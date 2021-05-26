@@ -90,7 +90,7 @@ parse_filepath(const char *name, char **local_name, bool create)
         goto done;
     }
     
-    if (strcmp(name, "a")==0) printf("parse_filepath_test:%1\n", dir_inode == NULL);
+    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", dir_inode == NULL);
     if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", dir_inode == NULL);
     
     if (create) ASSERT(filename != NULL);
