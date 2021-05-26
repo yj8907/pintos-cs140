@@ -534,7 +534,7 @@ sys_chdir(uint32_t *eax, char** argv)
     const char* input_dirname = *(char**)argv[0];
     validate_filename(input_dirname);
     char *dirname = trim_dir_path(input_dirname);
-    PANIC("test%s\n",dirname);
+    
     int success = 0;
         
     struct inode* dir_inode;
@@ -545,6 +545,7 @@ sys_chdir(uint32_t *eax, char** argv)
         thread_current()->pwd = inode_reopen(dir_inode);
         success = true;
     }
+    PANIC("test%s\n",dirname);
     file_close(dir_file);
     
     memcpy(eax, &success, sizeof(success));
