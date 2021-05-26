@@ -80,16 +80,16 @@ parse_filepath(const char *name, char **local_name, bool create)
       filename = strtok_r(NULL, pathsep, &saveptr);
     }
     
-    if (filename == NULL) PANIC("test:%s\n", name);
+    if (filename == NULL) PANIC("test1:%s\n", name);
     next_filename = strtok_r(NULL, pathsep, &saveptr);
     if (next_filename != NULL || (create && dir_inode != NULL)) {
         dir_close(curr_dir);
         inode_close(dir_inode);
         curr_dir = NULL;
+        if (curr_dir == NULL) PANIC("test3:%s\n", name);
         goto done;
     }
-    
-//    if (curr_dir == NULL) PANIC("test:%s\n", name);
+    if (curr_dir == NULL) PANIC("test2:%s\n", name);
     if (create) ASSERT(filename != NULL);
     if (filename != NULL) {
         *local_name = malloc(strlen(filename)+1);
