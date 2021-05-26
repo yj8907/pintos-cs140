@@ -90,8 +90,8 @@ trim_dir_path(const char* name)
     
     if (strcmp(name, "/") != 0 && strcmp(name+name_size-1, "/") == 0) name_size--;
     dirname = malloc(name_size+1);
-    strlcpy(dirname, name, name_size+1);    
-    PANIC("test:%s\n", dirname);
+    strlcpy(dirname, name, name_size+1);
+    
     return dirname;
 }
 
@@ -559,11 +559,11 @@ sys_mkdir(uint32_t *eax, char** argv)
     
     char *dirname = trim_dir_path(input_dirname);
     int success = 0;
-    PANIC("test:%s\n", input_dirname);
+    
     /* empty dir name is not allowed */
     if (strcmp(dirname, "") != 0 && strcmp(dirname, "/") != 0)
         success = filesys_create(dirname, 0);
-    PANIC("test:%s\n", dirname);
+    
     memcpy(eax, &success, sizeof(success));
     if (!success) return;
     
