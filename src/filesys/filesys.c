@@ -67,6 +67,8 @@ parse_filepath(const char *name, char **local_name, bool create)
       if (filename == NULL) filename = "";
     }
     
+    if (strcmp(name, "b")==0) PANIC("test:%d\n", inode_get_sector(dir_get_inode(curr_dir)));
+    
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
@@ -147,8 +149,7 @@ filesys_open (const char *name)
   struct dir *dir;
   char *filename = NULL;
   bool success = false;
-    
-  if (strcmp(name, "b")==0) PANIC("test:%s\n", name);
+      
   dir = parse_filepath(name, &filename, false);
       
   struct inode *inode = NULL;
