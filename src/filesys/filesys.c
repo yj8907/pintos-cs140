@@ -168,6 +168,8 @@ filesys_remove (const char *name)
   struct dir *dir;
   char *filename = NULL;
   bool success = false;
+    
+  dir = parse_filepath(name, &filename, false);
   if (dir != NULL && filename != NULL) {
     dir_remove (dir, filename);
     success = true;
