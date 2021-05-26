@@ -50,7 +50,7 @@ static struct dir*
 parse_filepath(const char *name, char **local_name, bool create)
 {
     char *pathsep = "/";
-    struct dir *curr_dir;
+    struct dir *curr_dir, *prev_dir;
     struct inode *dir_inode = NULL;
         
     char *fullname, *filename, *saveptr, *next_filename;
@@ -70,14 +70,15 @@ parse_filepath(const char *name, char **local_name, bool create)
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
-            
-      dir_close(curr_dir);
+    
+      prev_dir = curr_dir;
       if (inode_isdir(dir_inode))
         curr_dir = dir_open(dir_inode);
       else
         break;
       dir_inode = NULL;
       filename = strtok_r(NULL, pathsep, &saveptr);
+      if (filename != NULL) dir_close(prev_dir);
     }
     
 //    if (filename == NULL) PANIC("test1:%s\n", name);
@@ -96,7 +97,11 @@ parse_filepath(const char *name, char **local_name, bool create)
         strlcpy(*local_name, filename, strlen(filename)+1);
         goto done;
     }
-    
+    if (prev_dir != curr_dir) {
+        dir_close(curr_dir);
+        curr_dir = prev_dir;
+    }
+        
     done:
       free(fullname);
       return curr_dir;
@@ -137,11 +142,16 @@ filesys_create (const char *name, off_t initial_size)
 struct file *
 filesys_open (const char *name)
 {
-  struct dir *dir = dir_open_root ();
+  struct dir *dir;
+  char *filename = NULL;
+  bool success = false;
+  dir = parse_filepath(name, &filename, false);
+  
+//  if (filename == NULL) PANIC("test:%s\n", name);
+    
   struct inode *inode = NULL;
-
-  if (dir != NULL)
-    dir_lookup (dir, name, &inode);
+  if (dir != NULL && filename != NULL)
+    dir_lookup (dir, filename, &inode);
   dir_close (dir);
 
   return file_open (inode);
