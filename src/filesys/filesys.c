@@ -67,8 +67,6 @@ parse_filepath(const char *name, char **local_name, bool create)
       if (filename == NULL) filename = "";
     }
     
-    if (strcmp(name, "b")==0) PANIC("test:%d\n", inode_get_sector(dir_get_inode(curr_dir)));
-    
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
@@ -91,7 +89,7 @@ parse_filepath(const char *name, char **local_name, bool create)
         curr_dir = NULL;
         goto done;
     }
-//    if (curr_dir == NULL) PANIC("test2:%s\n", name);
+    if (strcmp(name, "b")==0) PANIC("test:%d\n", inode_get_sector(dir_inode);
     if (create) ASSERT(filename != NULL);
     /* to allow to open directory as file */
     if (!create && dir_inode != NULL && prev_dir != curr_dir) { /* file is actually directory */
