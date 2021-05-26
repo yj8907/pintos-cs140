@@ -535,11 +535,11 @@ sys_chdir(uint32_t *eax, char** argv)
     
     int success = 0;
         
-    struct inode* dir_inode;
+    struct inode* dir_inode = NULL;
     struct file *dir_file = filesys_open(dirname);
     if (dir_file != NULL) dir_inode = file_get_inode(dir_file);
     
-    if (inode_isdir(dir_inode)) {
+    if (dir_inode != NULL && inode_isdir(dir_inode)) {
         inode_close(thread_current()->pwd);
         thread_current()->pwd = inode_reopen(dir_inode);
         success = 1;
