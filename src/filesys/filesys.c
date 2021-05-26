@@ -92,7 +92,7 @@ parse_filepath(const char *name, char **local_name, bool create)
 //    if (curr_dir == NULL) PANIC("test2:%s\n", name);
     if (create) ASSERT(filename != NULL);
     /* to allow to open directory as file */
-    if (!create && prev_dir != curr_dir) { /* file is actually directory */
+    if (!create && dir_inode != NULL && prev_dir != curr_dir) { /* file is actually directory */
         dir_close(curr_dir);
         curr_dir = prev_dir;
         filename = prev_filename;
