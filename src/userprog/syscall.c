@@ -540,6 +540,9 @@ sys_chdir(uint32_t *eax, char** argv)
     struct inode* dir_inode;
     struct file *dir_file = filesys_open(dirname);
     if (dir_file != NULL) dir_inode = file_get_inode(dir_file);
+    
+    if (strcmp(name, "a")==0) PANIC("test:%d\n", inode_get_inumber(dir_inode));
+    
     if (inode_isdir(dir_inode)) {
         inode_close(thread_current()->pwd);
         thread_current()->pwd = inode_reopen(dir_inode);
