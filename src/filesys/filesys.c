@@ -86,10 +86,10 @@ parse_filepath(const char *name, char **local_name, bool create)
     
     next_filename = strtok_r(NULL, pathsep, &saveptr);
     if (next_filename != NULL || (create && dir_inode != NULL) ||  (!create && dir_inode == NULL)) {
-        dir_close(curr_dir);
-        inode_close(dir_inode);
+        if (curr_dir != NULL) dir_close(curr_dir);
+        if (dir_inode != NULL) inode_close(dir_inode);
+        if (prev_dir != NULL) dir_close(prev_dir);
         curr_dir = NULL;
-        if (create && prev_dir != NULL) dir_close(prev_dir);
         goto done;
     }
         
