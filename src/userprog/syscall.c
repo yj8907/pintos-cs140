@@ -440,9 +440,10 @@ sys_write(uint32_t *eax, char** argv)
       putbuf(buffer, size);
       bytes_write = size;
     } else if ( (fp = fetch_file(fd_no)) != NULL ) {
-//        sema_down(&filesys_sema);
-        bytes_write = file_write(fp, buffer, size);
-//        sema_up(&filesys_sema);
+        if (!inode_isdir(file_get_inode(fp)))
+            bytes_write = file_write(fp, buffer, size);
+        else
+            bytes_write = -1;
     }
     memcpy(eax, &bytes_write, sizeof(bytes_write));
 };
