@@ -122,11 +122,10 @@ filesys_create (const char *name, off_t initial_size)
   bool success = false;
   
   dir = parse_filepath(name, &filename, true);
-//  if (strcmp(name, "a/b")==0) PANIC("test:%d\n", inode_get_inumber(dir_get_inode(dir)));
+  if (strcmp(name, "a/b")==0) msg("test:%d\n", inode_get_inumber(dir_get_inode(dir)));
   if (dir != NULL) success = ( free_map_allocate (1, &inode_sector, true)
                   && inode_create (inode_sector, initial_size, false)
                   && dir_add (dir, filename, inode_sector));
-      if (strcmp(name, "a/b")==0) PANIC("test:%d\n", inode_sector);
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
 
