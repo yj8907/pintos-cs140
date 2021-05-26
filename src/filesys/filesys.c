@@ -167,8 +167,11 @@ filesys_remove (const char *name)
 {
   struct dir *dir;
   char *filename = NULL;
-        
-  bool success = dir != NULL && filename != NULL && dir_remove (dir, filename);
+  bool success = false;
+  if (dir != NULL && filename != NULL) {
+    dir_remove (dir, filename);
+    success = true;
+  }
   dir_close (dir); 
 
   return success;
