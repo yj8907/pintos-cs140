@@ -543,11 +543,11 @@ sys_chdir(uint32_t *eax, char** argv)
     if (inode_isdir(dir_inode)) {
         inode_close(thread_current()->pwd);
         thread_current()->pwd = inode_reopen(dir_inode);
-        success = true;
+        success = 1;
     }
-    PANIC("test%s\n",dirname);
-    file_close(dir_file);
     
+    file_close(dir_file);
+    PANIC("test %s\n",dirname);
     memcpy(eax, &success, sizeof(success));
 };
 
