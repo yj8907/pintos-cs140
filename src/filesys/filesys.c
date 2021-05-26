@@ -147,10 +147,10 @@ filesys_open (const char *name)
   struct dir *dir;
   char *filename = NULL;
   bool success = false;
-  dir = parse_filepath(name, &filename, false);
-  
-  if (strcmp(name, "b")==0) PANIC("test:%s\n", name);
     
+  if (strcmp(name, "b")==0) PANIC("test:%s\n", name);
+  dir = parse_filepath(name, &filename, false);
+      
   struct inode *inode = NULL;
   if (dir != NULL && filename != NULL)
     dir_lookup (dir, filename, &inode);
