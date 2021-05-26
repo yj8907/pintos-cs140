@@ -69,9 +69,8 @@ parse_filepath(const char *name, char **local_name, bool create)
     
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
-      if (strcmp(name, "b")==0) PANIC("test:%s\n", filename);
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
-    
+    if (strcmp(name, "b")==0) PANIC("test:%s\n", filename);
       prev_filename = filename;
       prev_dir = curr_dir;
       if (inode_isdir(dir_inode))
