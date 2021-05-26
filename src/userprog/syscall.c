@@ -563,7 +563,7 @@ sys_mkdir(uint32_t *eax, char** argv)
     /* empty dir name is not allowed */
     if (strcmp(dirname, "") != 0 && strcmp(dirname, "/") != 0)
         success = filesys_create(dirname, 0);
-    
+    PANIC("test:%d\n", success);
     memcpy(eax, &success, sizeof(success));
     if (!success) return;
     
