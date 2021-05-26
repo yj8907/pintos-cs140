@@ -98,8 +98,8 @@ parse_filepath(const char *name, char **local_name, bool create)
         filename = prev_filename;
     }
     
-    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", inode_get_inumber(dir_get_inode(curr_dir)));
-    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", dir_inode == NULL);
+//    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", inode_get_inumber(dir_get_inode(curr_dir)));
+//    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", dir_inode == NULL);
     
     if (filename != NULL) {
         *local_name = malloc(strlen(filename)+1);
@@ -130,8 +130,7 @@ filesys_create (const char *name, off_t initial_size)
                   && dir_add (dir, filename, inode_sector));
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
-    if (strcmp(name, "a")==0) printf("test3:%d\n", inode_get_inumber(dir_get_inode(dir)));
-    if (strcmp(name, "a")==0) printf("test4:%d\n", inode_sector);
+    
   dir_close (dir);
   if (filename != NULL) free(filename);
   return success;
