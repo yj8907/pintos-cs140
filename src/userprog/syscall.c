@@ -563,7 +563,7 @@ sys_mkdir(uint32_t *eax, char** argv)
     /* empty dir name is not allowed */
     if (strcmp(dirname, "") != 0 && strcmp(dirname, "/") != 0)
         success = filesys_create(dirname, 0);
-    PANIC("test:%s\n", dirname);
+    
     memcpy(eax, &success, sizeof(success));
     if (!success) return;
     
@@ -573,6 +573,7 @@ sys_mkdir(uint32_t *eax, char** argv)
     struct inode* dir_inode = file_get_inode(dir_file);
     inode_setdir(dir_inode, true);
     file_close(dir_file);
+    PANIC("test:%s\n", dirname);
     return;
 }
 
