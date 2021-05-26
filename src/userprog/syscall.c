@@ -560,7 +560,7 @@ sys_mkdir(uint32_t *eax, char** argv)
     
     char *dirname = trim_dir_path(input_dirname);
     int success = 0;
-    
+    PANIC("test:%s\n", input_dirname);
     /* empty dir name is not allowed */
     if (strcmp(dirname, "") != 0 && strcmp(dirname, "/") != 0)
         success = filesys_create(dirname, 0);
