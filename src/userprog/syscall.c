@@ -559,12 +559,12 @@ sys_mkdir(uint32_t *eax, char** argv)
     validate_filename(input_dirname);
     
     char *dirname = trim_dir_path(input_dirname);
-    PANIC("name:%s\n", dirname);
     bool success = false;
     
     /* empty dir name is not allowed */
     if (strcmp(dirname, "") != 0 && strcmp(dirname, "/") != 0)
         success = filesys_create(dirname, 0);
+    PANIC("name:%d\n", success);
     memcpy(eax, &success, sizeof(success));
     if (!success) return;
     
