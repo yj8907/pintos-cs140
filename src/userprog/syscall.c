@@ -559,7 +559,7 @@ sys_mkdir(uint32_t *eax, char** argv)
     validate_filename(input_dirname);
     
     char *dirname = trim_dir_path(input_dirname);
-    bool success = false;
+    int success = 0;
     
     /* empty dir name is not allowed */
     if (strcmp(dirname, "") != 0 && strcmp(dirname, "/") != 0)
