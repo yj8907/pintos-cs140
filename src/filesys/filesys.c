@@ -86,8 +86,8 @@ parse_filepath(const char *name, char **local_name, bool create)
     
     next_filename = strtok_r(NULL, pathsep, &saveptr);
     if (next_filename != NULL || (create && dir_inode != NULL) ||  (!create && dir_inode == NULL)) {
-        if (create && dir_inode != NULL) PANIC("test:%s\n",name);
         if (curr_dir != NULL) dir_close(curr_dir);
+        if (create && dir_inode != NULL) PANIC("test:%s,block:%d\n",name, inode_get_inumber(dir_get_inode(curr_dir)));
         if (dir_inode != NULL) inode_close(dir_inode);
         if (prev_dir != NULL) dir_close(prev_dir);
         curr_dir = NULL;
