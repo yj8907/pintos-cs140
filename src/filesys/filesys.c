@@ -128,6 +128,9 @@ filesys_create (const char *name, off_t initial_size)
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
 
+  if (strcmp(dirname, "a/b")==0) printf("test3:%d\n", inode_get_inumber(dir_get_inode(dir)));
+    if (strcmp(dirname, "a/b")==0) printf("test4:%d\n", inode_sector);
+    
   dir_close (dir);
   if (filename != NULL) free(filename);
   return success;
