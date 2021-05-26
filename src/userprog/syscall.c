@@ -534,7 +534,7 @@ sys_chdir(uint32_t *eax, char** argv)
     const char* input_dirname = *(char**)argv[0];
     validate_filename(input_dirname);
     char *dirname = trim_dir_path(input_dirname);
-    
+    PANIC("test%s\n",dirname);
     int success = 0;
         
     struct inode* dir_inode;
@@ -572,7 +572,6 @@ sys_mkdir(uint32_t *eax, char** argv)
     
     struct inode* dir_inode = file_get_inode(dir_file);
     inode_setdir(dir_inode, true);
-    PANIC("dir:%d\n", inode_isdir(dir_inode));
     file_close(dir_file);
     
     return;
