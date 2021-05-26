@@ -515,8 +515,3 @@ inode_setdir(const struct inode *inode, bool isdir)
     cache_write(cache, &isdir, offset, sizeof(isdir));
 }
 
-block_sector_t
-inode_get_sector(const struct inode *inode)
-{
-    return inode->sector;
-}
