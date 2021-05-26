@@ -92,7 +92,7 @@ trim_dir_path(const char* name)
     dirname = malloc(name_size+1);
     strlcpy(dirname, name, name_size);
     dirname += name_size;
-    strlcpy(dirname, "\0", 1);
+    strlcpy(dirname, '\0', 1);
     dirname -= name_size;
     PANIC("test:%s\n", dirname);
     return dirname;
