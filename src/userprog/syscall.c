@@ -574,9 +574,12 @@ sys_mkdir(uint32_t *eax, char** argv)
     ASSERT(dir_file != NULL);
     
     struct inode* dir_inode = file_get_inode(dir_file);
+    if (strcmp(dirname, "a")==0) printf("test21:%d\n", inode_isdir(dir_inode));
     inode_setdir(dir_inode, true);
     file_close(dir_file);
         if (strcmp(dirname, "a")==0) printf("test2:%d\n", inode_get_inumber(dir_inode));
+                if (strcmp(dirname, "a")==0) printf("test22:%d\n", inode_isdir(dir_inode));
+    
     return;
 }
 
