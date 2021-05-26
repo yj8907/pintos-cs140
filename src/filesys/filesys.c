@@ -97,7 +97,7 @@ parse_filepath(const char *name, char **local_name, bool create)
         curr_dir = prev_dir;
         filename = prev_filename;
     }
-    if (strcmp(name, "a")==0) printf("parse_filepath_test:%s\n", filename);
+    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", dir_inode == NULL);
     if (filename != NULL) {
         *local_name = malloc(strlen(filename)+1);
         strlcpy(*local_name, filename, strlen(filename)+1);
