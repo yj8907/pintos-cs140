@@ -92,14 +92,16 @@ parse_filepath(const char *name, char **local_name, bool create)
 //    if (curr_dir == NULL) PANIC("test2:%s\n", name);
     if (create) ASSERT(filename != NULL);
     /* to allow to open directory as file */
+    if (!create && prev_dir != curr_dir) { /* file is actually directory */
+        dir_close(curr_dir);
+        curr_dir = prev_dir;
+        filename = prev_filename;
+    }
+    
     if (filename != NULL) {
         *local_name = malloc(strlen(filename)+1);
         strlcpy(*local_name, filename, strlen(filename)+1);
         goto done;
-    }
-    if (prev_dir != curr_dir) {
-        dir_close(curr_dir);
-        curr_dir = prev_dir;        
     }
         
     done:
