@@ -536,7 +536,7 @@ sys_chdir(uint32_t *eax, char** argv)
     validate_filename(input_dirname);
     char *dirname = trim_dir_path(input_dirname);
     
-    bool success = false;
+    int success = 0;
         
     struct inode* dir_inode;
     struct file *dir_file = filesys_open(dirname);
@@ -566,7 +566,7 @@ sys_mkdir(uint32_t *eax, char** argv)
         success = filesys_create(dirname, 0);
     memcpy(eax, &success, sizeof(success));
     if (!success) return;
-    PANIC("name:%d\n", success);
+    
     struct file *dir_file = filesys_open(dirname);
     ASSERT(dir_file != NULL);
     
