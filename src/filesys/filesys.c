@@ -47,11 +47,11 @@ filesys_done (void)
 
 
 static struct dir*
-parse_filepath(const char *name, char **local_name)
+parse_filepath(const char *name, char **local_name, bool create)
 {
     char *pathsep = "/";
     struct dir *curr_dir;
-    struct inode *dir_inode;
+    struct inode *dir_inode = NULL;
         
     char *fullname, *filename, *saveptr, *next_filename;
     fullname = malloc(strlen(name) + 1);
@@ -72,27 +72,28 @@ parse_filepath(const char *name, char **local_name)
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
             
       dir_close(curr_dir);
-      if (inode_isdir(dir_inode)) {
+      if (inode_isdir(dir_inode))
         curr_dir = dir_open(dir_inode);
-      }
-      else {
-          inode_close(dir_inode);
-          curr_dir = NULL;
-          break;
-      }
+      else
+        break;
+      dir_inode = NULL;
       filename = strtok_r(NULL, pathsep, &saveptr);
     }
     
-    if (filename == NULL || curr_dir == NULL ||
-        (next_filename = strtok_r(NULL, pathsep, &saveptr)) != NULL) {
-        if(curr_dir != NULL) dir_close(curr_dir);
+    next_filename = strtok_r(NULL, pathsep, &saveptr);
+    if (next_filename != NULL || (create && dir_inode != NULL)) {
+        dir_close(curr_dir);
+        inode_close(dir_inode);
         curr_dir = NULL;
         goto done;
     }
+    
 //    if (curr_dir == NULL) PANIC("test:%s\n", name);
-    *local_name = malloc(strlen(filename)+1);
-    strlcpy(*local_name, filename, strlen(filename)+1);
-    goto done;
+    if (create) ASSERT(filename != NULL);
+    if (filename != NULL)
+        *local_name = malloc(strlen(filename)+1);
+        strlcpy(*local_name, filename, strlen(filename)+1);
+        goto done;
     
     done:
       free(fullname);
@@ -111,7 +112,7 @@ filesys_create (const char *name, off_t initial_size)
   char *filename = NULL;
   bool success = false;
   
-  dir = parse_filepath(name, &filename);
+  dir = parse_filepath(name, &filename, true);
   if (dir != NULL) success = ( free_map_allocate (1, &inode_sector, true)
                   && inode_create (inode_sector, initial_size, false)
                   && dir_add (dir, filename, inode_sector));
@@ -136,10 +137,10 @@ filesys_open (const char *name)
   struct dir *dir;
   char *filename = NULL;
   bool success = false;
-  dir = parse_filepath(name, &filename);
+  dir = parse_filepath(name, &filename, false);
     
   struct inode *inode = NULL;
-
+    
   if (dir != NULL && filename != NULL)
     dir_lookup (dir, filename, &inode);
   dir_close (dir);
