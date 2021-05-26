@@ -66,7 +66,7 @@ parse_filepath(const char *name, char **local_name, bool create)
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
       if (filename == NULL) filename = "";
     }
-    
+    if (strcmp(name, "a")==0) printf("parse_filepath_test:%d\n", inode_get_inumber(dir_get_inode(curr_dir)));
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
@@ -148,7 +148,7 @@ filesys_open (const char *name)
   bool success = false;
       
   dir = parse_filepath(name, &filename, false);
-      
+    
   struct inode *inode = NULL;
   if (dir != NULL && filename != NULL)
     dir_lookup (dir, filename, &inode);
