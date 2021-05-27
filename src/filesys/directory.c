@@ -235,4 +235,22 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
   return false;
 }
 
+/* Sets the current position in DIR to NEW_POS bytes from the
+   start of the file. */
+void
+dir_seek (struct dir *dir, off_t new_pos)
+{
+  ASSERT (dir != NULL);
+  ASSERT (new_pos >= 0);
+  dir->pos = new_pos;
+}
+
+/* Returns the current position in DIR as a byte offset from the
+   start of the file. */
+off_t
+dir_tell (struct dir *dir)
+{
+  ASSERT (dir != NULL);
+  return dir->pos;
+}
 

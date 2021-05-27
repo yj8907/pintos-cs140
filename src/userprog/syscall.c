@@ -582,24 +582,21 @@ sys_mkdir(uint32_t *eax, char** argv)
 
 static void sys_readdir(uint32_t *eax, char** argv)
 {
-    int fd = *(int*)argv[0];
+    int fd_no = *(int*)argv[0];
     const char* filename = *(char**)argv[1];
     
     int success = 0;
-    struct dir_entry e;
+    struct dir* dir;
     
     struct file *dir_file = fetch_file(fd_no);
     ASSERT(dir_file != NULL);
     struct inode* dir_inode = file_get_inode(dir_file);
     if (inode_isdir(dir_inode)) {
-        while (file_read (dir_file, &e, sizeof e) == sizeof e){
-            if (e.in_use)
-              {
-                strlcpy (filename, e.name, READDIR_MAX_LEN + 1);
-                success = true;
-                break;
-              }
-        }
+        dir = dir_open(inode_reopen(dir_inode));
+        dir_seek(file_tell(dir_file));
+        success = dir_readdir(dir, filename);
+        file_seek(dir_tell(dir));
+        dir_close(dir);
     }
     memcpy(eax, &success, sizeof(success));
 }
