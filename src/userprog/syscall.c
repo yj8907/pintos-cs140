@@ -612,7 +612,7 @@ static void sys_readdir(uint32_t *eax, char** argv)
         dir = dir_open(inode_reopen(dir_inode));
         dir_seek(dir, file_tell(dir_file));
         while ( (success = dir_readdir(dir, entry_name)) &&
-               (strcmp(dirname, ".") == 0 || strcmp(dirname, "..") == 0) )
+               (strcmp(entry_name, ".") == 0 || strcmp(entry_name, "..") == 0) )
             memset(entry_name, 0, READDIR_MAX_LEN+1);
                 
         file_seek(dir_file, dir_tell(dir));
