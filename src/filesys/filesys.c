@@ -154,7 +154,7 @@ filesys_open (const char *name)
   if (dir != NULL && filename != NULL)
     dir_lookup (dir, filename, &inode);
   dir_close (dir);
-
+if (strcmp(name, ".")==0) printf("test13:%d\n",inode_get_inumber(inode));
   return file_open (inode);
 }
 
