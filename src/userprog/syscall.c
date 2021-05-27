@@ -83,19 +83,6 @@ static void sys_readdir(uint32_t *eax, char** argv);
 static void sys_isdir(uint32_t *eax, char** argv);
 static void sys_inumber(uint32_t *eax, char** argv);
 
-static char*
-trim_dir_path(const char* name)
-{
-    char *dirname = name;
-    size_t name_size = strlen(name);
-    
-    if (strcmp(name, "/") != 0 && strcmp(name+name_size-1, "/") == 0) name_size--;
-    dirname = malloc(name_size+1);
-    strlcpy(dirname, name, name_size+1);
-    
-    return dirname;
-}
-
 void
 force_exit(void)
 {
@@ -549,9 +536,8 @@ sys_munmap(uint32_t *eax, char** argv)
 static void
 sys_chdir(uint32_t *eax, char** argv)
 {
-    const char* input_dirname = *(char**)argv[0];
-    validate_filename(input_dirname);
-    char *dirname = trim_dir_path(input_dirname);
+    const char* dirname = *(char**)argv[0];
+    validate_filename(dirname);
     
     int success = 0;
         
@@ -566,7 +552,6 @@ sys_chdir(uint32_t *eax, char** argv)
     }
     
     file_close(dir_file);
-    free(dirname);
     memcpy(eax, &success, sizeof(success));
 };
 
@@ -574,10 +559,9 @@ sys_chdir(uint32_t *eax, char** argv)
 static void
 sys_mkdir(uint32_t *eax, char** argv)
 {
-    const char* input_dirname = *(char**)argv[0];
-    validate_filename(input_dirname);
-    
-    char *dirname = trim_dir_path(input_dirname);
+    const char* dirname = *(char**)argv[0];
+    validate_filename(dirname);
+
     int success = 0;
     
     /* empty dir name is not allowed */
@@ -609,7 +593,6 @@ sys_mkdir(uint32_t *eax, char** argv)
     file_close(dir_file);
     
     done:
-      free(dirname);
       return;
 }
 

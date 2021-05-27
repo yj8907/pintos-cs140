@@ -45,6 +45,18 @@ filesys_done (void)
   free_map_close ();
 }
 
+static char*
+trim_dir_path(const char* name)
+{
+    char *dirname = name;
+    size_t name_size = strlen(name);
+    
+    if (strcmp(name, "/") != 0 && strcmp(name+name_size-1, "/") == 0) name_size--;
+    dirname = malloc(name_size+1);
+    strlcpy(dirname, name, name_size+1);
+    
+    return dirname;
+}
 
 struct dir*
 parse_filepath(const char *name, char **local_name, bool create)
@@ -54,8 +66,13 @@ parse_filepath(const char *name, char **local_name, bool create)
     struct inode *dir_inode = NULL;
         
     char *fullname, *filename, *saveptr, *next_filename, *prev_filename;
-    fullname = malloc(strlen(name) + 1);
-    strlcpy(fullname, name, strlen(name) + 1);
+    fullname = trim_dir_path(name);
+    
+    if (strcmp(fullname, pathsep) == 0) {
+        curr_dir = dir_open_root ();
+        strlcpy(*local_name, ".", 2);
+        goto done;
+    }
     
     filename = strtok_r(fullname, pathsep, &saveptr);
     if (filename != NULL && strcmp(filename, "") == 0) {
