@@ -606,18 +606,20 @@ static void sys_readdir(uint32_t *eax, char** argv)
     ASSERT(dir_file != NULL);
     struct inode* dir_inode = file_get_inode(dir_file);
     
-    char *dirname = malloc(READDIR_MAX_LEN+1);
+    char *entry_name = malloc(READDIR_MAX_LEN+1);
+    memset(entry_name, 0, READDIR_MAX_LEN+1);
     if (inode_isdir(dir_inode)) {
         dir = dir_open(inode_reopen(dir_inode));
         dir_seek(dir, file_tell(dir_file));
         while ( (success = dir_readdir(dir, dirname)) &&
                (strcmp(dirname, ".") == 0 || strcmp(dirname, "..") == 0) )
-            memset(dirname, 0, READDIR_MAX_LEN+1);
+            memset(entry_name, 0, READDIR_MAX_LEN+1);
                 
         file_seek(dir_file, dir_tell(dir));
         dir_close(dir);
     }
-    strlcpy(filename, dirname, READDIR_MAX_LEN+1);
+    PANIC("test:%s\n", entry_name);
+    strlcpy(filename, entry_name, READDIR_MAX_LEN+1);
     memcpy(eax, &success, sizeof(success));
 }
 
