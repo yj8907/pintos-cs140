@@ -244,7 +244,7 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
 
 /* is directory empty or not */
 bool
-dir_is_empty(struct dir*)
+dir_is_empty(struct dir* dir)
 {
     char filename[NAME_MAX+1];
     
