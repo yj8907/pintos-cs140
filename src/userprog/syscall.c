@@ -350,6 +350,7 @@ static void sys_remove(uint32_t *eax, char** argv)
     struct inode* f_inode = NULL;
     struct file *fp = filesys_open(filename);
     if (fp != NULL) f_inode = file_get_inode(fp);
+    printf("test1:%d\n", inode_open_cnt(f_inode));
     if (f_inode != NULL && inode_isdir(f_inode) ){
         dir = dir_open(inode_reopen(f_inode));
         if(!dir_is_empty(dir) || inode_open_cnt(f_inode) > 2) ret = 0;
