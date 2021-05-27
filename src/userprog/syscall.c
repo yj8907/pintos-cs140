@@ -341,7 +341,8 @@ static void sys_create(uint32_t *eax, char** argv)
     
     validate_filename(filename);
     int ret = 0;
-    if (strcmp(filename, "") != 0){
+    if (strcmp(filename, "") != 0
+        && strcmp(filename+strlen(filename)-1, "/") != 0){
         sema_down(&filesys_sema);
         ret = filesys_create(filename, initial_size) ? 1 : 0;
         sema_up(&filesys_sema);
