@@ -26,7 +26,14 @@ struct dir_entry
 bool
 dir_create (block_sector_t sector, size_t entry_cnt)
 {
-  return inode_create (sector, entry_cnt * sizeof (struct dir_entry), true);
+  bool success = inode_create (sector, entry_cnt * sizeof (struct dir_entry), true);
+  if (sector == ROOT_DIR_SECTOR && success) {
+      struct dir *curr_dir = dir_open(inode_open(sector));
+      dir_add(curr_dir, "..", sector);
+      dir_add(curr_dir, ".", sector);
+      dir_close(curr_dir);
+  }
+  return success
 }
 
 /* Opens and returns the directory for the given INODE, of which
