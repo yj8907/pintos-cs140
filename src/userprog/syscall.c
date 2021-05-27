@@ -340,10 +340,10 @@ static void sys_create(uint32_t *eax, char** argv)
     uint32_t initial_size = *(uint32_t*)argv[1];
     
     validate_filename(filename);
-    
+    int ret = 0;
     if (strcmp(filename, "") != 0){
         sema_down(&filesys_sema);
-        int ret = filesys_create(filename, initial_size) ? 1 : 0;
+        ret = filesys_create(filename, initial_size) ? 1 : 0;
         sema_up(&filesys_sema);
     }
     
