@@ -170,7 +170,7 @@ filesys_open (const char *name)
   if (dir != NULL && filename != NULL)
     dir_lookup (dir, filename, &inode);
   dir_close (dir);
-
+  printf("test3:%d\n", inode_open_cnt(inode));
   return file_open (inode);
 }
 
