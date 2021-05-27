@@ -70,6 +70,7 @@ parse_filepath(const char *name, char **local_name, bool create)
     
     if (strcmp(fullname, pathsep) == 0) {
         curr_dir = dir_open_root ();
+        *local_name = malloc(2);
         strlcpy(*local_name, ".", 2);
         goto done;
     }
