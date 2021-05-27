@@ -354,10 +354,9 @@ static void sys_remove(uint32_t *eax, char** argv)
     if (f_inode != NULL && inode_isdir(f_inode) ){
         dir = dir_open(inode_reopen(f_inode));
         if(!dir_is_empty(dir) || inode_open_cnt(f_inode) > 2) ret = 0;
-        printf("test:%d\n", inode_open_cnt(f_inode));
         dir_close(dir);
     }
-    
+    printf("test:%d\n", ret);
     file_close(fp);
     
     if (ret) {
