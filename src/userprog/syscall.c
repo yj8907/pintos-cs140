@@ -568,11 +568,25 @@ sys_mkdir(uint32_t *eax, char** argv)
     memcpy(eax, &success, sizeof(success));
     if (!success) goto done;
     
+    /* set file as directory */
     struct file *dir_file = filesys_open(dirname);
     ASSERT(dir_file != NULL);
-    
     struct inode* dir_inode = file_get_inode(dir_file);
     inode_setdir(dir_inode, true);
+    
+    struct dir * curr_dir = dir_open(inode_reopen(dir_inode));
+    /* add . as dir entry */
+    dir_add(curr_dir, ".", inode_get_inumber(dir_inode));
+    
+    /* add .. as dir entry */
+    char *upper_dirname = NULL;
+    struct dir *upper_dir = parse_filepath(dirname, &upper_dirname, false);
+    ASSERT(upper_dir != NULL && upper_dirname != NULL);
+    
+    dir_add(curr_dir, "..", inode_get_inumber(dir_get_inode(upper_dir)));
+    dir_close(upper_dir);
+    
+    dir_close(curr_dir);
     file_close(dir_file);
     
     done:
@@ -603,10 +617,16 @@ static void sys_readdir(uint32_t *eax, char** argv)
 
 static void sys_isdir(uint32_t *eax, char** argv)
 {
-    
+    int fd_no = *(int*)argv[0];
+    struct file *dir_file = fetch_file(fd_no);
+    int ret =  inode_isdir(file_get_inode(dir_file));
+    memcpy(eax, &ret, sizeof(ret));
 }
 
 static void sys_inumber(uint32_t *eax, char** argv)
 {
-    
+    int fd_no = *(int*)argv[0];
+    struct file *dir_file = fetch_file(fd_no);
+    int ret =  inode_get_inumber(file_get_inode(dir_file));
+    memcpy(eax, &ret, sizeof(ret));
 }
