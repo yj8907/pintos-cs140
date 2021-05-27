@@ -516,3 +516,9 @@ inode_setdir(const struct inode *inode, bool isdir)
     cache_write(cache, &isdir, offset, sizeof(isdir));
 }
 
+int
+inode_open_cnt(const struct inode*)
+{
+    if (inode == NULL) return 0;
+    return inode->open_cnt;
+}
