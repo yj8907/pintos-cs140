@@ -355,6 +355,7 @@ static void sys_remove(uint32_t *eax, char** argv)
         if(!dir_is_empty(dir) || inode_open_cnt(f_inode) > 2) ret = 0;
         dir_close(dir);
     }
+    printf("test:%d\n", ret);
     file_close(fp);
     
     if (ret) {
@@ -371,8 +372,6 @@ sys_open(uint32_t *eax, char** argv)
 {
     const char* filename = *(char**)argv[0];
     validate_filename(filename);
-    
-    
     
     int ret = -1;
     
