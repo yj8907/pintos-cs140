@@ -605,10 +605,15 @@ static void sys_readdir(uint32_t *eax, char** argv)
     struct file *dir_file = fetch_file(fd_no);
     ASSERT(dir_file != NULL);
     struct inode* dir_inode = file_get_inode(dir_file);
+    
+    char *dirname = malloc(READDIR_MAX_LEN+1);
     if (inode_isdir(dir_inode)) {
         dir = dir_open(inode_reopen(dir_inode));
         dir_seek(dir, file_tell(dir_file));
-        success = dir_readdir(dir, filename);
+        while ( (success = dir_readdir(dir, dirname)) &&
+               (strcmp(dirname, ".") == 0 || strcmp(dirname, "..") == 0) )
+            memset(dirname, 0, READDIR_MAX_LEN+1);
+                
         file_seek(dir_file, dir_tell(dir));
         dir_close(dir);
     }
