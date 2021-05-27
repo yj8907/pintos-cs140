@@ -617,6 +617,7 @@ static void sys_readdir(uint32_t *eax, char** argv)
         file_seek(dir_file, dir_tell(dir));
         dir_close(dir);
     }
+    strlcpy(filename, dirname, READDIR_MAX_LEN+1);
     memcpy(eax, &success, sizeof(success));
 }
 
