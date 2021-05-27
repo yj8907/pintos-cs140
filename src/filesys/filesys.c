@@ -66,7 +66,7 @@ parse_filepath(const char *name, char **local_name, bool create)
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
       if (filename == NULL) filename = "";
     }
-    
+    if (strcmp(name, ".")==0) printf("test11:%d\n", inode_get_inumber(dir_get_inode(curr_dir)));
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
@@ -84,7 +84,7 @@ parse_filepath(const char *name, char **local_name, bool create)
       }
     }
     
-    if (strcmp(name, ".")==0) printf("test1:%d\n",dir_inode);
+    if (strcmp(name, ".")==0) printf("test1:%d\n",inode_get_inumber(dir_inode));
     next_filename = strtok_r(NULL, pathsep, &saveptr);
     if (next_filename != NULL || (create && dir_inode != NULL) ||  (!create && dir_inode == NULL)) {
         if (curr_dir != NULL) dir_close(curr_dir);
