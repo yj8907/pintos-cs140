@@ -87,15 +87,14 @@ parse_filepath(const char *name, char **local_name, bool create)
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
-        printf("curr dir: %d\n", inode_get_inumber(dir_get_inode(curr_dir)));
-      printf("test4:%d, %d\n", inode_open_cnt(dir_inode), inode_get_inumber(dir_inode) );
+      
       prev_filename = filename;
       prev_dir = curr_dir;
       if (inode_isdir(dir_inode))
         curr_dir = dir_open(dir_inode);
       else
         break;
-      printf("test5:%d, %d\n", inode_open_cnt(dir_inode), inode_get_inumber(dir_inode) );
+      
       filename = strtok_r(NULL, pathsep, &saveptr);
       if (filename != NULL) {
           dir_close(prev_dir); prev_dir = NULL;
@@ -113,7 +112,6 @@ parse_filepath(const char *name, char **local_name, bool create)
         
     /* to allow to open directory as file */
     if (!create && filename == NULL) { /* file is actually directory */
-        printf("test3:%d\n", inode_open_cnt(dir_inode));
         dir_close(curr_dir);
         curr_dir = prev_dir;
         filename = prev_filename;
