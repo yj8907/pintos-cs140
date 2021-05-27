@@ -517,7 +517,7 @@ inode_setdir(const struct inode *inode, bool isdir)
 }
 
 int
-inode_open_cnt(const struct inode*)
+inode_open_cnt(const struct inode* inode)
 {
     if (inode == NULL) return 0;
     return inode->open_cnt;
