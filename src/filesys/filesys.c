@@ -84,7 +84,7 @@ parse_filepath(const char *name, char **local_name, bool create)
       }
     }
     
-    if (strcmp(name, ".")==0) PANIC("test:%d\n",dir_inode==NULL);
+    if (strcmp(name, ".")==0) printf("test1:%d\n",dir_inode);
     next_filename = strtok_r(NULL, pathsep, &saveptr);
     if (next_filename != NULL || (create && dir_inode != NULL) ||  (!create && dir_inode == NULL)) {
         if (curr_dir != NULL) dir_close(curr_dir);
