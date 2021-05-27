@@ -12,6 +12,7 @@
 #include "threads/vaddr.h"
 #include "filesys/file.h"
 #include "filesys/inode.h"
+
 #include "threads/palloc.h"
 #include "threads/malloc.h"
 
@@ -546,6 +547,7 @@ sys_chdir(uint32_t *eax, char** argv)
     }
     
     file_close(dir_file);
+    free(dirname);
     memcpy(eax, &success, sizeof(success));
 };
 
@@ -564,7 +566,7 @@ sys_mkdir(uint32_t *eax, char** argv)
         success = filesys_create(dirname, 0);
     
     memcpy(eax, &success, sizeof(success));
-    if (!success) return;
+    if (!success) goto done;
     
     struct file *dir_file = filesys_open(dirname);
     ASSERT(dir_file != NULL);
@@ -572,13 +574,34 @@ sys_mkdir(uint32_t *eax, char** argv)
     struct inode* dir_inode = file_get_inode(dir_file);
     inode_setdir(dir_inode, true);
     file_close(dir_file);
-                            
-    return;
+    
+    done:
+      free(dirname);
+      return;
 }
 
 static void sys_readdir(uint32_t *eax, char** argv)
 {
+    int fd = *(int*)argv[0];
+    const char* filename = *(char**)argv[1];
     
+    int success = 0;
+    struct dir_entry e;
+    
+    struct file *dir_file = fetch_file(fd_no);
+    ASSERT(dir_file != NULL);
+    struct inode* dir_inode = file_get_inode(dir_file);
+    if (inode_isdir(dir_inode)) {
+        while (file_read (dir_file, &e, sizeof e) == sizeof e){
+            if (e.in_use)
+              {
+                strlcpy (filename, e.name, READDIR_MAX_LEN + 1);
+                success = true;
+                break;
+              }
+        }
+    }
+    memcpy(eax, &success, sizeof(success));
 }
 
 static void sys_isdir(uint32_t *eax, char** argv)
