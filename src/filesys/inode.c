@@ -499,6 +499,7 @@ inode_length (const struct inode *inode)
 bool
 inode_isdir(const struct inode *inode)
 {
+    if (inode == NULL) return false;
     bool isdir;
     off_t offset = INODE_META_SIZE + (NUM_DIRECT+NUM_INDIRECT+NUM_DOUBLE_INDIRECT) * ENTRY_SIZE;
     void *cache = cache_allocate_sector(inode->sector, CACHE_READ);

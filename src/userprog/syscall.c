@@ -355,9 +355,25 @@ static void sys_remove(uint32_t *eax, char** argv)
     const char* filename = *(char**)argv[0];
     validate_filename(filename);
     
-    sema_down(&filesys_sema);
-    int ret = filesys_remove(filename) ? 1 : 0;
-    sema_up(&filesys_sema);
+    int ret = 1;
+    memcpy(eax, &ret, sizeof(ret));
+    
+    struct dir *dir;
+    struct inode* f_inode = NULL;
+    struct file *fp = filesys_open(filename);
+    if (fp != NULL) f_inode = file_get_inode(fp);
+    if (f_inode != NULL && inode_isdir(f_inode) ){
+        dir = dir_open(inode_reopen(f_inode))
+        if(!dir_is_empty(dir)) ret = 0;
+        dir_close(dir);
+    }
+    file_close(fp);
+    
+    if (ret) {
+        sema_down(&filesys_sema);
+        ret = filesys_remove(filename) ? 1 : 0;
+        sema_up(&filesys_sema);
+    }
     
     memcpy(eax, &ret, sizeof(ret));
 };
@@ -618,7 +634,7 @@ static void sys_readdir(uint32_t *eax, char** argv)
         file_seek(dir_file, dir_tell(dir));
         dir_close(dir);
     }
-    PANIC("test:%s\n", entry_name);
+    
     strlcpy(filename, entry_name, READDIR_MAX_LEN+1);
     memcpy(eax, &success, sizeof(success));
 }

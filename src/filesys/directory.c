@@ -242,6 +242,18 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
   return false;
 }
 
+/* is directory empty or not */
+bool
+dir_is_empty(struct dir*)
+{
+    char filename[NAME_MAX+1];
+    
+    while(dir_readdir(dir, filename)){
+        if (strcmp(filename, ".") != 0 || strcmp(filename, "..") != 0) return false;
+    }
+    return true;
+}
+
 /* Sets the current position in DIR to NEW_POS bytes from the
    start of the file. */
 void
