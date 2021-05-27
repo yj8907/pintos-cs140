@@ -577,7 +577,7 @@ sys_mkdir(uint32_t *eax, char** argv)
     struct dir * curr_dir = dir_open(inode_reopen(dir_inode));
     /* add . as dir entry */
     dir_add(curr_dir, ".", inode_get_inumber(dir_inode));
-    printf("test2:%d\n",inode_get_inumber(dir_inode));
+    
     /* add .. as dir entry */
     char *upper_dirname = NULL;
     struct dir *upper_dir = parse_filepath(dirname, &upper_dirname, false);
