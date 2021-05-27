@@ -87,6 +87,7 @@ parse_filepath(const char *name, char **local_name, bool create)
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
+        printf("curr dir: %d\n", inode_get_inumber(curr_dir));
       printf("test4:%d, %d\n", inode_open_cnt(dir_inode), inode_get_inumber(dir_inode) );
       prev_filename = filename;
       prev_dir = curr_dir;
