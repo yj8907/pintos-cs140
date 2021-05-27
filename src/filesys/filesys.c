@@ -117,6 +117,8 @@ parse_filepath(const char *name, char **local_name, bool create)
         dir_close(curr_dir);
         curr_dir = prev_dir;
         filename = prev_filename;
+    } else if (!create && dir_inode != NULL) {
+        inode_close(dir_inode);
     }
     
     ASSERT(filename != NULL);
