@@ -336,15 +336,16 @@ static void sys_wait(uint32_t *eax, char** argv)
 
 static void sys_create(uint32_t *eax, char** argv)
 {
-
     const char* filename = *(char**)argv[0];
     uint32_t initial_size = *(uint32_t*)argv[1];
     
     validate_filename(filename);
     
-    sema_down(&filesys_sema);
-    int ret = filesys_create(filename, initial_size) ? 1 : 0;
-    sema_up(&filesys_sema);
+    if (strcmp(filename, "") != 0){
+        sema_down(&filesys_sema);
+        int ret = filesys_create(filename, initial_size) ? 1 : 0;
+        sema_up(&filesys_sema);
+    }
     
     memcpy(eax, &ret, sizeof(ret));
 };
@@ -381,8 +382,10 @@ static void
 sys_open(uint32_t *eax, char** argv)
 {
     const char* filename = *(char**)argv[0];
-    
     validate_filename(filename);
+    
+    
+    
     int ret = -1;
     
     sema_down(&filesys_sema);
