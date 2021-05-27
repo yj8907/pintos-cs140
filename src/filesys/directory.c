@@ -33,7 +33,7 @@ dir_create (block_sector_t sector, size_t entry_cnt)
       dir_add(curr_dir, ".", sector);
       dir_close(curr_dir);
   }
-  return success
+    return success;
 }
 
 /* Opens and returns the directory for the given INODE, of which
