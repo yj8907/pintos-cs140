@@ -249,9 +249,9 @@ dir_is_empty(struct dir* dir)
     char filename[NAME_MAX+1];
     
     while(dir_readdir(dir, filename)){
-        if (strcmp(filename, ".") != 0 && strcmp(filename, "..") != 0) return true;
+        if (strcmp(filename, ".") != 0 && strcmp(filename, "..") != 0) return false;
     }
-    return false;
+    return true;
 }
 
 /* Sets the current position in DIR to NEW_POS bytes from the
