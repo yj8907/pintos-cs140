@@ -112,6 +112,7 @@ parse_filepath(const char *name, char **local_name, bool create)
         
     /* to allow to open directory as file */
     if (!create && filename == NULL) { /* file is actually directory */
+        printf("test3:%d\n", inode_open_cnt(dir_inode));
         dir_close(curr_dir);
         curr_dir = prev_dir;
         filename = prev_filename;
@@ -170,7 +171,7 @@ filesys_open (const char *name)
   if (dir != NULL && filename != NULL)
     dir_lookup (dir, filename, &inode);
   dir_close (dir);
-  printf("test3:%d\n", inode_open_cnt(inode));
+  
   return file_open (inode);
 }
 
