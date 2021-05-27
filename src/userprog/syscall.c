@@ -593,9 +593,9 @@ static void sys_readdir(uint32_t *eax, char** argv)
     struct inode* dir_inode = file_get_inode(dir_file);
     if (inode_isdir(dir_inode)) {
         dir = dir_open(inode_reopen(dir_inode));
-        dir_seek(file_tell(dir_file));
+        dir_seek(dir, file_tell(dir_file));
         success = dir_readdir(dir, filename);
-        file_seek(dir_tell(dir));
+        file_seek(dir_file, dir_tell(dir));
         dir_close(dir);
     }
     memcpy(eax, &success, sizeof(success));
