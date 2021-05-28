@@ -387,6 +387,7 @@ sys_open(uint32_t *eax, char** argv)
             sema_up(&filesys_sema);
         }
     }
+    if (strcmp(filename, "/a")==0) printf("test3:%d\n", ret);
     memcpy(eax, &ret, sizeof(ret));
 };
 
