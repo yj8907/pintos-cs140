@@ -42,7 +42,7 @@ test_main (void)
           break;
         }
       close (fd);
-        PANIC("test");
+        
       /* Create directory. */
       snprintf (dir_name, sizeof dir_name, "dir%d", i);
       if (!mkdir (dir_name)) 
@@ -62,7 +62,7 @@ test_main (void)
              "actually \"%s\" and \"%s\"",
              file_name, dir_name, name[0], name[1]);
       close (fd);
-
+PANIC("test");
       /* Descend into directory. */
       CHECK (chdir (dir_name), "chdir \"%s\"", dir_name);
     }
