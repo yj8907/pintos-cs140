@@ -543,7 +543,7 @@ sys_chdir(uint32_t *eax, char** argv)
     struct inode* dir_inode = NULL;
     struct file *dir_file = filesys_open(dirname);
     if (dir_file != NULL) dir_inode = file_get_inode(dir_file);
-    if (strcmp(dirname, "..")==0) PANIC("ret:%d\n", dir_file != NULL);
+    if (strcmp(dirname, "..")==0) PANIC("ret:%d\n", inode_isdir(dir_inode));
     if (dir_inode != NULL && inode_isdir(dir_inode)) {
         inode_close(thread_current()->pwd);
         thread_current()->pwd = inode_reopen(dir_inode);
