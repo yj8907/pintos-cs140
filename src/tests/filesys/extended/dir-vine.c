@@ -62,7 +62,7 @@ test_main (void)
              "actually \"%s\" and \"%s\"",
              file_name, dir_name, name[0], name[1]);
       close (fd);
-      if (i == 1) PANIC("test");
+      if (i == 4) PANIC("test");
       /* Descend into directory. */
       CHECK (chdir (dir_name), "chdir \"%s\"", dir_name);
     }
