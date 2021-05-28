@@ -79,8 +79,9 @@ test_main (void)
 
       snprintf (file_name, sizeof file_name, "file%d", i);
       snprintf (dir_name, sizeof dir_name, "dir%d", i);
-        PANIC("test: %d\n", i);
+
       CHECK (chdir (".."), "chdir \"..\"");
+        PANIC("test: %d\n", i);
       CHECK (remove (dir_name), "remove \"%s\"", dir_name);
       CHECK (remove (file_name), "remove \"%s\"", file_name);
     }
