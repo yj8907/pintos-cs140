@@ -71,7 +71,9 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
 
     if (*sector == BITMAP_ERROR && allocate) {
         free_map_allocate (1, sector, write_freemap);
-
+        
+        if (*sector == BITMAP_ERROR) return;
+        
         cache = cache_allocate_sector(block, CACHE_WRITE);
         block_sector_t sector_read = cache_index_write(cache, sector, offset);
 
@@ -86,8 +88,6 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
             *sector = sector_read;
         }
     }
-    
-    if (allocate) ASSERT(*sector != BITMAP_ERROR);
 
 }
 
@@ -440,7 +440,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     {
       /* Sector to write, starting byte offset within sector. */
       block_sector_t sector_idx = byte_to_sector (inode, offset, true);
-      ASSERT (sector_idx != -1);
+      if (sector_idx == BITMAP_ERROR) return bytes_written;
       int sector_ofs = offset % BLOCK_SECTOR_SIZE;
 
       /* Bytes left in inode, bytes left in sector, lesser of the two. */
