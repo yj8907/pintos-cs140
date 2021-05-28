@@ -374,12 +374,11 @@ sys_open(uint32_t *eax, char** argv)
     validate_filename(filename);
     
     int ret = -1;
-    if (strcmp(filename, "/a")==0) printf("test1:%d\n", ret);
+    
     sema_down(&filesys_sema);
     struct file *fp = filesys_open(filename);
     sema_up(&filesys_sema);
         
-    if (strcmp(filename, "/a")==0) printf("test2:%d\n", ret);
     if (fp != NULL) {
         if ( (ret = allocate_fd(fp)) == -1) {
             sema_down(&filesys_sema);
@@ -387,7 +386,7 @@ sys_open(uint32_t *eax, char** argv)
             sema_up(&filesys_sema);
         }
     }
-    if (strcmp(filename, "/a")==0) printf("test3:%d\n", ret);
+    
     memcpy(eax, &ret, sizeof(ret));
 };
 

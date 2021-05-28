@@ -101,7 +101,7 @@ parse_filepath(const char *name, char **local_name, bool create)
           dir_close(prev_dir); prev_dir = NULL;
       }
     }
-//    if (strcmp(name, "/a")==0) printf("test:%d\n", inode_get_inumber(dir_inode));
+    if (strcmp(name, "/a")==0) printf("test:%d\n", dir_inode==NULL);
     next_filename = strtok_r(NULL, pathsep, &saveptr);
     if (next_filename != NULL || (create && dir_inode != NULL) ||  (!create && dir_inode == NULL)) {
         if (curr_dir != NULL) dir_close(curr_dir);
