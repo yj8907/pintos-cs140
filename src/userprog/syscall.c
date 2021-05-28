@@ -584,7 +584,8 @@ sys_mkdir(uint32_t *eax, char** argv)
     char *upper_dirname = NULL;
     struct dir *upper_dir = parse_filepath(dirname, &upper_dirname, false);
     ASSERT(upper_dir != NULL && upper_dirname != NULL);
-    ASSERT(inode_isdir(dir_get_inode(upper_dir)));
+//    ASSERT(inode_isdir(dir_get_inode(upper_dir)));
+    if (!inode_isdir(dir_get_inode(upper_dir))) PANIC("test:%s\n", dirname);
     dir_add(curr_dir, "..", inode_get_inumber(dir_get_inode(upper_dir)));
     dir_close(upper_dir);
     
