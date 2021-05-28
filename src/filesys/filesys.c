@@ -77,7 +77,7 @@ parse_filepath(const char *name, char **local_name, bool create)
     
     filename = strtok_r(fullname, pathsep, &saveptr);
     if (strcmp(fullname, "/a")==0) printf("test3:%s, %s, %d\n", filename, fullname);
-    if ( *name == (int)(*pathsep) ) {
+    if ( *name == (*pathsep) ) {
       curr_dir = dir_open_root ();
     }
     else {
