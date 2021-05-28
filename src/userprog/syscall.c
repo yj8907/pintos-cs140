@@ -549,7 +549,7 @@ sys_chdir(uint32_t *eax, char** argv)
         thread_current()->pwd = inode_reopen(dir_inode);
         success = 1;
     }
-    
+    if (strcmp(dirname, "..")==0) PANIC("ret:%d\n", success);
     file_close(dir_file);
     memcpy(eax, &success, sizeof(success));
 };
