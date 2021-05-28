@@ -174,7 +174,7 @@ filesys_open (const char *name)
   if (dir != NULL && filename != NULL)
     dir_lookup (dir, filename, &inode);
   dir_close (dir);
-  
+  if (strcmp(name, "/a")==0) printf("open2:%s\n", filename);
   return file_open (inode);
 }
 
