@@ -72,14 +72,14 @@ test_main (void)
 
   msg ("removing all but top 10 levels of files and directories...");
   quiet = true;
-    PANIC("test: %d\n", i);
+    
   while (i-- > 10) 
     {
       char file_name[16], dir_name[16];
 
       snprintf (file_name, sizeof file_name, "file%d", i);
       snprintf (dir_name, sizeof dir_name, "dir%d", i);
-        
+        PANIC("test: %d\n", i);
       CHECK (chdir (".."), "chdir \"..\"");
       CHECK (remove (dir_name), "remove \"%s\"", dir_name);
       CHECK (remove (file_name), "remove \"%s\"", file_name);
