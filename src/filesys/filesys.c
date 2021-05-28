@@ -76,15 +76,16 @@ parse_filepath(const char *name, char **local_name, bool create)
     }
     
     filename = strtok_r(fullname, pathsep, &saveptr);
-    if (strcmp(fullname, "/a")==0) printf("test3:%s\n", filename);
-    if (strchr(name, "/")-name == 0) {
+    if (strcmp(fullname, "/a")==0) printf("test3:%s, %s\n", filename, fullname);
+    if ( strchr(name, "/")-name == 0) {
       curr_dir = dir_open_root ();
     }
     else {
       curr_dir = dir_open(inode_reopen(thread_current()->pwd));
       if (filename == NULL) filename = "";
     }
-    
+    if (strcmp(name, "/a")==0) printf("testmain:%d\n",
+                                      inode_get_inumber(dir_get_inode(curr_dir)));
     /* search subdirectories */
     while(filename != NULL && curr_dir != NULL){
       if (!dir_lookup(curr_dir, filename, &dir_inode)) break;
