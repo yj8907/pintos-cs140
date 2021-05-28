@@ -66,7 +66,7 @@ test_main (void)
       /* Descend into directory. */
       CHECK (chdir (dir_name), "chdir \"%s\"", dir_name);
     }
-    PANIC("test: %d\n", i);
+    
   CHECK (i > 200, "created files and directories only to level %d", i);
   quiet = false;
 
@@ -79,6 +79,7 @@ test_main (void)
       snprintf (file_name, sizeof file_name, "file%d", i);
       snprintf (dir_name, sizeof dir_name, "dir%d", i);
       CHECK (chdir (".."), "chdir \"..\"");
+        PANIC("test: %d\n", i);
       CHECK (remove (dir_name), "remove \"%s\"", dir_name);
       CHECK (remove (file_name), "remove \"%s\"", file_name);
     }
