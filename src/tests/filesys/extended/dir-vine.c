@@ -42,7 +42,7 @@ test_main (void)
           break;
         }
       close (fd);
-      
+        PANIC("test");
       /* Create directory. */
       snprintf (dir_name, sizeof dir_name, "dir%d", i);
       if (!mkdir (dir_name)) 
