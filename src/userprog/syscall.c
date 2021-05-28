@@ -363,7 +363,7 @@ static void sys_remove(uint32_t *eax, char** argv)
         ret = filesys_remove(filename) ? 1 : 0;
         sema_up(&filesys_sema);
     }
-    
+    if (strcmp(filename, "/a")==0) printf("ret:%d\n", ret);
     memcpy(eax, &ret, sizeof(ret));
 };
 
