@@ -201,7 +201,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 //        printf("cache_read cond signal write: 0x%08x, thread: %s\n", cache, thread_name());
         cond_signal(&e->write_cv, &e->block_lock);
     }
-    else if (e->read_ref > 0 && e->state = NOOP) {
+    else if (e->read_ref > 0 && e->state == NOOP) {
 //        printf("cache_read cond signal read: 0x%08x, thread: %s\n", cache, thread_name());
         cond_signal(&e->read_cv, &e->block_lock);
     }
