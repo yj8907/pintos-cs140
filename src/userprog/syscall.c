@@ -596,7 +596,7 @@ sys_mkdir(uint32_t *eax, char** argv)
     printf("dir: %s, upper_dir: %d, upper inode: %d, curr inode: %d, success: %d\n",
            dirname, upper_dir==NULL, inode_get_inumber(dir_get_inode(upper_dir)),
            inode_get_inumber(dir_get_inode(curr_dir)),
-           worked);
+           dir_inode == NULL);
     dir_close(upper_dir);
     
     dir_close(curr_dir);
