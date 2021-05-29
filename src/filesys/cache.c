@@ -195,9 +195,9 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     ASSERT(e->read_ref > 0);
     
     e->read_ref--;
-    if (e->read_ref == 0) e->state = NOOP;
-        
-    if (e->write_ref > 0 && e->read_ref == 0){
+    if (e->read_ref == list_size(&e->read_cv)) e->state = NOOP;
+    
+    if (e->write_ref > 0 && e->state == NOOP){
         printf("cache_read cond signal write: 0x%08x, thread: %s\n", cache, thread_name());
         cond_signal(&e->write_cv, &e->block_lock);
     }
