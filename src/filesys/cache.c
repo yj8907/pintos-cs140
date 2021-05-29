@@ -201,7 +201,7 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
 //        printf("cache_read cond signal write: 0x%08x, thread: %s\n", cache, thread_name());
         cond_signal(&e->write_cv, &e->block_lock);
     }
-    else if (e->read_ref > 0) {
+    else if (e->read_ref > 0 && e->state = NOOP) {
 //        printf("cache_read cond signal read: 0x%08x, thread: %s\n", cache, thread_name());
         cond_signal(&e->read_cv, &e->block_lock);
     }
@@ -308,11 +308,10 @@ evict_block()
     block_sector_t sector_no;
     
     struct cache_entry *e;
-//    printf("evict_block ckpt1\n");
     /* acquire block to evict */
     lock_acquire (&cache_lock);
     ASSERT(!list_empty(&cache_in_use));
-//    printf("evict_block ckpt2\n");
+
     while (true) {
         if (clock_iter == NULL || clock_iter == list_end(&cache_in_use)) clock_iter = list_front(&cache_in_use);
                     
@@ -325,7 +324,7 @@ evict_block()
     }
     clock_iter = list_remove(clock_iter);
     lock_release (&cache_lock);
-//    printf("evict_block ckpt3\n");
+
     /* evict block */
     /* write to disk if dirty */
     size_t cache_index = e - cache_table;
@@ -337,7 +336,6 @@ evict_block()
     if (dirty) block_write (fs_device, sector_no, cache_base+cache_index*BLOCK_SECTOR_SIZE);
     memset(cache_base+cache_index*BLOCK_SECTOR_SIZE, 0, BLOCK_SECTOR_SIZE); /* set memory to all zeros*/
     
-//    printf("evict_block ckpt4\n");
     /* free bitmap */
     ASSERT (bitmap_all (used_map, cache_index, 1));
     bitmap_set_multiple (used_map, cache_index, 1, false);
