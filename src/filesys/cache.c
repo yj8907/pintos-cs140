@@ -127,6 +127,7 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
 {
     struct cache_entry* e = cache_table + cache_index;
             
+    int count = 0;
     lock_acquire(&e->block_lock);
     if (e->sector_no != block) {
         cache_index = -1;
@@ -137,16 +138,18 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
             e->write_ref++;
             if (e->state != NOOP || e->write_ref > 1) {
                 while (e->state != NOOP) {
-                    printf("cond_wait read: 0x%08x\n", cache_base+cache_index*BLOCK_SECTOR_SIZE);
+                    printf("cond_wait read: 0x%08x, count: %d\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count);
                     cond_wait(&e->write_cv, &e->block_lock);
+                    count++;
                 }
             }
         } else if (action == CACHE_READ) {
             e->read_ref++;
             if (e->write_ref > 0) {
                 do {
-                    printf("cond_wait write: 0x%08x\n", cache_base+cache_index*BLOCK_SECTOR_SIZE);
+                    printf("cond_wait write: 0x%08x, count: %d\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count);
                     cond_wait(&e->read_cv, &e->block_lock);
+                    count++;
                 } while(e->state == CACHE_WRITE);
             }
         }
