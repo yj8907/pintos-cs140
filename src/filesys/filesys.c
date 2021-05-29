@@ -101,7 +101,7 @@ parse_filepath(const char *name, char **local_name, bool create)
           dir_close(prev_dir); prev_dir = NULL;
       }
     }
-                                          
+    
     next_filename = strtok_r(NULL, pathsep, &saveptr);
     if (next_filename != NULL || (create && dir_inode != NULL) ||  (!create && dir_inode == NULL)) {
         if (curr_dir != NULL) dir_close(curr_dir);
@@ -118,6 +118,12 @@ parse_filepath(const char *name, char **local_name, bool create)
         filename = prev_filename;
     } else if (!create && dir_inode != NULL) {
         inode_close(dir_inode);
+    }
+    
+    if (strcmp(fullname, "..")==0) {
+        printf("curr_dir null?:%d\n", curr_dir==NULL);
+        if (curr_dir!=NULL)
+            printf("curr_dir:%d\n", inode_get_inumber(dir_get_inode(curr_dir)));
     }
     
     ASSERT(filename != NULL);
