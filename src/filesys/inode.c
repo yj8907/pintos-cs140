@@ -10,6 +10,7 @@
 #include "filesys/cache.h"
 #include "threads/malloc.h"
 #include "threads/synch.h"
+#include "threads/thread.h"
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
@@ -70,6 +71,8 @@ inode_read_index(block_sector_t block, size_t offset, block_sector_t *sector,
     cache_read(cache, sector, offset, ENTRY_SIZE);
 
     if (*sector == BITMAP_ERROR && allocate) {
+          if (strcmp(thread_name(),  "child-syn-rw") == 0) printf("bad inode_read_index\n");
+        
         free_map_allocate (1, sector, write_freemap);
         
         if (*sector == BITMAP_ERROR) return;
@@ -428,6 +431,8 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
   if (inode->deny_write_cnt)
     return 0;
   
+  if (strcmp(thread_name(),  "child-syn-rw") == 0) printf("bad inode_write_at\n");
+    
   size_t new_length = offset + size;
   while (size > 0) 
     {
@@ -445,7 +450,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       int chunk_size = size < min_left ? size : min_left;
       if (chunk_size <= 0)
         break;
-
+      
       cache = cache_allocate_sector(sector_idx, CACHE_WRITE);
       cache_write(cache, buffer+bytes_written, sector_ofs, chunk_size);
         
