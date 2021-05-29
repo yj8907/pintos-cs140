@@ -136,16 +136,19 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
         if (action == CACHE_WRITE) {
             e->write_ref++;
             if (e->state != NOOP || e->write_ref > 1) {
-                while (e->state != NOOP) cond_wait(&e->write_cv, &e->block_lock);
+                while (e->state != NOOP) {
+                    printf("cond_wait read: 0x%08x\n", cache_base+cache_index*BLOCK_SECTOR_SIZE);
+                    cond_wait(&e->write_cv, &e->block_lock);
+                }
             }
         } else if (action == CACHE_READ) {
             e->read_ref++;
-//            printf("cache_fetch_sector ckpt1\n");
             if (e->write_ref > 0) {
-                do { cond_wait(&e->read_cv, &e->block_lock);
+                do {
+                    printf("cond_wait write: 0x%08x\n", cache_base+cache_index*BLOCK_SECTOR_SIZE);
+                    cond_wait(&e->read_cv, &e->block_lock);
                 } while(e->state == CACHE_WRITE);
             }
-//            printf("cache_fetch_sector ckpt2\n");
         }
         
         e->state = action;
@@ -179,50 +182,53 @@ void
 cache_read(void *cache, void* buffer, size_t offset, size_t size)
 {
     /* read data into memory */
-//    printf("cache_read ckpt1\n");
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (buffer, cache + offset, size);
-//    printf("cache_read ckpt2\n");
             
     lock_acquire(&e->block_lock);
-//    printf("cache_read ckpt3\n");
     ASSERT(e->state == CACHE_READ);
     ASSERT(e->read_ref > 0);
     
     e->read_ref--;
     if (e->read_ref == 0) e->state = NOOP;
         
-    if (e->write_ref > 0)
+    if (e->write_ref > 0){
+        printf("cache_read cond signal write: 0x%08x\n", cache);
         cond_signal(&e->write_cv, &e->block_lock);
-    else if (e->read_ref > 0)
+    }
+    else if (e->read_ref > 0) {
+        printf("cache_read cond signal read: 0x%08x\n", cache);
         cond_signal(&e->read_cv, &e->block_lock);
-    
+    }
+        
     lock_release(&e->block_lock);
-//    PANIC("cache_read ckpt4\n");
+
 }
 
 void
 cache_write(void *cache, void* buffer, size_t offset, size_t size)
 {
-//    printf("cache_write ckpt1\n");
     /* read data into memory */
     struct cache_entry* e = cache_table + compute_cache_index(cache);
     memcpy (cache+offset, buffer, size);
-//    printf("cache_write ckpt2\n");
+
     lock_acquire(&e->block_lock);
-//    printf("cache_write ckpt3\n");
     ASSERT(e->state == CACHE_WRITE);
     ASSERT(e->write_ref > 0);
     
     e->write_ref--;
     e->state = NOOP;
     e->dirty = true;
-    if (e->read_ref > 0)
+    if (e->read_ref > 0) {
+        printf("cache_write cond signal read: 0x%08x\n", cache);
         cond_signal(&e->read_cv, &e->block_lock);
-    else if (e->write_ref > 0)
+    }
+    else if (e->write_ref > 0) {
+        printf("cache_write cond signal write: 0x%08x\n", cache);
         cond_signal(&e->write_cv, &e->block_lock);
+    }
     lock_release(&e->block_lock);
-//    printf("cache_write ckpt4\n");
+
 }
 
 block_sector_t
