@@ -72,7 +72,7 @@ test_main (void)
 
   msg ("removing all but top 10 levels of files and directories...");
   quiet = true;
-    
+    printf("test:%d\n", i);
   while (i-- > 10) 
     {
       char file_name[16], dir_name[16];
