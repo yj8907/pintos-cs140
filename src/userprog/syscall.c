@@ -351,7 +351,7 @@ static void sys_remove(uint32_t *eax, char** argv)
     struct file *fp = filesys_open(filename);
     if (fp != NULL) f_inode = file_get_inode(fp);
     
-    if (strcmp(dir, "dir946")) PANIC("fp open:%d\n", fp==NULL);
+    if (strcmp(dir, "dir946")) printf("fp open:%d\n", fp==NULL);
     
     if (f_inode != NULL && inode_isdir(f_inode) ){
         dir = dir_open(inode_reopen(f_inode));
