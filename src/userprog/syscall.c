@@ -591,10 +591,10 @@ sys_mkdir(uint32_t *eax, char** argv)
     ASSERT(upper_dir != NULL && upper_dirname != NULL);
     success  = dir_add(curr_dir, "..", inode_get_inumber(dir_get_inode(upper_dir)));
     
-//    printf("dir: %s, upper_dir: %d, upper inode: %d, curr inode: %d, success: %d\n",
-//           dirname, upper_dir==NULL, inode_get_inumber(dir_get_inode(upper_dir)),
-//           inode_get_inumber(dir_get_inode(curr_dir)),
-//           success);
+    printf("dir: %s, upper_dir: %d, upper inode: %d, curr inode: %d, success: %d\n",
+           dirname, upper_dir==NULL, inode_get_inumber(dir_get_inode(upper_dir)),
+           inode_get_inumber(dir_get_inode(curr_dir)),
+           success);
     
     if (!success) goto fail;
     
