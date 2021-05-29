@@ -166,7 +166,7 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
    returns the same `struct inode'. */
 static struct list open_inodes;
 
-static lock inode_global_lock;
+static struct lock inode_global_lock;
 
 /* Initializes the inode module. */
 void
