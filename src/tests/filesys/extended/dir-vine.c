@@ -75,7 +75,7 @@ test_main (void)
     
   while (i-- > 10) 
     {
-//        printf("test:%d\n", i);
+        printf("test:%d\n", i);
       char file_name[16], dir_name[16];
 
       snprintf (file_name, sizeof file_name, "file%d", i);
