@@ -544,7 +544,7 @@ sys_chdir(uint32_t *eax, char** argv)
     struct file *dir_file = filesys_open(dirname);
     if (dir_file != NULL) dir_inode = file_get_inode(dir_file);
     
-    if (strcmp(dirname, "..")==0) printf("ret:%d\n", inode_get_inumber(thread_current()->pwd));
+//    if (strcmp(dirname, "..")==0) printf("ret:%d\n", inode_get_inumber(thread_current()->pwd));
 //    if (strcmp(dirname, "..")==0) PANIC("ret:%d\n", dir_file == NULL);
     
     if (dir_inode != NULL && inode_isdir(dir_inode)) {
@@ -569,8 +569,6 @@ sys_mkdir(uint32_t *eax, char** argv)
     /* empty dir name is not allowed */
     if (strcmp(dirname, "") != 0 && strcmp(dirname, "/") != 0)
         success = filesys_create(dirname, 0);
-    
-    memcpy(eax, &success, sizeof(success));
     if (!success) goto done;
     
     /* set file as directory */
@@ -580,29 +578,32 @@ sys_mkdir(uint32_t *eax, char** argv)
     inode_setdir(dir_inode, true);
     
     struct dir * curr_dir = dir_open(inode_reopen(dir_inode));
+    struct dir *upper_dir = NULL;
     /* add . as dir entry */
-    dir_add(curr_dir, ".", inode_get_inumber(dir_inode));
+    success = dir_add(curr_dir, ".", inode_get_inumber(dir_inode));
+    if (!success) goto fail;
     
     /* add .. as dir entry */
     char *upper_dirname = NULL;
-    struct dir *upper_dir = parse_filepath(dirname, &upper_dirname, false);
+    upper_dir = parse_filepath(dirname, &upper_dirname, false);
     ASSERT(upper_dir != NULL && upper_dirname != NULL);
-//    ASSERT(inode_isdir(dir_get_inode(upper_dir)));
-//    if (!inode_isdir(dir_get_inode(upper_dir))) PANIC("test:%s\n", dirname);
+    success  = dir_add(curr_dir, "..", inode_get_inumber(dir_get_inode(upper_dir)));
     
-    dir_add(curr_dir, "..", inode_get_inumber(dir_get_inode(upper_dir)));
-    
-    int worked = dir_lookup(curr_dir, "..", &dir_inode);
     printf("dir: %s, upper_dir: %d, upper inode: %d, curr inode: %d, success: %d\n",
            dirname, upper_dir==NULL, inode_get_inumber(dir_get_inode(upper_dir)),
            inode_get_inumber(dir_get_inode(curr_dir)),
-           dir_inode == NULL);
-    dir_close(upper_dir);
+           success);
     
-    dir_close(curr_dir);
-    file_close(dir_file);
+    if (!success) goto fail;
+    
+    fail:
+        sys_remove(eax, argv);
+        if (upper_dir != NULL) dir_close(upper_dir);
+        dir_close(curr_dir);
+        file_close(dir_file);
     
     done:
+      memcpy(eax, &success, sizeof(success));
       return;
 }
 
