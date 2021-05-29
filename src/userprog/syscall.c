@@ -544,7 +544,7 @@ sys_chdir(uint32_t *eax, char** argv)
     struct file *dir_file = filesys_open(dirname);
     if (dir_file != NULL) dir_inode = file_get_inode(dir_file);
     
-//    if (strcmp(dirname, "..")==0) PANIC("ret:%d\n", inode_get_inumber(dir_inode));
+    if (strcmp(dirname, "..")==0) printf("ret:%d\n", inode_get_inumber(thread_current()->pwd));
 //    if (strcmp(dirname, "..")==0) PANIC("ret:%d\n", dir_file == NULL);
     
     if (dir_inode != NULL && inode_isdir(dir_inode)) {
@@ -589,7 +589,9 @@ sys_mkdir(uint32_t *eax, char** argv)
     ASSERT(upper_dir != NULL && upper_dirname != NULL);
 //    ASSERT(inode_isdir(dir_get_inode(upper_dir)));
 //    if (!inode_isdir(dir_get_inode(upper_dir))) PANIC("test:%s\n", dirname);
-    printf("dir: %s, upper_dir: %d\n", dirname, upper_dir==NULL);
+    printf("dir: %s, upper_dir: %d, upper inode: %d, curr inode: %d\n",
+           dirname, upper_dir==NULL, inode_get_inumber(dir_get_inode(upper_dir)),
+           inode_get_inumber(dir_get_inode(curr_dir)));
     
     dir_add(curr_dir, "..", inode_get_inumber(dir_get_inode(upper_dir)));
     dir_close(upper_dir);
