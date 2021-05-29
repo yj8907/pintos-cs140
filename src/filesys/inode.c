@@ -220,17 +220,20 @@ inode_open (block_sector_t sector)
   struct inode *inode;
 
   /* Check whether this inode is already open. */
+  lock_acquire(&inode_global_lock);
   for (e = list_begin (&open_inodes); e != list_end (&open_inodes);
        e = list_next (e)) 
     {
       inode = list_entry (e, struct inode, elem);
       if (inode->sector == sector) 
         {
+          lock_release(&inode_global_lock);
           inode_reopen (inode);
           return inode; 
         }
     }
-
+  lock_release(&inode_global_lock);
+    
   /* Allocate memory. */
   inode = malloc (sizeof *inode);
   if (inode == NULL)
@@ -251,8 +254,12 @@ inode_open (block_sector_t sector)
 struct inode *
 inode_reopen (struct inode *inode)
 {
-  if (inode != NULL)
+  if (inode != NULL) {
+    lock_acquire(&inode->inode_lock);
     inode->open_cnt++;
+    lock_release(&inode->inode_lock);
+  }
+    
   return inode;
 }
 
