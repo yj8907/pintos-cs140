@@ -111,7 +111,7 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
         offset = INODE_META_SIZE+index_pos*ENTRY_SIZE;
         index_sector = inode->sector;
         inode_read_index(index_sector, offset, &sector, allocate, false, inode->sector != FREE_MAP_SECTOR);
-//        PANIC("byte_to_sector: %d, sector1: %d\n",index_sector, sector);
+
         if (sector == BITMAP_ERROR) return -1;
         return sector;
         

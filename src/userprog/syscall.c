@@ -441,7 +441,7 @@ sys_write(uint32_t *eax, char** argv)
     uint32_t size = *(int*)argv[2];
              
     validate_vaddr(buffer, size);
-    
+    if (strcmp(thread_name(), "child-syn-rw") == 0) printf("bad write\n");
     struct file* fp;
     int bytes_write = 0;
     if (fd_no == 1) { // write to stdout
