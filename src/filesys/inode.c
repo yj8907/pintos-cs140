@@ -166,11 +166,14 @@ byte_to_sector(const struct inode *inode, off_t pos, bool allocate){
    returns the same `struct inode'. */
 static struct list open_inodes;
 
+static lock inode_global_lock;
+
 /* Initializes the inode module. */
 void
 inode_init (void) 
 {
   list_init (&open_inodes);
+  lock_init(&inode_global_lock);
   memset(size_maxes, UINT8_MAX, BLOCK_SECTOR_SIZE);
   memset(zeros, 0, BLOCK_SECTOR_SIZE);
 }
@@ -239,8 +242,8 @@ inode_open (block_sector_t sector)
   inode->open_cnt = 1;
   inode->deny_write_cnt = 0;
   inode->removed = false;
-//  block_read (fs_device, inode->sector, &inode->data);
   lock_init(&inode->inode_lock);
+    
   return inode;
 }
 
