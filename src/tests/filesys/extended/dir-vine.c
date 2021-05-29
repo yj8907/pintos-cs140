@@ -75,14 +75,13 @@ test_main (void)
     
   while (i-- > 10) 
     {
-        printf("test:%d\n", i);
+//        printf("test:%d\n", i);
       char file_name[16], dir_name[16];
 
       snprintf (file_name, sizeof file_name, "file%d", i);
       snprintf (dir_name, sizeof dir_name, "dir%d", i);
 
       CHECK (chdir (".."), "chdir \"..\"");
-//        PANIC("test: %d\n", i);
       CHECK (remove (dir_name), "remove \"%s\"", dir_name);
       CHECK (remove (file_name), "remove \"%s\"", file_name);
     }
