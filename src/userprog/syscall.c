@@ -545,7 +545,7 @@ sys_chdir(uint32_t *eax, char** argv)
     if (dir_file != NULL) dir_inode = file_get_inode(dir_file);
     
 //    if (strcmp(dirname, "..")==0) PANIC("ret:%d\n", inode_get_inumber(dir_inode));
-    if (strcmp(dirname, "..")==0) PANIC("ret:%d\n", dir_file == NULL);
+//    if (strcmp(dirname, "..")==0) PANIC("ret:%d\n", dir_file == NULL);
     
     if (dir_inode != NULL && inode_isdir(dir_inode)) {
         inode_close(thread_current()->pwd);
@@ -589,6 +589,8 @@ sys_mkdir(uint32_t *eax, char** argv)
     ASSERT(upper_dir != NULL && upper_dirname != NULL);
 //    ASSERT(inode_isdir(dir_get_inode(upper_dir)));
 //    if (!inode_isdir(dir_get_inode(upper_dir))) PANIC("test:%s\n", dirname);
+    printf("dir: %s, upper_dir: %d\n", dirname, upper_dir==NULL);
+    
     dir_add(curr_dir, "..", inode_get_inumber(dir_get_inode(upper_dir)));
     dir_close(upper_dir);
     
