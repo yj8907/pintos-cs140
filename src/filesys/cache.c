@@ -15,6 +15,8 @@
 #include "threads/palloc.h"
 #include "threads/malloc.h"
 #include "threads/synch.h"
+#include "threads/thread.h"
+
 #include "filesys/filesys.h"
 
 #include "cache.h"
@@ -138,7 +140,7 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
             e->write_ref++;
             if (e->state != NOOP || e->write_ref > 1) {
                 while (e->state != NOOP) {
-                    printf("cond_wait read: 0x%08x, count: %d\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count);
+                    printf("cond_wait read: 0x%08x, count: %d, threadname: %s\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count, thread_name(thread_current()));
                     cond_wait(&e->write_cv, &e->block_lock);
                     count++;
                 }
@@ -147,7 +149,7 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
             e->read_ref++;
             if (e->write_ref > 0) {
                 do {
-                    printf("cond_wait write: 0x%08x, count: %d\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count);
+                    printf("cond_wait write: 0x%08x, count: %d, threadname: %s\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count, thread_name(thread_current()));
                     cond_wait(&e->read_cv, &e->block_lock);
                     count++;
                 } while(e->state == CACHE_WRITE);
@@ -196,11 +198,11 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     if (e->read_ref == 0) e->state = NOOP;
         
     if (e->write_ref > 0){
-        printf("cache_read cond signal write: 0x%08x\n", cache);
+        printf("cache_read cond signal write: 0x%08x, thread: %s\n", cache, thread_name(thread_current()));
         cond_signal(&e->write_cv, &e->block_lock);
     }
     else if (e->read_ref > 0) {
-        printf("cache_read cond signal read: 0x%08x\n", cache);
+        printf("cache_read cond signal read: 0x%08x, thread: %s\n", cache, thread_name(thread_current()));
         cond_signal(&e->read_cv, &e->block_lock);
     }
         
