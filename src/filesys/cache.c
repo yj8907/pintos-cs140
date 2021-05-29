@@ -140,7 +140,7 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
             e->write_ref++;
             if (e->state != NOOP || e->write_ref > 1) {
                 while (e->state != NOOP) {
-                    printf("cond_wait write: 0x%08x, count: %d, threadname: %s\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count, thread_name());
+//                    printf("cond_wait write: 0x%08x, count: %d, threadname: %s\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count, thread_name());
                     cond_wait(&e->write_cv, &e->block_lock);
                     count++;
                 }
@@ -149,7 +149,7 @@ cache_fetch_sector(block_sector_t block, size_t cache_index, enum cache_action a
             e->read_ref++;
             if (e->write_ref > 0) {
                 do {
-                    printf("cond_wait read: 0x%08x, count: %d, threadname: %s\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count, thread_name());
+//                    printf("cond_wait read: 0x%08x, count: %d, threadname: %s\n", cache_base+cache_index*BLOCK_SECTOR_SIZE, count, thread_name());
                     cond_wait(&e->read_cv, &e->block_lock);
                     count++;
                 } while(e->state == CACHE_WRITE);
@@ -198,11 +198,11 @@ cache_read(void *cache, void* buffer, size_t offset, size_t size)
     if (e->read_ref == list_size(&e->read_cv)) e->state = NOOP;
     
     if (e->write_ref > 0 && e->state == NOOP){
-        printf("cache_read cond signal write: 0x%08x, thread: %s\n", cache, thread_name());
+//        printf("cache_read cond signal write: 0x%08x, thread: %s\n", cache, thread_name());
         cond_signal(&e->write_cv, &e->block_lock);
     }
     else if (e->read_ref > 0) {
-        printf("cache_read cond signal read: 0x%08x, thread: %s\n", cache, thread_name());
+//        printf("cache_read cond signal read: 0x%08x, thread: %s\n", cache, thread_name());
         cond_signal(&e->read_cv, &e->block_lock);
     }
         
@@ -225,11 +225,11 @@ cache_write(void *cache, void* buffer, size_t offset, size_t size)
     e->state = NOOP;
     e->dirty = true;
     if (e->read_ref > 0) {
-        printf("cache_write cond signal read: 0x%08x, thread: %s\n", cache, thread_name());
+//        printf("cache_write cond signal read: 0x%08x, thread: %s\n", cache, thread_name());
         cond_signal(&e->read_cv, &e->block_lock);
     }
     else if (e->write_ref > 0) {
-        printf("cache_write cond signal write: 0x%08x, thread: %s\n", cache, thread_name());
+//        printf("cache_write cond signal write: 0x%08x, thread: %s\n", cache, thread_name());
         cond_signal(&e->write_cv, &e->block_lock);
     }
     lock_release(&e->block_lock);
