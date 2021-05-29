@@ -375,6 +375,8 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
   off_t bytes_read = 0;
   uint8_t *cache = NULL;
 //  uint8_t *bounce = NULL;
+  
+  if (offset >= inode_length(inode)) return 0;
     
   while (size > 0) 
     {
@@ -425,16 +427,6 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     
   if (inode->deny_write_cnt)
     return 0;
-    
-  if (offset + size > inode_length(inode)) {
-      lock_acquire(&inode->inode_lock);
-      if (offset + size > inode_length(inode)) {
-          size_t new_length = offset + size;
-          void *cache = cache_allocate_sector(inode->sector, CACHE_WRITE);
-          cache_write(cache, &new_length, 0, ENTRY_SIZE);
-      }
-      lock_release(&inode->inode_lock);
-  }
   
   while (size > 0) 
     {
@@ -461,7 +453,18 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       offset += chunk_size;
       bytes_written += chunk_size;
     }
-//  free (bounce);
+    
+    /* update inode length after write */
+    if (offset + bytes_written > inode_length(inode)) {
+        lock_acquire(&inode->inode_lock);
+        if (offset + bytes_written > inode_length(inode)) {
+            size_t new_length = offset + bytes_written;
+            void *cache = cache_allocate_sector(inode->sector, CACHE_WRITE);
+            cache_write(cache, &new_length, 0, ENTRY_SIZE);
+        }
+        lock_release(&inode->inode_lock);
+    }
+    
   return bytes_written;
 }
 
