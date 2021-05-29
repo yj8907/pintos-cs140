@@ -453,16 +453,17 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       size -= chunk_size;
       offset += chunk_size;
       bytes_written += chunk_size;
-    }
-    
-    /* update inode length after write */
-    if (offset > inode_length(inode)) {
-        lock_acquire(&inode->inode_lock);
+        
+        /* update inode length after write */
         if (offset > inode_length(inode)) {
-            void *cache = cache_allocate_sector(inode->sector, CACHE_WRITE);
-            cache_write(cache, &offset, 0, ENTRY_SIZE);
+            lock_acquire(&inode->inode_lock);
+            if (offset > inode_length(inode)) {
+                void *cache = cache_allocate_sector(inode->sector, CACHE_WRITE);
+                cache_write(cache, &offset, 0, ENTRY_SIZE);
+            }
+            lock_release(&inode->inode_lock);
         }
-        lock_release(&inode->inode_lock);
+        
     }
     
   return bytes_written;
