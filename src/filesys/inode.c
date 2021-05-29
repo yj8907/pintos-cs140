@@ -428,6 +428,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
   if (inode->deny_write_cnt)
     return 0;
   
+  size_t new_length = offset + size;
   while (size > 0) 
     {
       /* Sector to write, starting byte offset within sector. */
@@ -436,7 +437,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       int sector_ofs = offset % BLOCK_SECTOR_SIZE;
 
       /* Bytes left in inode, bytes left in sector, lesser of the two. */
-      off_t inode_left = inode_length (inode) - offset;
+      off_t inode_left = new_length - offset;
       int sector_left = BLOCK_SECTOR_SIZE - sector_ofs;
       int min_left = inode_left < sector_left ? inode_left : sector_left;
 
@@ -455,12 +456,11 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     }
     
     /* update inode length after write */
-    if (offset + bytes_written > inode_length(inode)) {
+    if (offset > inode_length(inode)) {
         lock_acquire(&inode->inode_lock);
-        if (offset + bytes_written > inode_length(inode)) {
-            size_t new_length = offset + bytes_written;
+        if (offset > inode_length(inode)) {
             void *cache = cache_allocate_sector(inode->sector, CACHE_WRITE);
-            cache_write(cache, &new_length, 0, ENTRY_SIZE);
+            cache_write(cache, &offset, 0, ENTRY_SIZE);
         }
         lock_release(&inode->inode_lock);
     }
