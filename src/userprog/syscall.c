@@ -591,10 +591,12 @@ sys_mkdir(uint32_t *eax, char** argv)
 //    if (!inode_isdir(dir_get_inode(upper_dir))) PANIC("test:%s\n", dirname);
     
     dir_add(curr_dir, "..", inode_get_inumber(dir_get_inode(upper_dir)));
+    
+    int worked = dir_lookup(curr_dir, "..", &dir_inode);
     printf("dir: %s, upper_dir: %d, upper inode: %d, curr inode: %d, success: %d\n",
            dirname, upper_dir==NULL, inode_get_inumber(dir_get_inode(upper_dir)),
            inode_get_inumber(dir_get_inode(curr_dir)),
-           dir_lookup(curr_dir, "..", &dir_inode));
+           worked);
     dir_close(upper_dir);
     
     dir_close(curr_dir);
