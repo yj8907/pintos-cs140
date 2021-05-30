@@ -350,9 +350,7 @@ static void sys_remove(uint32_t *eax, char** argv)
     struct inode* f_inode = NULL;
     struct file *fp = filesys_open(filename);
     if (fp != NULL) f_inode = file_get_inode(fp);
-    
-//    if (strcmp(filename, "dir946") == 0) printf("fp open:%d\n", fp==NULL);
-    
+        
     if (f_inode != NULL && inode_isdir(f_inode) ){
         dir = dir_open(inode_reopen(f_inode));
         if(!dir_is_empty(dir) || inode_open_cnt(f_inode) > 2) ret = 0;
@@ -377,15 +375,15 @@ sys_open(uint32_t *eax, char** argv)
     
     int ret = -1;
     
-    sema_down(&filesys_sema);
+//    sema_down(&filesys_sema);
     struct file *fp = filesys_open(filename);
-    sema_up(&filesys_sema);
+//    sema_up(&filesys_sema);
         
     if (fp != NULL) {
         if ( (ret = allocate_fd(fp)) == -1) {
-            sema_down(&filesys_sema);
+//            sema_down(&filesys_sema);
             file_close(filename);
-            sema_up(&filesys_sema);
+//            sema_up(&filesys_sema);
         }
     }
     
