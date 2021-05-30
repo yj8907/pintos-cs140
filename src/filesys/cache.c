@@ -11,12 +11,12 @@
 #include <string.h>
 
 #include "lib/kernel/hash.h"
+#include "devices/timer.h"
 #include "threads/vaddr.h"
 #include "threads/palloc.h"
 #include "threads/malloc.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
-
 #include "filesys/filesys.h"
 
 #include "cache.h"
@@ -95,6 +95,13 @@ setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action 
     if (!lock_held) lock_release(&e->block_lock);
 }
 
+static void
+cache_write_back(void)
+{
+    cache_flush();
+    timer_sleep(100);
+}
+
 void
 cache_init(void)
 {
@@ -115,6 +122,8 @@ cache_init(void)
     size_t bm_pages = DIV_ROUND_UP (bitmap_buf_size (CACHE_NBLOCKS), PGSIZE);
     void *used_map_base = palloc_get_multiple(PAL_ZERO, bm_pages);
     used_map = bitmap_create_in_buf (CACHE_NBLOCKS, used_map_base, bm_pages * PGSIZE);
+    
+    cache_flush_thread = thread_create ("cache_flush_routine", PRI_DEFAULT, cache_write_back, NULL);
 }
 
 static size_t
@@ -365,3 +374,5 @@ cache_flush(void)
     lock_release (&cache_lock);
     
 }
+
+
