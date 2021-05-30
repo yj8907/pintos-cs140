@@ -370,7 +370,7 @@ cache_flush(void)
 //                    if (e->sector_no > 1222319100)
 //                        PANIC("test: 0x%08x, count:%d\n", cache_base+(e - cache_table), e->read_ref);
 //                    block_write (fs_device, e->sector_no, cache_base+(e - cache_table)*BLOCK_SECTOR_SIZE);
-                    e->dirty = false;
+//                    e->dirty = false;
                 }
                 lock_release(&e->block_lock);
             }
