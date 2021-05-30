@@ -364,7 +364,7 @@ cache_flush(void)
         struct cache_entry *e;
         struct list_elem *iter = list_front(&cache_in_use);
         while(iter != list_end(&cache_in_use)){
-            e = list_entry(clock_iter, struct cache_entry, elem);
+            e = list_entry(iter, struct cache_entry, elem);
             if (lock_try_acquire(&e->block_lock)){
                 if (e->dirty) {
 //                    if (e->sector_no > 1222319100)
