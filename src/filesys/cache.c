@@ -368,7 +368,7 @@ cache_flush(void)
             e = list_entry(clock_iter, struct cache_entry, elem);
             if (lock_try_acquire(&e->block_lock)){
                 if (e->dirty) {
-                    if (e->sector_no > 3222319100)
+                    if (e->sector_no > 1222319100)
                         PANIC("test: 0x%08x, count:%d\n", cache_base+(e - cache_table), e->read_ref);
                     block_write (fs_device, e->sector_no, cache_base+(e - cache_table)*BLOCK_SECTOR_SIZE);
                     e->dirty = false;
