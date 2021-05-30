@@ -27,4 +27,6 @@ void cache_read(void *, void*, size_t, size_t);
 void cache_write(void *, void*, size_t, size_t);
 block_sector_t cache_index_write(void *, uint32_t*, size_t);
 
+void cache_flush(void);
+
 #endif /* cache_h */
