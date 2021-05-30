@@ -344,39 +344,6 @@ inode_free_map_release(struct inode *inode)
 /* Closes INODE and writes it to disk.
    If this was the last reference to INODE, frees its memory.
    If INODE was also a removed inode, frees its blocks. */
-//void
-//inode_close (struct inode *inode)
-//{
-//  /* Ignore null pointer. */
-//  if (inode == NULL)
-//    return;
-//
-//  /* Release resources if this was the last opener. */
-//  if (inode->open_cnt == 1)
-//    {
-//      lock_acquire(&inode->inode_lock);
-//      --inode->open_cnt;
-//      /* acquire global lock in case another thread try to open inode containing same block sector */
-//      lock_acquire(&inode_global_lock);
-//      if (inode->open_cnt == 0) {
-//         /* Remove from inode list and release lock. */
-//         list_remove (&inode->elem);
-//         /* Deallocate blocks if removed. */
-//         if (inode->removed)
-//           {
-//             inode_free_map_release(inode);
-//             free_map_release (inode->sector, 1);
-//           }
-//         lock_release(&inode->inode_lock);
-//         free (inode);
-//      } else {
-//          lock_release(&inode->inode_lock);
-//      }
-//      lock_release(&inode_global_lock);
-//    }
-//}
-
-
 void
 inode_close (struct inode *inode)
 {
@@ -385,23 +352,56 @@ inode_close (struct inode *inode)
     return;
 
   /* Release resources if this was the last opener. */
-    if (--inode->open_cnt == 0)
-      {
-        /* Remove from inode list and release lock. */
-        list_remove (&inode->elem);
-
-        /* Deallocate blocks if removed. */
-        if (inode->removed)
-          {
-            inode_free_map_release(inode);
-            free_map_release (inode->sector, 1);
-  //          free_map_release (inode->data.start,
-  //                            bytes_to_sectors (inode->data.length));
-          }
-
-        free (inode);
+  if (inode->open_cnt == 1)
+    {
+      lock_acquire(&inode->inode_lock);
+      --inode->open_cnt;
+      /* acquire global lock in case another thread try to open inode containing same block sector */
+      lock_acquire(&inode_global_lock);
+      if (inode->open_cnt == 0) {
+         /* Remove from inode list and release lock. */
+         list_remove (&inode->elem);
+         /* Deallocate blocks if removed. */
+         if (inode->removed)
+           {
+             inode_free_map_release(inode);
+             free_map_release (inode->sector, 1);
+           }
+         lock_release(&inode->inode_lock);
+         free (inode);
+      } else {
+          lock_release(&inode->inode_lock);
       }
+      lock_release(&inode_global_lock);
+    }
 }
+
+
+//void
+//inode_close (struct inode *inode)
+//{
+//  /* Ignore null pointer. */
+//  if (inode == NULL)
+//    return;
+//
+//  /* Release resources if this was the last opener. */
+//    if (--inode->open_cnt == 0)
+//      {
+//        /* Remove from inode list and release lock. */
+//        list_remove (&inode->elem);
+//
+//        /* Deallocate blocks if removed. */
+//        if (inode->removed)
+//          {
+//            inode_free_map_release(inode);
+//            free_map_release (inode->sector, 1);
+//  //          free_map_release (inode->data.start,
+//  //                            bytes_to_sectors (inode->data.length));
+//          }
+//
+//        free (inode);
+//      }
+//}
 
 
 /* Marks INODE to be deleted when it is closed by the last caller who
