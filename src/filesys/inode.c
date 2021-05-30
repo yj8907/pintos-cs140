@@ -372,7 +372,9 @@ inode_close (struct inode *inode)
       } else {
           lock_release(&inode->inode_lock);
       }
+        
       lock_release(&inode_global_lock);
+        
     } else {
         lock_release(&inode->inode_lock);
     }
