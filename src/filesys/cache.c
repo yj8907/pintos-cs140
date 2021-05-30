@@ -306,10 +306,8 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
     lock_release (&cache_lock);
     
     cache = cache_base + BLOCK_SECTOR_SIZE*cache_index;
-    if ((cache_table+cache_index)->sector_no > 1222319100)
-        PANIC("test: 0x%08x\n", (cache_table+cache_index)->sector_no);
     block_read (fs_device, (cache_table+cache_index)->sector_no, cache);
-//    printf("fetch_new_cache_block ckpt4\n");
+
     return cache;
 }
 
@@ -369,9 +367,9 @@ cache_flush(void)
             e = list_entry(clock_iter, struct cache_entry, elem);
             if (lock_try_acquire(&e->block_lock)){
                 if (e->dirty) {
-                    if (e->sector_no > 1222319100)
-                        PANIC("test: 0x%08x, count:%d\n", cache_base+(e - cache_table), e->read_ref);
-                    block_write (fs_device, e->sector_no, cache_base+(e - cache_table)*BLOCK_SECTOR_SIZE);
+//                    if (e->sector_no > 1222319100)
+//                        PANIC("test: 0x%08x, count:%d\n", cache_base+(e - cache_table), e->read_ref);
+//                    block_write (fs_device, e->sector_no, cache_base+(e - cache_table)*BLOCK_SECTOR_SIZE);
                     e->dirty = false;
                 }
                 lock_release(&e->block_lock);
