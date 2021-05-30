@@ -349,6 +349,7 @@ cache_flush(void)
     lock_acquire (&cache_lock);
     ASSERT(!list_empty(&cache_in_use));
 
+    struct cache_entry *e;
     struct list_elem *iter = list_front(&cache_in_use);
     while(iter != list_end(&cache_in_use)){
         e = list_entry(clock_iter, struct cache_entry, elem);
