@@ -362,10 +362,10 @@ cache_flush(void)
         while(iter != list_end(&cache_in_use)){
             e = list_entry(clock_iter, struct cache_entry, elem);
             if (lock_try_acquire(&e->block_lock)){
-//                if (e->dirty) {
+                if (e->dirty) {
                     block_write (fs_device, e->sector_no, cache_base+(e - cache_table)*BLOCK_SECTOR_SIZE);
                     e->dirty = false;
-//                }
+                }
                 lock_release(&e->block_lock);
             }
             iter = list_next(iter);
