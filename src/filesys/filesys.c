@@ -103,7 +103,7 @@ parse_filepath(const char *name, char **local_name, bool create)
     }
     
     next_filename = strtok_r(NULL, pathsep, &saveptr);
-    if (create && strcmp(name, "abc") == 0) printf("dir_node:%d\n", dir_node != NULL);
+    if (create && strcmp(name, "abc") == 0) printf("dir_node:%d\n", dir_inode != NULL);
     if (next_filename != NULL || (create && dir_inode != NULL) ||  (!create && dir_inode == NULL)) {
         if (curr_dir != NULL) dir_close(curr_dir);
         if (dir_inode != NULL) inode_close(dir_inode);
