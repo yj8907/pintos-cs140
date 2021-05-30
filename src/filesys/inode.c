@@ -352,10 +352,10 @@ inode_close (struct inode *inode)
     return;
 
   /* Release resources if this was the last opener. */
-  if (inode->open_cnt == 1)
+  lock_acquire(&inode->inode_lock);
+  --inode->open_cnt;
+  if (inode->open_cnt == 0)
     {
-      lock_acquire(&inode->inode_lock);
-      --inode->open_cnt;
       /* acquire global lock in case another thread try to open inode containing same block sector */
       lock_acquire(&inode_global_lock);
       if (inode->open_cnt == 0) {
@@ -373,6 +373,8 @@ inode_close (struct inode *inode)
           lock_release(&inode->inode_lock);
       }
       lock_release(&inode_global_lock);
+    } else {
+        lock_release(&inode->inode_lock);
     }
 }
 
@@ -410,7 +412,9 @@ void
 inode_remove (struct inode *inode) 
 {
   ASSERT (inode != NULL);
+  lock_acquire(&inode->inode_lock);
   inode->removed = true;
+  lock_release(&inode->inode_lock);
 }
 
 /* Reads SIZE bytes from INODE into BUFFER, starting at position OFFSET.
