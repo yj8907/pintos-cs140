@@ -307,7 +307,7 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
     
     cache = cache_base + BLOCK_SECTOR_SIZE*cache_index;
     if ((cache_table+cache_index)->sector_no > 1222319100)
-        PANIC("test: 0x%08x, count:%d\n", cache_base+(e - cache_table), e->read_ref);
+        PANIC("test: 0x%08x\n", cache_table+cache_index)->sector_no);
     block_read (fs_device, (cache_table+cache_index)->sector_no, cache);
 //    printf("fetch_new_cache_block ckpt4\n");
     return cache;
