@@ -324,14 +324,17 @@ evict_block()
     lock_acquire (&cache_lock);
     ASSERT(!list_empty(&cache_in_use));
 
+    int counter = 0;
     while (true) {
         if (clock_iter == NULL || clock_iter == list_end(&cache_in_use)) clock_iter = list_front(&cache_in_use);
                     
         e = list_entry(clock_iter, struct cache_entry, elem);
         if (lock_try_acquire(&e->block_lock)){
-            if (e->read_ref == 0 && e->write_ref == 0 && e->dirty) break;
+            if (e->read_ref == 0 && e->write_ref == 0 &&
+                (e->dirty || counter > CACHE_NBLOCKS) ) break;
             lock_release(&e->block_lock);
         }
+        counter++;
         clock_iter = list_next(clock_iter);
     }
     clock_iter = list_remove(clock_iter);
