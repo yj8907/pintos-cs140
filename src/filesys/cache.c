@@ -279,7 +279,6 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
     
     /* obtain new block */
     size_t cache_index = bitmap_scan_and_flip (used_map, 0, 1, false);
-//    printf("fetch_new_cache_block ckpt1\n");
     
     if (cache_index == BITMAP_ERROR) {
         evict_block();
@@ -307,6 +306,8 @@ fetch_new_cache_block(block_sector_t block, enum cache_action action)
     lock_release (&cache_lock);
     
     cache = cache_base + BLOCK_SECTOR_SIZE*cache_index;
+    if ((cache_table+cache_index)->sector_no > 1222319100)
+        PANIC("test: 0x%08x, count:%d\n", cache_base+(e - cache_table), e->read_ref);
     block_read (fs_device, (cache_table+cache_index)->sector_no, cache);
 //    printf("fetch_new_cache_block ckpt4\n");
     return cache;
