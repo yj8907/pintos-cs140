@@ -400,6 +400,7 @@ inode_close (struct inode *inode)
           }
 
         free (inode);
+      }
 }
 
 
