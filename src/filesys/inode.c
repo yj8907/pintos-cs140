@@ -349,21 +349,27 @@ inode_close (struct inode *inode)
     return;
 
   /* Release resources if this was the last opener. */
-  if (--inode->open_cnt == 0)
+  if (inode->open_cnt == 1)
     {
-      /* Remove from inode list and release lock. */
-      list_remove (&inode->elem);
- 
-      /* Deallocate blocks if removed. */
-      if (inode->removed) 
-        {
-          inode_free_map_release(inode);
-          free_map_release (inode->sector, 1);
-//          free_map_release (inode->data.start,
-//                            bytes_to_sectors (inode->data.length));
-        }
-
-      free (inode); 
+      lock_acquire(&inode->inode_lock);
+      --inode->open_cnt;
+      /* acquire global lock in case another thread try to open inode containing same block sector */
+      lock_acquire(&inode_global_lock);
+      if (inode->open_cnt == 0) {
+         /* Remove from inode list and release lock. */
+         list_remove (&inode->elem);
+         /* Deallocate blocks if removed. */
+         if (inode->removed)
+           {
+             inode_free_map_release(inode);
+             free_map_release (inode->sector, 1);
+           }
+         lock_release(&inode->inode_lock);
+         free (inode);
+      } else {
+          lock_release(&inode->inode_lock);
+      }
+      lock_release(&inode_global_lock);
     }
 }
 
