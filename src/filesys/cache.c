@@ -98,8 +98,10 @@ setup_cache_block(struct cache_entry *e, size_t block_sector, enum cache_action 
 static void
 cache_write_back(void)
 {
-    cache_flush();
-    timer_sleep(100);
+    while(true){
+        cache_flush();
+        timer_sleep(100);
+    }
 }
 
 void
