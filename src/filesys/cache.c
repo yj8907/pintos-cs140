@@ -356,23 +356,22 @@ void
 cache_flush(void)
 {
     lock_acquire (&cache_lock);
-    ASSERT(!list_empty(&cache_in_use));
-
-    struct cache_entry *e;
-    struct list_elem *iter = list_front(&cache_in_use);
-    while(iter != list_end(&cache_in_use)){
-        e = list_entry(clock_iter, struct cache_entry, elem);
-        if (lock_try_acquire(&e->block_lock)){
-            if (e->dirty) {
-                block_write (fs_device, e->sector_no, cache_base+(e - cache_table)*BLOCK_SECTOR_SIZE);
-                e->dirty = false;
+    if (list_empty(&cache_in_use)){
+        struct cache_entry *e;
+        struct list_elem *iter = list_front(&cache_in_use);
+        while(iter != list_end(&cache_in_use)){
+            e = list_entry(clock_iter, struct cache_entry, elem);
+            if (lock_try_acquire(&e->block_lock)){
+                if (e->dirty) {
+                    block_write (fs_device, e->sector_no, cache_base+(e - cache_table)*BLOCK_SECTOR_SIZE);
+                    e->dirty = false;
+                }
+                lock_release(&e->block_lock);
             }
-            lock_release(&e->block_lock);
+            iter = list_next(iter);
         }
-        iter = list_next(iter);
     }
     lock_release (&cache_lock);
-    
 }
 
 
