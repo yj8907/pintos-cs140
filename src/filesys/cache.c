@@ -100,7 +100,7 @@ cache_write_back(void)
 {
     while(true){
         cache_flush();
-        timer_sleep(1000);
+        timer_sleep(100);
     }
 }
 
@@ -333,7 +333,6 @@ evict_block()
             if (lock_try_acquire(&e->block_lock)){
                 if (e->read_ref == 0 && e->write_ref == 0 &&
                     (!e->dirty || counter > CACHE_NBLOCKS) ) break;
-//                if ( e->read_ref == 0 && e->write_ref == 0 ) break;
                 lock_release(&e->block_lock);
             }
         }
