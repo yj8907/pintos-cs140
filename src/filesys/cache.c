@@ -100,7 +100,7 @@ cache_write_back(void)
 {
     while(true){
         cache_flush();
-        timer_sleep(100);
+        timer_sleep(1000);
     }
 }
 
