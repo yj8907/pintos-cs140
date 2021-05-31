@@ -330,7 +330,7 @@ evict_block()
         e = list_entry(clock_iter, struct cache_entry, elem);
         if (lock_try_acquire(&e->block_lock)){
             if (e->read_ref == 0 && e->write_ref == 0 &&
-                (e->dirty || counter > CACHE_NBLOCKS) ) break;
+                (!e->dirty || counter > CACHE_NBLOCKS) ) break;
             lock_release(&e->block_lock);
         }
         counter++;
